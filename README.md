@@ -1,6 +1,7 @@
 # prima.cpp: Fast 30-70B LLM Inference on Heterogeneous and Everyday Home Devices
 
-![prima](https://github.com/OpenCPIL/prima.cpp/blob/main/figures/prima-cpp-logo.png)
+![prima](https://github.com/OpenCPIL/prima.cpp/blob/main/figures/prima-logo.png)
+
 [![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](https://opensource.org/licenses/MIT)
 
 prima.cpp is a **distributed implementation** of [llama.cpp](https://github.com/ggerganov/llama.cpp) that lets you **run 70B-level LLMs on your everyday devices**—💻 laptops, 🖥️ desktops, 📱 phones, and tablets (GPU or no GPU, it’s all good). With it, you can run **QwQ-32B, Qwen 2.5-72B, Llama 3-70B, or DeepSeek R1 70B** right from your local home cluster!
