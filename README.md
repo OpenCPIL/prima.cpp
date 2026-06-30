@@ -1,6 +1,6 @@
-# prima.cpp: Speeding up 70B-level LLM inference on low-resource everyday home clusters
+# prima.cpp: Fast 30-70B LLM Inference on Heterogeneous and Everyday Home Devices
 
-![prima](https://raw.githubusercontent.com/Lizonghang/prima.cpp/main/figures/prima-cpp-logo.png)
+![prima](https://github.com/OpenCPIL/prima.cpp/blob/main/figures/prima-cpp-logo.png)
 [![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](https://opensource.org/licenses/MIT)
 
 prima.cpp is a **distributed implementation** of [llama.cpp](https://github.com/ggerganov/llama.cpp) that lets you **run 70B-level LLMs on your everyday devices**—💻 laptops, 🖥️ desktops, 📱 phones, and tablets (GPU or no GPU, it’s all good). With it, you can run **QwQ-32B, Qwen 2.5-72B, Llama 3-70B, or DeepSeek R1 70B** right from your local home cluster!
@@ -74,7 +74,7 @@ And, if your devices are more powerful, you could unlock even more possibilities
 - - **Heterogeneity-aware workload distribution:** A scheduler is designed to optimize workload distribution based on each device's computing power, disk speed, memory, and OS (the OS will affect the disk speed and the memory management strategy). It decides how many model layers a device should handle and how many should run on GPU (if available). 
 - - **Automatic device selection:** If there are weak devices and removing them would speed up inference, prima.cpp will automatically discover and remove them. This may retain some devices as proxy to prevent the socket connection from being blocked.
 - - **Quantization:** We now support Q4K, Q6K, Q80 and IQ1 quantization (GGUF format) and are exploring a Q4K-IQ1 hybrid for a better balance between performance and speed.
-- - **Speculative decoding:** We now support speculative decoding, which can [further speed up by up to 80%.](https://github.com/Lizonghang/prima.cpp/discussions/29)
+- - **Speculative decoding:** We now support speculative decoding, which can further speed up by up to 80%.
 - **Dynamic batching**: We now support concurrent requests from multiple users and batch decoding. 
 - **Support Models:** We now support hot models like the **Llama, Qwen (and QwQ), and DeepSeek series**. More will be added in future updates.
 - **Cross-Platform:** The cluster can consist of devices with different OSs, including macOS, Linux, Android, HarmonyOS, etc. Now, Android and HarmonyOS devices require Termux, and Windows support will be added in future update.
@@ -380,10 +380,6 @@ curl -X POST http://localhost:8080/v1/cancel \
      -d '{"task_id": 0}'
 ```
 
-**9. How to use speculative decoding?**
-
-Please see "[Power prima.cpp with speculative decoding: Further speeds up by up to 80%](https://github.com/Lizonghang/prima.cpp/discussions/29)".
-
 ## ❤️ Acknowledgment
 This project builds upon the incredible work from the open-source community, especially [ggml, gguf](https://github.com/ggml-org/ggml), and [llama.cpp](https://github.com/ggml-org/llama.cpp). We gratefully acknowledge their contributions.
 
@@ -391,13 +387,11 @@ This project builds upon the incredible work from the open-source community, esp
 If you find this work helpful, please do not hesitate to cite us and send a star! 🤩
 
 ```bibtex
-@misc{li2025primacpp,
-    title={PRIMA.CPP: Speeding Up 70B-Scale LLM Inference on Low-Resource Everyday Home Clusters}, 
-    author={Zonghang Li and Tao Li and Wenjiao Feng and Mohsen Guizani and Hongfang Yu and Qirong Ho and Wei Xiang},
-    year={2025},
-    eprint={2504.08791},
-    archivePrefix={arXiv},
-    primaryClass={cs.DC},
-    url={https://arxiv.org/abs/2504.08791}, 
+@inproceedings{li2026primacpp,
+  title={Prima.cpp: Fast 30-70B LLM Inference on Heterogeneous and Low-Resource Home Clusters},
+  author={Li, Zonghang and Li, Tao and Feng, Wenjiao and Xiao, Rongxing and She, Jianshu and Huang, Hong and Guizani, Mohsen and Yu, Hongfang and Ho, Qirong and Xiang, Wei and Liu, Xue},
+  booktitle={14th International Conference on Learning Representations},
+  year={2026},
+  url={https://iclr.cc/virtual/2026/poster/10008093}
 }
 ```
