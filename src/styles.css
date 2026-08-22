@@ -1419,6 +1419,15 @@ h3 {
   font-size: 14px;
 }
 
+.sim-actions .sim-stop-icon,
+.sim-actions .button.is-stop .sim-run-icon {
+  display: none;
+}
+
+.sim-actions .button.is-stop .sim-stop-icon {
+  display: block;
+}
+
 .simulator-shell.is-paused .sim-actions .pause-icon {
   display: none;
 }

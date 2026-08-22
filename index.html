@@ -301,7 +301,7 @@
 
               <div class="sim-actions">
                 <button class="button button--primary" type="submit" data-sim-send aria-controls="home-response server-response simulation-response">
-                  <span>Run</span><i data-lucide="play" aria-hidden="true"></i>
+                  <span>Run</span><i class="sim-run-icon" data-lucide="play" aria-hidden="true"></i><i class="sim-stop-icon" data-lucide="square" aria-hidden="true"></i>
                 </button>
                 <button type="button" data-sim-pause disabled hidden aria-hidden="true" tabindex="-1"><span>Pause</span></button>
                 <button type="button" data-sim-reset disabled hidden aria-hidden="true" tabindex="-1"><span>Reset</span></button>
@@ -430,6 +430,6 @@
     </main>
 
     <script defer src="./vendor/lucide-prima.js"></script>
-    <script type="module" src="./src/app.js?v=presets-v1-20260822"></script>
+    <script type="module" src="./src/app.js?v=run-stop-v1-20260822"></script>
   </body>
 </html>

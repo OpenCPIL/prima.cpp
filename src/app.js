@@ -403,8 +403,9 @@ function initMeasuredPlayback() {
 
     results.forEach((result) => result.output.setAttribute("aria-busy", String(streaming)));
     send.disabled = !enabled;
-    send.setAttribute("aria-label", active ? "Replay all simulations from the beginning" : "Run all simulations");
-    setButtonLabel(send, "Run");
+    send.classList.toggle("is-stop", active);
+    send.setAttribute("aria-label", active ? "Stop all simulations" : "Run all simulations from the beginning");
+    setButtonLabel(send, active ? "Stop" : "Run");
     pause.disabled = !active || playbackState === "suspended";
     pause.setAttribute("aria-pressed", String(playbackState === "paused"));
     pause.setAttribute("aria-label", playbackState === "paused" ? "Resume measured output simulation" : "Pause measured output simulation");
@@ -428,6 +429,7 @@ function initMeasuredPlayback() {
       streaming: "Running",
       paused: "Paused",
       suspended: `Paused · ${suspensionReason}`,
+      stopped: "Stopped",
       complete: "Complete",
     };
     status.textContent = statusText[playbackState];
@@ -523,6 +525,12 @@ function initMeasuredPlayback() {
     if (playbackState === "streaming") playbackFrame = window.requestAnimationFrame(playbackTick);
   }
 
+  function stopPlayback() {
+    cancelPlaybackFrame();
+    playbackState = "stopped";
+    updateInterface();
+  }
+
   function syncAutomaticPlayback() {
     const shouldSuspend = document.hidden || !simulationInView;
 
@@ -544,6 +552,10 @@ function initMeasuredPlayback() {
 
   form.addEventListener("submit", (event) => {
     event.preventDefault();
+    if (playbackState === "streaming" || playbackState === "paused" || playbackState === "suspended") {
+      stopPlayback();
+      return;
+    }
     startPlayback();
   });
 
