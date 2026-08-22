@@ -242,15 +242,15 @@
               <span class="sr-only">Home network · subnet A. Intel Core Ultra 9 185H CPU. NVIDIA RTX 4090 Laptop GPU with 16 GB VRAM. 32 GB system memory. Laptop uplink 27 Mbps. Laptop downlink 145 Mbps. Laptop RTT approximately 50 milliseconds.</span>
             </article>
 
-            <div class="sim-link-map sim-link-map--generated" aria-label="Wi-Fi access to the backbone network, crossing a secure logical VPN tunnel into a small wired Network Gateway">
-              <img src="./assets/network-path-v3.webp" alt="Realistic Wi-Fi router and backbone routing hardware carrying a secure logical VPN path to a small Network Gateway" width="1400" height="383" />
+            <div class="sim-link-map sim-link-map--generated" aria-label="Wi-Fi wireless access entering a secure logical VPN tunnel across the WAN and terminating at a small wired Network Gateway">
+              <img src="./assets/network-path-v5.webp" alt="Wi-Fi entering an end-to-end logical VPN tunnel spanning realistic WAN routing hardware and terminating at a small Network Gateway" width="1400" height="339" />
               <div class="sim-link-legend" aria-hidden="true">
-                <span>Wi‑Fi → Backbone</span>
+                <span>Wi‑Fi → VPN ingress</span>
                 <span>Secure VPN tunnel</span>
                 <span>Network Gateway</span>
               </div>
               <span class="sim-link-line" data-sim-packet-stream aria-hidden="true"><b></b><b></b><b></b><b></b></span>
-              <span class="sr-only">The Home Laptop connects over Wi‑Fi, crosses LAN boundaries through a VPN tunnel, then exits through a wired Network Gateway to the GPU server.</span>
+              <span class="sr-only">The Home Laptop enters the VPN tunnel over Wi‑Fi. The encrypted logical tunnel spans the WAN, then terminates at a wired Network Gateway connected to the GPU server.</span>
             </div>
 
             <article class="sim-machine-card sim-machine-card--server" aria-label="GPU server in the remote local network">
@@ -321,7 +321,6 @@
                 <dl class="sim-telemetry" aria-label="Home Laptop playback telemetry">
                   <div><dt>Elapsed</dt><dd data-sim-result-elapsed>0.0 s</dd></div>
                   <div><dt>Output</dt><dd data-sim-result-token-count>0</dd></div>
-                  <div><dt>TTFT</dt><dd data-sim-result-ttft>3506.99 ms</dd></div>
                 </dl>
               </article>
 
@@ -337,7 +336,6 @@
                 <dl class="sim-telemetry" aria-label="GPU server playback telemetry">
                   <div><dt>Elapsed</dt><dd data-sim-result-elapsed>0.0 s</dd></div>
                   <div><dt>Output</dt><dd data-sim-result-token-count>0</dd></div>
-                  <div><dt>TTFT</dt><dd data-sim-result-ttft>0.00 ms</dd></div>
                 </dl>
               </article>
 
@@ -353,7 +351,6 @@
                 <dl class="sim-telemetry" aria-label="PRIMA playback telemetry">
                   <div><dt>Elapsed</dt><dd data-sim-elapsed data-sim-result-elapsed>0.0 s</dd></div>
                   <div><dt>Output</dt><dd data-sim-token-count data-sim-result-token-count>0</dd></div>
-                  <div><dt>TTFT</dt><dd data-sim-result-ttft>1585.18 ms</dd></div>
                 </dl>
               </article>
             </div>

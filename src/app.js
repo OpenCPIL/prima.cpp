@@ -237,7 +237,6 @@ function initMeasuredPlayback() {
     elapsed: panel.querySelector("[data-sim-result-elapsed]"),
     tokenCount: panel.querySelector("[data-sim-result-token-count]"),
     rateOutput: panel.querySelector("[data-sim-result-rate-output]"),
-    ttftOutput: panel.querySelector("[data-sim-result-ttft]"),
     rateOff: Number(panel.dataset.simRateOff || 0),
     rateOn: Number(panel.dataset.simRateOn || 0),
     ttftOff: Number(panel.dataset.simTtftOff || 0),
@@ -248,7 +247,7 @@ function initMeasuredPlayback() {
     visibleTokens: 0,
   }));
 
-  if (!prompt || !output || !send || !reset || !pause || !model || !dflash || !status || !elapsed || !tokenCount || !rate || results.length !== 3 || results.some((result) => !result.output || !result.status || !result.elapsed || !result.tokenCount || !result.rateOutput || !result.ttftOutput)) {
+  if (!prompt || !output || !send || !reset || !pause || !model || !dflash || !status || !elapsed || !tokenCount || !rate || results.length !== 3 || results.some((result) => !result.output || !result.status || !result.elapsed || !result.tokenCount || !result.rateOutput)) {
     return;
   }
 
@@ -375,7 +374,6 @@ function initMeasuredPlayback() {
       result.elapsed.textContent = `${(resultElapsedMs / 1000).toFixed(1)} s`;
       result.tokenCount.textContent = playbackState === "idle" || playbackState === "unavailable" ? "0" : `${result.visibleTokens}`;
       result.rateOutput.textContent = enabled ? `${result.playbackRate.toFixed(1)} tok/s` : "—";
-      result.ttftOutput.textContent = enabled ? `${result.ttftMs.toFixed(2)} ms` : "—";
       const waitingForFirstToken = playbackState === "streaming" && result.playbackRate > 0 && elapsedMs < result.ttftMs;
       result.panel.classList.toggle("is-awaiting-first-token", waitingForFirstToken);
       if (playbackState === "streaming") {
