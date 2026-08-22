@@ -1455,12 +1455,14 @@ h3 {
 .sim-response {
   min-height: 112px;
   padding: 16px 0 18px;
+  overflow-y: auto;
   font: 430 clamp(14px, 1.08vw, 16px)/1.55 "Geist Mono", monospace;
   letter-spacing: -0.01em;
 }
 
 .sim-response p {
   color: var(--muted);
+  white-space: pre-wrap;
 }
 
 .sim-response strong {
@@ -3988,7 +3990,8 @@ h3 {
   .sim-results .sim-response {
     min-height: 0;
     padding: clamp(7px, 1vh, 11px) 0;
-    overflow: hidden;
+    overflow-x: hidden;
+    overflow-y: auto;
     font-size: clamp(11px, 1.55vh, 14px);
     line-height: 1.42;
   }

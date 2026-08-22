@@ -1,3 +1,5 @@
+import { presetConversations } from "./preset-conversations.js";
+
 document.documentElement.classList.add("js");
 
 const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
@@ -252,37 +254,23 @@ function initMeasuredPlayback() {
   }
 
   let playbackRate = 15.2;
-  const defaultPrompt = "collaboration";
-  const presetResponses = new Map([
-    [
-      "collaboration",
-      "PRIMA treats the Home Laptop and GPU server as one heterogeneous inference pool. The laptop contributes local acceleration over Wi-Fi, while the remote server contributes additional compute across the VPN-connected LAN boundary. Work is coordinated across both devices using the measured wireless path, allowing the Q8 model trace to be replayed without pretending this browser is running the model.",
-    ],
-    [
-      "dflash2",
-      "DFlash2 increases measured throughput by coordinating data movement and computation across the Home Laptop and GPU server. In this configuration, the recorded PRIMA rate rises from 7.4 to 15.2 tokens per second, while the Home Laptop baseline rises from 3.6 to 6.8 tokens per second.",
-    ],
-    [
-      "cross-lan",
-      "PRIMA coordinates inference across separate LANs through the VPN-connected network path. The Home Laptop reaches the backbone network over Wi-Fi, traffic crosses the secure logical VPN tunnel, and the Network Gateway provides the wired path to the remote GPU server.",
-    ],
-  ]);
+  const defaultPrompt = presetConversations[0].id;
+  const presetResponses = new Map(presetConversations.map((preset) => [preset.id, preset]));
 
-  function makePlaybackTokens(text) {
-    const pieces = text.match(/\s+|[\p{L}\p{N}]+|[^\s\p{L}\p{N}]/gu) || [];
+  function makePlaybackTokens(preset) {
+    const characters = [...preset.output];
+    const tokenCount = Math.min(characters.length, Math.max(1, preset.tokenCount));
     const tokens = [];
-    let whitespace = "";
+    let cursor = 0;
 
-    pieces.forEach((piece) => {
-      if (/^\s+$/.test(piece)) {
-        whitespace += piece;
-      } else {
-        tokens.push(`${whitespace}${piece}`);
-        whitespace = "";
-      }
-    });
+    for (let index = 0; index < tokenCount; index += 1) {
+      const remainingCharacters = characters.length - cursor;
+      const remainingTokens = tokenCount - index;
+      const chunkSize = Math.ceil(remainingCharacters / remainingTokens);
+      tokens.push(characters.slice(cursor, cursor + chunkSize).join(""));
+      cursor += chunkSize;
+    }
 
-    if (whitespace && tokens.length) tokens[tokens.length - 1] += whitespace;
     return tokens;
   }
 
@@ -367,6 +355,7 @@ function initMeasuredPlayback() {
     if (result.output.firstElementChild !== result.paragraph || result.output.childElementCount !== 1) {
       result.output.replaceChildren(result.paragraph);
     }
+    result.output.scrollTop = result.output.scrollHeight;
   }
 
   function updateTelemetry() {
