@@ -1702,6 +1702,53 @@ h3 {
   border: 1px solid var(--line);
 }
 
+.sim-wifi-glyph {
+  position: relative;
+  display: block;
+  width: 54px;
+  height: 54px;
+  margin: 0 !important;
+  background: var(--surface);
+  border: 1px solid var(--line);
+}
+
+.sim-wifi-glyph b {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  border: 2px solid var(--orange);
+  border-bottom-color: transparent;
+  border-left-color: transparent;
+  border-radius: 50%;
+  transform: translate(-50%, -50%) rotate(-45deg);
+}
+
+.sim-wifi-glyph b:nth-child(1) {
+  width: 16px;
+  height: 16px;
+}
+
+.sim-wifi-glyph b:nth-child(2) {
+  width: 29px;
+  height: 29px;
+}
+
+.sim-wifi-glyph b:nth-child(3) {
+  width: 42px;
+  height: 42px;
+}
+
+.sim-wifi-glyph i {
+  position: absolute;
+  bottom: 8px;
+  left: 50%;
+  width: 5px;
+  height: 5px;
+  background: var(--orange);
+  border-radius: 50%;
+  transform: translateX(-50%);
+}
+
 .sim-link-node span {
   margin-top: 9px;
   font: 550 9px/1.2 "Geist Mono", monospace;
@@ -1737,6 +1784,7 @@ h3 {
 }
 
 .sim-model-field {
+  position: relative;
   display: grid;
   gap: 9px;
 }
@@ -1762,6 +1810,17 @@ h3 {
   border-radius: 0;
   color: var(--ink);
   font: 600 13px/1.2 "Geist Mono", monospace;
+  transition: border-color 160ms ease, box-shadow 160ms ease;
+}
+
+.sim-model-field select:hover {
+  border-color: var(--ink);
+}
+
+.sim-model-field select:focus-visible {
+  border-color: var(--orange);
+  outline: 0;
+  box-shadow: 0 0 0 2px rgba(239, 91, 14, 0.16);
 }
 
 .sim-console {
@@ -3338,6 +3397,330 @@ h3 {
 @media (max-height: 720px) and (min-width: 901px) {
   .screen {
     min-height: 760px;
+  }
+}
+
+@media (min-width: 901px) {
+  html,
+  body,
+  main {
+    height: 100%;
+    overflow: hidden;
+  }
+
+  .screen--simulation {
+    grid-template-rows: auto minmax(0, 1fr);
+    gap: clamp(5px, 1vh, 10px);
+    height: 100svh;
+    min-height: 0;
+    padding-top: calc(var(--header-h) + clamp(10px, 1.8vh, 18px));
+    padding-bottom: clamp(8px, 1.4vh, 14px);
+  }
+
+  .simulation-intro--playground h2 {
+    font-size: clamp(38px, 4.1vh, 48px);
+    line-height: 0.94;
+  }
+
+  .simulator-shell {
+    display: grid;
+    grid-template-rows: minmax(190px, 27vh) minmax(0, 1fr) auto;
+    min-height: 0;
+  }
+
+  .sim-topology.sim-topology--devices {
+    grid-template-columns: minmax(320px, 1fr) minmax(180px, 0.48fr) minmax(320px, 1fr);
+    gap: clamp(14px, 1.8vw, 28px);
+    min-height: 0;
+    padding: clamp(7px, 1.1vh, 11px) 0;
+  }
+
+  .sim-machine-card {
+    grid-template-columns: minmax(126px, 0.78fr) minmax(190px, 1.22fr);
+    grid-template-rows: auto minmax(0, 1fr);
+    gap: 5px 12px;
+    min-height: 0;
+    padding: clamp(10px, 1.3vh, 14px);
+  }
+
+  .sim-machine-head {
+    grid-column: 1 / -1;
+  }
+
+  .sim-machine-head > div > span {
+    font-size: 7px;
+  }
+
+  .sim-machine-head h3 {
+    margin-top: 2px;
+    font-size: clamp(17px, 2.2vh, 22px);
+  }
+
+  .sim-network-badge {
+    min-height: 24px;
+    padding-inline: 7px;
+    font-size: 7px;
+  }
+
+  .sim-machine-visual {
+    grid-column: 1;
+    grid-row: 2;
+    min-height: 0;
+    height: 100%;
+    margin: 0;
+  }
+
+  .sim-machine-visual img,
+  .sim-machine-visual--server img {
+    max-height: clamp(104px, 16vh, 142px);
+  }
+
+  .sim-machine-specs {
+    grid-column: 2;
+    grid-row: 2;
+    align-self: stretch;
+  }
+
+  .sim-machine-specs > div {
+    display: grid;
+    align-content: center;
+    padding: 3px 4px 3px 0;
+  }
+
+  .sim-machine-specs > div:nth-child(even) {
+    padding-left: 7px;
+  }
+
+  .sim-machine-specs dt {
+    font-size: 6px;
+  }
+
+  .sim-machine-specs dd {
+    margin-top: 2px;
+    font-size: clamp(8px, 1.15vh, 10px);
+  }
+
+  .sim-link-map {
+    min-height: 0;
+  }
+
+  .sim-link-line {
+    right: 1%;
+    left: 1%;
+    height: 4px;
+    background: linear-gradient(90deg, var(--orange) 0 24%, transparent 24% 27%, var(--line) 27% 73%, transparent 73% 76%, var(--ink) 76% 100%);
+  }
+
+  .sim-link-line::before,
+  .sim-link-line::after {
+    position: absolute;
+    top: -5px;
+    width: 28%;
+    height: 14px;
+    border: 1px dashed var(--line);
+    content: "";
+  }
+
+  .sim-link-line::before {
+    left: 22%;
+    border-right: 0;
+  }
+
+  .sim-link-line::after {
+    right: 22%;
+    border-left: 0;
+  }
+
+  .sim-link-core {
+    width: clamp(76px, 11vh, 96px);
+    height: clamp(76px, 11vh, 96px);
+    border-width: 6px;
+  }
+
+  .sim-link-core svg {
+    margin-bottom: 4px;
+    font-size: 17px;
+  }
+
+  .sim-link-core strong {
+    font-size: 9px;
+  }
+
+  .sim-wifi-glyph,
+  .sim-link-node svg {
+    width: 46px;
+    height: 46px;
+  }
+
+  .sim-link-node svg {
+    padding: 11px;
+  }
+
+  .sim-wifi-glyph b:nth-child(3) {
+    width: 36px;
+    height: 36px;
+  }
+
+  .sim-wifi-glyph b:nth-child(2) {
+    width: 25px;
+    height: 25px;
+  }
+
+  .sim-wifi-glyph b:nth-child(1) {
+    width: 14px;
+    height: 14px;
+  }
+
+  .sim-controls-panel {
+    grid-template-columns: minmax(230px, 0.72fr) minmax(112px, 0.3fr) minmax(360px, 1.48fr) 86px;
+    grid-template-rows: auto;
+    align-items: end;
+    gap: 12px;
+    padding: clamp(8px, 1.1vh, 12px) 0;
+  }
+
+  .sim-console {
+    display: grid;
+    grid-template-columns: 1fr;
+    grid-template-rows: auto minmax(0, 1fr);
+    min-height: 0;
+  }
+
+  .sim-console > .sim-controls-panel {
+    grid-column: 1;
+    grid-row: 1;
+  }
+
+  .sim-console > .sim-results {
+    grid-column: 1;
+    grid-row: 2;
+  }
+
+  .sim-controls-panel > .sim-model-field,
+  .sim-controls-panel > .sim-switch,
+  .sim-controls-panel > textarea,
+  .sim-controls-panel > .sim-actions {
+    grid-row: 1;
+  }
+
+  .sim-controls-panel > .sim-model-field {
+    grid-column: 1;
+  }
+
+  .sim-controls-panel > .sim-switch {
+    grid-column: 2;
+    align-self: end;
+    min-height: 46px;
+    margin: 0;
+    padding: 0;
+    border-bottom: 0;
+  }
+
+  .sim-controls-panel > textarea {
+    grid-column: 3;
+    min-height: 46px;
+    max-height: 46px;
+    margin: 0;
+    padding: 12px 14px;
+    font-size: 12px;
+    line-height: 1.35;
+  }
+
+  .sim-controls-panel > .sim-actions {
+    grid-column: 4;
+    margin: 0;
+  }
+
+  .sim-model-field {
+    gap: 5px;
+  }
+
+  .sim-model-field > span {
+    font-size: 7px;
+  }
+
+  .sim-model-field select {
+    min-height: 46px;
+    padding-left: 17px;
+    background-color: transparent;
+    background-position: calc(100% - 19px) 20px, calc(100% - 14px) 20px;
+    border-color: var(--ink);
+    box-shadow: inset 4px 0 0 var(--orange);
+    font-size: 11px;
+  }
+
+  .sim-switch > span:last-child strong {
+    font-size: 11px;
+  }
+
+  .sim-switch-track {
+    width: 36px;
+    height: 20px;
+  }
+
+  .sim-switch-track b {
+    top: 3px;
+    width: 12px;
+    height: 12px;
+  }
+
+  .sim-switch input:checked + .sim-switch-track b {
+    transform: translateX(17px);
+  }
+
+  .sim-actions .button {
+    width: 86px;
+    min-height: 46px;
+    padding-inline: 12px;
+  }
+
+  .sim-results {
+    min-height: 0;
+  }
+
+  .sim-results .sim-response-panel {
+    grid-template-rows: auto minmax(0, 1fr) auto;
+    min-height: 0;
+    padding: clamp(9px, 1.3vh, 13px);
+  }
+
+  .sim-results .sim-response-head {
+    padding-bottom: 7px;
+  }
+
+  .sim-results .sim-response-head > span:first-child,
+  .sim-results .sim-response-head > span:last-child {
+    font-size: 7px;
+  }
+
+  .sim-results .sim-response {
+    min-height: 0;
+    padding: clamp(7px, 1vh, 11px) 0;
+    overflow: hidden;
+    font-size: clamp(9px, 1.25vh, 12px);
+    line-height: 1.38;
+  }
+
+  .sim-results .sim-telemetry > div {
+    padding: 6px;
+  }
+
+  .sim-results .sim-telemetry dt {
+    font-size: 6px;
+  }
+
+  .sim-results .sim-telemetry dd {
+    margin-top: 3px;
+    font-size: 8px;
+  }
+
+  .sim-disclaimer {
+    overflow: hidden;
+    padding: clamp(4px, 0.7vh, 7px) 0 0;
+    font-size: 7px;
+    line-height: 1.35;
+    text-overflow: ellipsis;
+    white-space: nowrap;
   }
 }
 

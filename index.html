@@ -244,9 +244,12 @@
 
             <div class="sim-link-map" aria-label="Wireless home connection crossing LAN boundaries to the remote GPU server">
               <span class="sim-link-line" data-sim-packet-stream aria-hidden="true"><b></b><b></b><b></b><b></b></span>
-              <div class="sim-link-node sim-link-node--home"><i data-lucide="network" aria-hidden="true"></i><span>Home Wi‑Fi</span></div>
-              <div class="sim-link-core"><i data-lucide="route" aria-hidden="true"></i><strong>Cross-LAN</strong><span>VPN path</span></div>
-              <div class="sim-link-node sim-link-node--remote"><i data-lucide="network" aria-hidden="true"></i><span>Remote LAN</span></div>
+              <div class="sim-link-node sim-link-node--home">
+                <span class="sim-wifi-glyph" aria-hidden="true"><b></b><b></b><b></b><i></i></span>
+                <span class="sr-only">Home Wi‑Fi</span>
+              </div>
+              <div class="sim-link-core"><i data-lucide="route" aria-hidden="true"></i><strong>Cross-LAN</strong><span class="sr-only">VPN path</span></div>
+              <div class="sim-link-node sim-link-node--remote"><i data-lucide="network" aria-hidden="true"></i><span class="sr-only">Remote LAN</span></div>
               <span class="sr-only">Home Wi‑Fi. SIM gateway. Access network. VPN tunnel.</span>
             </div>
 
@@ -290,14 +293,14 @@
               <p class="sim-switch-help sr-only" id="dflash-help">The measured-rate 15 tok/s playback is available only with DFlash 2 enabled.</p>
 
               <label class="sim-prompt-label sr-only" for="simulation-prompt">Preset prompt</label>
-              <textarea id="simulation-prompt" data-sim-prompt rows="3" readonly>Explain how two heterogeneous devices can collaborate on AI inference across different networks.</textarea>
+              <textarea id="simulation-prompt" data-sim-prompt rows="2" readonly>Explain how two heterogeneous devices can collaborate on AI inference across different networks.</textarea>
 
               <div class="sim-actions">
                 <button class="button button--primary" type="submit" data-sim-send aria-controls="home-response server-response simulation-response">
-                  <span>Run all</span><i data-lucide="arrow-up-right" aria-hidden="true"></i>
+                  <span>Run</span><i data-lucide="play" aria-hidden="true"></i>
                 </button>
-                <button type="button" data-sim-pause disabled><i class="pause-icon" data-lucide="pause" aria-hidden="true"></i><i class="play-icon" data-lucide="play" aria-hidden="true"></i><span>Pause</span></button>
-                <button type="button" data-sim-reset disabled><i data-lucide="rotate-ccw" aria-hidden="true"></i><span>Reset</span></button>
+                <button type="button" data-sim-pause disabled hidden aria-hidden="true" tabindex="-1"><span>Pause</span></button>
+                <button type="button" data-sim-reset disabled hidden aria-hidden="true" tabindex="-1"><span>Reset</span></button>
               </div>
             </div>
 
@@ -308,7 +311,7 @@
                   <span data-sim-result-status role="status" aria-live="polite">Ready</span>
                 </div>
                 <div class="sim-response" id="home-response" data-sim-result-output aria-busy="false">
-                  <p>Press <strong>Run all</strong> to begin.</p>
+                  <p>Press <strong>Run</strong> to begin.</p>
                 </div>
                 <dl class="sim-telemetry" aria-label="Home Laptop playback telemetry">
                   <div><dt>Elapsed</dt><dd data-sim-result-elapsed>0.0 s</dd></div>
@@ -323,7 +326,7 @@
                   <span data-sim-result-status role="status" aria-live="polite">Ready</span>
                 </div>
                 <div class="sim-response" id="server-response" data-sim-result-output aria-busy="false">
-                  <p>Press <strong>Run all</strong> to begin.</p>
+                  <p>Press <strong>Run</strong> to begin.</p>
                 </div>
                 <dl class="sim-telemetry" aria-label="GPU server playback telemetry">
                   <div><dt>Elapsed</dt><dd data-sim-result-elapsed>0.0 s</dd></div>
@@ -338,7 +341,7 @@
                   <span data-sim-status data-sim-result-status role="status" aria-live="polite">Ready</span>
                 </div>
                 <div class="sim-response" id="simulation-response" data-sim-output data-sim-result-output aria-busy="false">
-                  <p>Press <strong>Run all</strong> to begin.</p>
+                  <p>Press <strong>Run</strong> to begin.</p>
                 </div>
                 <dl class="sim-telemetry" aria-label="PRIMA playback telemetry">
                   <div><dt>Elapsed</dt><dd data-sim-elapsed data-sim-result-elapsed>0.0 s</dd></div>

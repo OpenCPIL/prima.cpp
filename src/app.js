@@ -355,8 +355,8 @@ function initMeasuredPlayback() {
 
     results.forEach((result) => result.output.setAttribute("aria-busy", String(streaming)));
     send.disabled = !enabled;
-    send.setAttribute("aria-label", active ? "Restart all measured output simulations" : "Start all measured output simulations");
-    setButtonLabel(send, active ? "Restart all" : "Run all");
+    send.setAttribute("aria-label", active ? "Replay all simulations from the beginning" : "Run all simulations");
+    setButtonLabel(send, "Run");
     pause.disabled = !active || playbackState === "suspended";
     pause.setAttribute("aria-pressed", String(playbackState === "paused"));
     pause.setAttribute("aria-label", playbackState === "paused" ? "Resume measured output simulation" : "Pause measured output simulation");
@@ -439,7 +439,7 @@ function initMeasuredPlayback() {
     playbackState = isDflashEnabled() ? "idle" : "unavailable";
     results.forEach((result) => {
       result.visibleTokens = 0;
-      setOutputText(result, isDflashEnabled() ? "Press Run all to begin." : "Enable DFlash 2 to compare playback.");
+      setOutputText(result, isDflashEnabled() ? "Press Run to begin." : "Enable DFlash 2 to compare playback.");
     });
     updateInterface();
   }
