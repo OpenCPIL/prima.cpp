@@ -1390,6 +1390,10 @@ h3 {
 }
 
 .sim-actions .button {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 14px;
+  column-gap: 8px;
+  align-items: center;
   min-height: 44px;
   padding-inline: 15px;
 }
@@ -1415,8 +1419,30 @@ h3 {
   opacity: 0.62;
 }
 
-.sim-actions svg {
-  font-size: 14px;
+.sim-actions .sim-action-icon {
+  display: grid;
+  width: 14px;
+  height: 14px;
+  flex: 0 0 14px;
+  place-items: center;
+}
+
+.sim-actions .sim-run-icon::before {
+  width: 0;
+  height: 0;
+  margin-left: 2px;
+  border-top: 5px solid transparent;
+  border-bottom: 5px solid transparent;
+  border-left: 8px solid currentColor;
+  content: "";
+}
+
+.sim-actions .sim-stop-icon::before {
+  width: 9px;
+  height: 9px;
+  border-radius: 1px;
+  background: currentColor;
+  content: "";
 }
 
 .sim-actions .sim-stop-icon,
@@ -1425,7 +1451,7 @@ h3 {
 }
 
 .sim-actions .button.is-stop .sim-stop-icon {
-  display: block;
+  display: grid;
 }
 
 .simulator-shell.is-paused .sim-actions .pause-icon {
