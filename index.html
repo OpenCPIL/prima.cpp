@@ -3,19 +3,20 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta name="theme-color" content="#f7f6f2" />
+    <meta name="theme-color" content="#f7f6f5" />
     <meta name="description" content="Prima.cpp turns compatible consumer hardware you already own into one private inference pool." />
     <meta property="og:title" content="Prima Lab — Scale local AI beyond one device" />
     <meta property="og:description" content="Open-source distributed inference for mixed, local hardware." />
     <meta property="og:type" content="website" />
-    <meta property="og:image" content="https://zonghang-li.github.io/cpil-lab.github.io/assets/hero-hardware.webp" />
+    <meta property="og:image" content="https://zonghang-li.github.io/cpil-lab.github.io/assets/hero-topology.webp" />
     <meta name="twitter:card" content="summary_large_image" />
     <meta name="twitter:title" content="Prima Lab — Scale local AI beyond one device" />
     <meta name="twitter:description" content="Open-source distributed inference for mixed, local hardware." />
-    <meta name="twitter:image" content="https://zonghang-li.github.io/cpil-lab.github.io/assets/hero-hardware.webp" />
+    <meta name="twitter:image" content="https://zonghang-li.github.io/cpil-lab.github.io/assets/hero-topology.webp" />
     <link rel="canonical" href="https://zonghang-li.github.io/cpil-lab.github.io/" />
     <link rel="icon" href="./assets/favicon.ico" sizes="any" />
-    <link rel="preload" as="image" href="./assets/hero-hardware.webp" />
+    <link rel="preload" as="font" href="./assets/fonts/Geist-Variable.woff2" type="font/woff2" crossorigin />
+    <link rel="preload" as="image" href="./assets/hero-topology.webp" />
     <link rel="stylesheet" href="./src/styles.css" />
     <title>Prima Lab — Local AI, beyond one device</title>
   </head>
@@ -24,226 +25,258 @@
 
     <header class="site-header" aria-label="Primary navigation">
       <a class="brand" href="#intro" aria-label="Prima Lab home">
-        <img src="./assets/prima-lab-lockup.webp" alt="Prima Lab" />
+        <img src="./assets/prima-lab-lockup.webp" alt="Prima Lab" width="498" height="139" />
       </a>
       <nav class="desktop-nav" aria-label="Site sections">
+        <a href="#product">Product</a>
         <a href="#home">Use cases</a>
-        <a href="#features">Product</a>
-        <a href="#advantages">Advantages</a>
+        <a href="#evidence">Evidence</a>
       </nav>
       <a class="header-link" href="https://github.com/OpenCPIL/prima.cpp" target="_blank" rel="noreferrer">
         GitHub
         <i data-lucide="arrow-up-right" aria-hidden="true"></i>
       </a>
+      <span class="scroll-progress" aria-hidden="true"><b data-scroll-progress></b></span>
     </header>
 
-    <aside class="slide-rail" aria-label="Page sections">
-      <a href="#intro" aria-label="Go to introduction" data-rail="intro"></a>
-      <a href="#home" aria-label="Go to private AI at home" data-rail="home"></a>
-      <a href="#lab" aria-label="Go to shared lab runtime" data-rail="lab"></a>
-      <a href="#edge" aria-label="Go to edge AI" data-rail="edge"></a>
-      <a href="#features" aria-label="Go to product features" data-rail="features"></a>
-      <a href="#advantages" aria-label="Go to advantages" data-rail="advantages"></a>
-      <a href="#open-source" aria-label="Go to open-source project" data-rail="open-source"></a>
-    </aside>
-
     <main id="main">
-      <section class="slide slide--hero" id="intro" data-slide="intro" aria-labelledby="hero-title">
-        <div class="slide-index" aria-hidden="true"><span>01</span><span>Prima.cpp</span></div>
+      <section class="screen screen--hero" id="intro" data-slide="intro" aria-labelledby="hero-title">
+        <div class="screen-meta" aria-hidden="true"><span>Prima.cpp</span><span>Local-first distributed inference</span></div>
         <div class="hero-copy reveal">
-          <p class="eyebrow">Open-source distributed inference</p>
           <h1 id="hero-title">Scale local AI<br />beyond one device.</h1>
-          <p class="hero-lede">Prima.cpp turns compatible consumer hardware you already own into one private inference pool.</p>
+          <p class="hero-lede">Connect consumer hardware you have already paid for into one distributed inference runtime.</p>
           <div class="actions">
             <a class="button button--primary" href="https://github.com/OpenCPIL/prima.cpp" target="_blank" rel="noreferrer">
               Explore Prima.cpp
               <i data-lucide="arrow-up-right" aria-hidden="true"></i>
             </a>
-            <a class="text-link" href="#features">
-              See the product
-              <i data-lucide="arrow-down" aria-hidden="true"></i>
+            <a class="button button--outline" href="https://github.com/OpenCPIL/prima.cpp" target="_blank" rel="noreferrer">
+              View on GitHub
+              <i data-lucide="git-fork" aria-hidden="true"></i>
             </a>
           </div>
-          <div class="hero-proof" aria-label="Project highlights">
-            <span>ICLR 2026</span>
-            <span>Built on llama.cpp</span>
-            <span>MIT licensed</span>
+          <div class="runtime-status" aria-label="Illustrative runtime status">
+            <span>Illustrative status</span>
+            <b aria-hidden="true"></b>
+            <code>All nodes operational</code>
           </div>
         </div>
-        <figure class="hero-visual reveal reveal--late">
-          <img src="./assets/hero-hardware.webp" alt="Abstract arrangement of a laptop, compact computer, workstation and GPU connected by an orange loop" width="956" height="992" />
-          <figcaption>One model. The hardware already around you.</figcaption>
+        <figure class="hero-art reveal reveal--late">
+          <img src="./assets/hero-topology.webp" alt="Laptop, workstation, mini PC and consumer GPU connected to one Prima Lab runtime" width="1484" height="1060" />
+          <figcaption>Heterogeneous hardware. One private runtime.</figcaption>
         </figure>
-        <a class="scroll-cue" href="#home" aria-label="Scroll to the next section">
-          <span>Scroll</span>
-          <i data-lucide="arrow-down" aria-hidden="true"></i>
-        </a>
       </section>
 
-      <section class="slide slide--scenario" id="home" data-slide="home" aria-labelledby="home-title">
-        <div class="slide-index" aria-hidden="true"><span>02</span><span>Private home</span></div>
+      <section class="screen screen--scenario" id="home" data-slide="home" aria-labelledby="home-title">
+        <div class="screen-meta" aria-hidden="true"><span>01</span><span>Private home</span></div>
         <div class="scenario-copy reveal">
-          <p class="eyebrow">Use what is already paid for</p>
-          <h2 id="home-title">The purchase is sunk.<br />The compute is not.</h2>
-          <p>Put compatible Linux PCs, laptops and workstations back to work—without sending private prompts to a remote service.</p>
-          <ul class="inline-facts" aria-label="Private home advantages">
-            <li><i data-lucide="lock-keyhole" aria-hidden="true"></i> Local by design</li>
-            <li><i data-lucide="laptop" aria-hidden="true"></i> Mixed devices</li>
+          <h2 id="home-title">Private AI<br />at home.</h2>
+          <p>Run capable local models while keeping prompts and data close.</p>
+          <div class="scenario-note"><i data-lucide="lock-keyhole" aria-hidden="true"></i><span>Local by design</span></div>
+        </div>
+        <figure class="scenario-art reveal reveal--late">
+          <img src="./assets/home-topology.webp" alt="A home-shaped boundary containing a laptop, mini PC, workstation and consumer GPU connected through Prima" loading="lazy" width="1672" height="941" />
+          <figcaption><span>LAN — Home</span><span>Use the compatible machines already there.</span></figcaption>
+        </figure>
+      </section>
+
+      <section class="screen screen--scenario" id="lab" data-slide="lab" aria-labelledby="lab-title">
+        <div class="screen-meta" aria-hidden="true"><span>02</span><span>Shared lab</span></div>
+        <div class="scenario-copy reveal">
+          <h2 id="lab-title">A shared runtime<br />for the lab.</h2>
+          <p>Turn mixed CPU and CUDA machines into a single inference service.</p>
+          <div class="scenario-note"><i data-lucide="cpu" aria-hidden="true"></i><span>Resource-aware</span></div>
+        </div>
+        <figure class="scenario-art reveal reveal--late">
+          <img src="./assets/lab-topology.webp" alt="A heterogeneous group of laptops, workstations, mini PCs and consumer GPUs connected through Prima" loading="lazy" width="1681" height="935" />
+          <figcaption><span>LAN — Lab</span><span>Different machines contribute different capacity.</span></figcaption>
+        </figure>
+      </section>
+
+      <section class="screen screen--scenario" id="edge" data-slide="edge" aria-labelledby="edge-title">
+        <div class="screen-meta" aria-hidden="true"><span>03</span><span>Private edge</span></div>
+        <div class="scenario-copy reveal">
+          <h2 id="edge-title">Edge intelligence,<br />kept close.</h2>
+          <p>Serve apps and agents from infrastructure you control, near the work and the data.</p>
+          <div class="scenario-note"><i data-lucide="bot" aria-hidden="true"></i><span>Self-hosted endpoint</span></div>
+        </div>
+        <figure class="scenario-art scenario-art--edge reveal reveal--late">
+          <img src="./assets/edge-topology.webp" alt="Sensors and an edge device sending an inference stream through Prima to private local workstations" loading="lazy" width="1800" height="760" />
+          <figcaption><span>Edge site</span><span>Intelligence stays within reach.</span></figcaption>
+        </figure>
+      </section>
+
+      <section class="screen screen--product motion-scene" id="product" data-slide="product" data-animation-section aria-labelledby="product-title">
+        <div class="screen-meta" aria-hidden="true"><span>Prima.cpp</span><span>Continuous inference</span></div>
+        <div class="product-copy reveal">
+          <h2 id="product-title">One runtime.<br />Many devices.<br />Continuous inference.</h2>
+          <p>Tokens move across assigned CPU and GPU resources. Membership changes are applied between requests.</p>
+          <ul class="flow-key" aria-label="Animation key">
+            <li><b class="key-line key-line--active"></b>Active token flow</li>
+            <li><b class="key-line"></b>Standby path</li>
+            <li><b class="key-node key-node--join"></b>Node joining</li>
+            <li><b class="key-node key-node--leave"></b>Node leaving</li>
           </ul>
         </div>
-        <figure class="scenario-visual reveal reveal--late">
-          <img src="./assets/private-home.webp" alt="Abstract consumer laptop, compact desktop and external graphics device connected as a local pool" loading="lazy" width="1020" height="992" />
-          <figcaption>Private inference across eligible devices on your LAN.</figcaption>
-        </figure>
-      </section>
 
-      <section class="slide slide--scenario slide--reverse" id="lab" data-slide="lab" aria-labelledby="lab-title">
-        <div class="slide-index" aria-hidden="true"><span>03</span><span>Shared lab</span></div>
-        <div class="scenario-copy reveal">
-          <p class="eyebrow">Heterogeneous by default</p>
-          <h2 id="lab-title">One lab.<br />Mixed machines.</h2>
-          <p>Let compatible CPU and CUDA systems contribute different amounts of memory and compute to the same inference pool.</p>
-          <ul class="inline-facts" aria-label="Shared lab advantages">
-            <li><i data-lucide="cpu" aria-hidden="true"></i> CPU + CUDA</li>
-            <li><i data-lucide="scale" aria-hidden="true"></i> Resource-aware</li>
-          </ul>
-        </div>
-        <figure class="scenario-visual reveal reveal--late">
-          <img src="./assets/shared-lab.webp" alt="Abstract assortment of mismatched workstations, laptop and compact computers sharing one workload" loading="lazy" width="1116" height="992" />
-          <figcaption>Useful capacity from the machines a small team already owns.</figcaption>
-        </figure>
-      </section>
-
-      <section class="slide slide--scenario" id="edge" data-slide="edge" aria-labelledby="edge-title">
-        <div class="slide-index" aria-hidden="true"><span>04</span><span>Local edge</span></div>
-        <div class="scenario-copy reveal">
-          <p class="eyebrow">Intelligence stays close</p>
-          <h2 id="edge-title">Private inference,<br />where the work happens.</h2>
-          <p>Serve local apps and agents from a reachable pool across the site—close to the data and under your control.</p>
-          <ul class="inline-facts" aria-label="Local edge advantages">
-            <li><i data-lucide="bot" aria-hidden="true"></i> Local agents</li>
-            <li><i data-lucide="network" aria-hidden="true"></i> Cross-LAN ready</li>
-          </ul>
-        </div>
-        <figure class="scenario-visual reveal reveal--late">
-          <img src="./assets/edge-local.webp" alt="Abstract edge devices and compact workstations connected by a restrained orange path" loading="lazy" width="1050" height="992" />
-          <figcaption>For studios, workshops and private sites—not a distant cluster.</figcaption>
-        </figure>
-      </section>
-
-      <section class="slide slide--features" id="features" data-slide="features" aria-labelledby="features-title">
-        <div class="slide-index" aria-hidden="true"><span>05</span><span>Product features</span></div>
-        <div class="feature-heading reveal">
-          <p class="eyebrow">Watch Prima.cpp work</p>
-          <h2 id="features-title">A pool that moves<br />with your devices.</h2>
-          <p>Simple at the endpoint. Flexible underneath.</p>
-        </div>
-
-        <div class="feature-demo reveal reveal--late" data-demo="request">
-          <div class="feature-tabs" role="tablist" aria-label="Feature animations">
-            <button class="feature-tab is-active" type="button" role="tab" aria-selected="true" aria-controls="panel-request" id="tab-request" data-feature="request">Request flow</button>
-            <button class="feature-tab" type="button" role="tab" aria-selected="false" aria-controls="panel-devices" id="tab-devices" data-feature="devices">Join &amp; leave</button>
-            <button class="feature-tab" type="button" role="tab" aria-selected="false" aria-controls="panel-lan" id="tab-lan" data-feature="lan">Cross-LAN</button>
-          </div>
-
-          <div class="demo-stage">
-            <div class="demo-panel is-active" id="panel-request" role="tabpanel" aria-labelledby="tab-request" data-panel="request">
-              <div class="io-endpoint io-endpoint--input">
-                <span class="endpoint-label">Prompt</span>
-                <span class="prompt-copy">“Summarize locally.”</span>
-              </div>
-              <div class="device-pool" aria-label="Three compatible devices processing an inference request">
-                <span class="flow-line flow-line--left" aria-hidden="true"><b></b></span>
-                <div class="device-node"><i data-lucide="laptop" aria-hidden="true"></i><span>Laptop</span></div>
-                <div class="device-node device-node--lead"><i data-lucide="server" aria-hidden="true"></i><span>Workstation</span></div>
-                <div class="device-node"><i data-lucide="box" aria-hidden="true"></i><span>Mini PC</span></div>
-                <span class="flow-line flow-line--right" aria-hidden="true"><b></b></span>
-              </div>
-              <div class="io-endpoint io-endpoint--output" aria-live="polite">
-                <span class="endpoint-label">Tokens</span>
-                <span class="token-stream"><b>Private</b><b>AI</b><b>stays</b><b>local.</b></span>
-              </div>
+        <div class="inference-visual reveal reveal--late">
+          <div class="inference-track">
+            <div class="io-block io-block--input">
+              <span>Prompt input</span>
+              <code>Explain how transformers work.</code>
             </div>
 
-            <div class="demo-panel" id="panel-devices" role="tabpanel" aria-labelledby="tab-devices" data-panel="devices" hidden>
-              <div class="boundary-label"><span>Request boundary</span><b></b></div>
-              <div class="membership-grid">
-                <div class="member member--steady"><i data-lucide="server" aria-hidden="true"></i><strong>Workstation</strong><span>Ready</span></div>
-                <div class="member member--joining"><i data-lucide="laptop" aria-hidden="true"></i><strong>Gaming laptop</strong><span class="member-state"><i data-lucide="plus" aria-hidden="true"></i> Joining next request</span></div>
-                <div class="member member--leaving"><i data-lucide="box" aria-hidden="true"></i><strong>Mini PC</strong><span class="member-state"><i data-lucide="minus" aria-hidden="true"></i> Leaving safely</span></div>
-              </div>
-              <p class="demo-note">Membership changes are admitted at safe request boundaries. Eligible recovery can re-plan supported active requests.</p>
+            <div class="compute-chain">
+              <span class="token-rail" data-token-rail aria-hidden="true">
+                <b class="token-train" data-token-train><i></i><i></i><i></i><i></i><i></i></b>
+              </span>
+              <div class="compute-node"><i data-lucide="laptop" aria-hidden="true"></i><strong>Laptop</strong><span>CPU</span></div>
+              <div class="compute-node"><i data-lucide="server" aria-hidden="true"></i><strong>Workstation</strong><span>CPU + GPU</span></div>
+              <div class="compute-node"><i data-lucide="box" aria-hidden="true"></i><strong>Mini PC</strong><span>CPU</span></div>
+              <div class="compute-node"><i data-lucide="cpu" aria-hidden="true"></i><strong>GPU node</strong><span>CUDA</span></div>
             </div>
 
-            <div class="demo-panel" id="panel-lan" role="tabpanel" aria-labelledby="tab-lan" data-panel="lan" hidden>
-              <div class="lan-zone lan-zone--a">
-                <span class="zone-label">LAN A</span>
-                <div class="zone-device"><i data-lucide="server" aria-hidden="true"></i><span>Workstation</span></div>
-                <div class="zone-device"><i data-lucide="laptop" aria-hidden="true"></i><span>Laptop</span></div>
-              </div>
-              <div class="lan-link" aria-label="Operator-provided routed connection"><span><i data-lucide="route" aria-hidden="true"></i></span><b aria-hidden="true"></b><em>Reachable path</em></div>
-              <div class="lan-zone lan-zone--b">
-                <span class="zone-label">LAN B</span>
-                <div class="zone-device"><i data-lucide="box" aria-hidden="true"></i><span>Mini PC</span></div>
-                <div class="zone-device"><i data-lucide="cpu" aria-hidden="true"></i><span>GPU host</span></div>
-              </div>
-              <p class="demo-note">Cross-LAN collaboration uses operator-provided network reachability.</p>
+            <div class="io-block io-block--output">
+              <span>Token output</span>
+              <p class="output-tokens" aria-hidden="true"><b>Transformers</b><b>use</b><b>attention</b><b>to model…</b></p>
+              <span class="sr-only">Example token output: Transformers use attention to model.</span>
             </div>
           </div>
 
-          <div class="demo-controls">
-            <button class="icon-button" type="button" data-animation-toggle aria-label="Pause animation" aria-pressed="false"><i data-lucide="pause" aria-hidden="true"></i><span>Pause</span></button>
-            <button class="icon-button" type="button" data-replay aria-label="Replay current animation"><i data-lucide="rotate-ccw" aria-hidden="true"></i><span>Replay</span></button>
-            <span class="demo-status"><i data-lucide="circle-check" aria-hidden="true"></i> OpenAI-compatible endpoint</span>
+          <div class="membership-events" aria-label="Dynamic device membership">
+            <div class="membership-event membership-event--leave">
+              <span class="event-line" aria-hidden="true"></span>
+              <i data-lucide="laptop" aria-hidden="true"></i>
+              <div><strong>Old laptop</strong><span>Leaving after request</span></div>
+            </div>
+            <div class="membership-event membership-event--join">
+              <span class="event-line" aria-hidden="true"></span>
+              <i data-lucide="box" aria-hidden="true"></i>
+              <div><strong>New mini PC</strong><span>Joining next request</span></div>
+            </div>
+          </div>
+
+          <div class="motion-controls">
+            <button type="button" data-animation-toggle aria-label="Pause inference animation" aria-pressed="false">
+              <i class="pause-icon" data-lucide="pause" aria-hidden="true"></i>
+              <i class="play-icon" data-lucide="play" aria-hidden="true"></i>
+              <span>Pause</span>
+            </button>
+            <button type="button" data-replay aria-label="Replay inference animation"><i data-lucide="rotate-ccw" aria-hidden="true"></i><span>Replay</span></button>
+            <span class="endpoint-status"><i data-lucide="circle-check" aria-hidden="true"></i>OpenAI-compatible endpoint</span>
           </div>
         </div>
       </section>
 
-      <section class="slide slide--advantages" id="advantages" data-slide="advantages" aria-labelledby="advantages-title">
-        <div class="slide-index" aria-hidden="true"><span>06</span><span>Advantages</span></div>
-        <div class="advantage-heading reveal">
-          <p class="eyebrow">More model. Less new infrastructure.</p>
+      <section class="screen screen--lan motion-scene" id="lan" data-slide="lan" data-animation-section aria-labelledby="lan-title">
+        <div class="screen-meta" aria-hidden="true"><span>Cross-LAN</span><span>Reachable locations</span></div>
+        <div class="lan-copy reveal">
+          <h2 id="lan-title">Collaborate across<br />locations. On hardware<br />you control.</h2>
+          <p>Coordinate inference over operator-provided reachable networks while execution stays on operator-controlled devices.</p>
+          <div class="motion-controls motion-controls--inline">
+            <button type="button" data-animation-toggle aria-label="Pause cross-LAN animation" aria-pressed="false">
+              <i class="pause-icon" data-lucide="pause" aria-hidden="true"></i>
+              <i class="play-icon" data-lucide="play" aria-hidden="true"></i>
+              <span>Pause</span>
+            </button>
+            <button type="button" data-replay aria-label="Replay cross-LAN animation"><i data-lucide="rotate-ccw" aria-hidden="true"></i><span>Replay</span></button>
+          </div>
+        </div>
+
+        <div class="lan-map reveal reveal--late" role="img" aria-label="Illustration of inference traffic moving between two operator-controlled local networks over a reachable path">
+          <div class="lan-zone">
+            <span class="lan-label">Lab LAN</span>
+            <div class="lan-devices">
+              <i data-lucide="server" aria-hidden="true"></i>
+              <i data-lucide="laptop" aria-hidden="true"></i>
+              <i data-lucide="cpu" aria-hidden="true"></i>
+            </div>
+            <span class="local-note"><i data-lucide="lock-keyhole" aria-hidden="true"></i>Operator-controlled devices</span>
+          </div>
+
+          <div class="lan-bridge">
+            <span class="bridge-route" data-token-rail aria-hidden="true">
+              <b class="token-train token-train--lan" data-token-train><i></i><i></i><i></i><i></i></b>
+            </span>
+            <span class="bridge-node"><i data-lucide="route" aria-hidden="true"></i></span>
+            <em>Reachable path</em>
+          </div>
+
+          <div class="lan-zone">
+            <span class="lan-label">Office LAN</span>
+            <div class="lan-devices">
+              <i data-lucide="laptop" aria-hidden="true"></i>
+              <i data-lucide="box" aria-hidden="true"></i>
+              <i data-lucide="cpu" aria-hidden="true"></i>
+            </div>
+            <span class="local-note"><i data-lucide="lock-keyhole" aria-hidden="true"></i>Operator-controlled devices</span>
+          </div>
+        </div>
+      </section>
+
+      <section class="screen screen--advantages" id="advantages" data-slide="advantages" aria-labelledby="advantages-title">
+        <div class="screen-meta" aria-hidden="true"><span>More model</span><span>Less new infrastructure</span></div>
+        <div class="advantages-copy reveal">
           <h2 id="advantages-title">Useful AI capacity<br />is already around you.</h2>
+          <p>Build from compatible hardware that has already been purchased.</p>
         </div>
-
-        <div class="advantage-grid reveal reveal--late">
-          <article><span class="advantage-number">01</span><i data-lucide="recycle" aria-hidden="true"></i><h3>Use what is paid for</h3><p>Turn sunk-cost consumer hardware into practical inference capacity.</p></article>
-          <article><span class="advantage-number">02</span><i data-lucide="shield-check" aria-hidden="true"></i><h3>Keep control local</h3><p>Run an OpenAI-compatible endpoint on infrastructure you control.</p></article>
-          <article><span class="advantage-number">03</span><i data-lucide="gauge" aria-hidden="true"></i><h3>Fit the pool</h3><p>Use resource-aware placement across mixed CPU and CUDA memory.</p></article>
-        </div>
-
-        <div class="evidence-strip reveal">
-          <div class="evidence-title">
-            <span>Published testbed</span>
-            <a href="https://proceedings.iclr.cc/paper_files/paper/2026/file/e991e5587c1daa49bbf9a818b3f02f9a-Paper-Conference.pdf" target="_blank" rel="noreferrer">ICLR 2026 <i data-lucide="arrow-up-right" aria-hidden="true"></i></a>
-          </div>
-          <dl>
-            <div><dt>70B</dt><dd>model scale</dd></div>
-            <div><dt>674</dt><dd>ms / token</dd></div>
-            <div><dt>&lt;6%</dt><dd>decode memory pressure</dd></div>
-          </dl>
-          <p class="evidence-note">Mainline development run: Qwen3.8-27B on an RTX A4000 workstation + RTX 4090 laptop reached a 6.47 tok/s median follow-up. Kimi K3 and HY4 are also under development evaluation.</p>
-          <p class="caveat">Results are specific to the cited hardware, model, quantization and workload; they are not universal performance claims.</p>
+        <div class="advantage-list reveal reveal--late">
+          <article>
+            <i data-lucide="recycle" aria-hidden="true"></i>
+            <div><span>01</span><h3>Use what you have.</h3><p>Laptops, desktops, mini PCs and consumer GPUs become useful capacity.</p></div>
+          </article>
+          <article>
+            <i data-lucide="shield-check" aria-hidden="true"></i>
+            <div><span>02</span><h3>Keep data local.</h3><p>Prompts and model execution stay on infrastructure you control.</p></div>
+          </article>
+          <article>
+            <i data-lucide="network" aria-hidden="true"></i>
+            <div><span>03</span><h3>Resilient collaboration.</h3><p>Eligible devices can join, leave and recover at controlled boundaries.</p></div>
+          </article>
         </div>
       </section>
 
-      <section class="slide slide--cta" id="open-source" data-slide="open-source" aria-labelledby="cta-title">
-        <div class="slide-index slide-index--light" aria-hidden="true"><span>07</span><span>Open source</span></div>
-        <div class="cta-inner reveal">
-          <img class="cta-mark" src="./assets/prima-lab-mark.webp" alt="" width="255" height="289" />
-          <p class="eyebrow">Prima Lab</p>
-          <h2 id="cta-title">Build private intelligence<br />where your data lives.</h2>
-          <p>Start with Prima.cpp—the open-source runtime for mixed, local hardware.</p>
-          <div class="actions actions--center">
-            <a class="button button--light" href="https://github.com/OpenCPIL/prima.cpp" target="_blank" rel="noreferrer">View on GitHub <i data-lucide="git-fork" aria-hidden="true"></i></a>
-            <a class="text-link text-link--light" href="https://proceedings.iclr.cc/paper_files/paper/2026/file/e991e5587c1daa49bbf9a818b3f02f9a-Paper-Conference.pdf" target="_blank" rel="noreferrer">Read the paper <i data-lucide="arrow-up-right" aria-hidden="true"></i></a>
+      <section class="screen screen--evidence" id="evidence" data-slide="evidence" aria-labelledby="evidence-title">
+        <div class="screen-meta" aria-hidden="true"><span>Evidence</span><span>Public and caveated</span></div>
+        <div class="evidence-copy reveal">
+          <p class="eyebrow">Evidence you can inspect</p>
+          <h2 id="evidence-title">Built in the open.<br />Measured on real hardware.</h2>
+        </div>
+        <dl class="evidence-grid reveal reveal--late">
+          <div><dt>ICLR<br />2026</dt><dd>Published evaluation</dd></div>
+          <div><dt>80+</dt><dd>GitHub stars</dd></div>
+          <div><dt>MIT</dt><dd>Licensed</dd></div>
+          <div><dt>674<span>ms / token</span></dt><dd>70B TPOT · four-device home testbed</dd></div>
+          <div><dt>&lt;6%</dt><dd>70B · per-device memory overhead</dd></div>
+        </dl>
+        <div class="development-note reveal">
+          <span>Development snapshot</span>
+          <div class="development-results">
+            <p><strong>6.47 tok/s</strong><small>Qwen3.8-27B · Q8_0 · two-host, three-sample median</small></p>
+            <p><strong>4.26 s/token</strong><small>Kimi K3 · two-device cold-cache TPOT</small></p>
+            <p><strong>12.33%</strong><small>HY4 IQ1_M · cold-to-best-warm TPOT improvement</small></p>
           </div>
-          <div class="traction" aria-label="Early project traction"><span>ICLR 2026</span><span>80+ GitHub stars</span><span>MIT license</span></div>
+        </div>
+        <p class="evidence-caveat">Development results are unpublished measurements from active branches. All results depend on the cited model, quantization, hardware, networking and workload; they are not universal performance claims.</p>
+      </section>
+
+      <section class="screen screen--cta" id="open-source" data-slide="open-source" aria-labelledby="cta-title">
+        <div class="screen-meta" aria-hidden="true"><span>Open source</span><span>Prima Lab</span></div>
+        <div class="cta-copy reveal">
+          <p class="eyebrow">Start with Prima.cpp</p>
+          <h2 id="cta-title">Build private intelligence<br />where your data lives.</h2>
+          <p>Open source. Self-hosted. Built for heterogeneous hardware.</p>
+        </div>
+        <div class="cta-actions reveal reveal--late">
+          <a class="button button--primary" href="https://github.com/OpenCPIL/prima.cpp" target="_blank" rel="noreferrer">View on GitHub <i data-lucide="git-fork" aria-hidden="true"></i></a>
+          <code>git clone https://github.com/OpenCPIL/prima.cpp</code>
+          <a class="paper-link" href="https://proceedings.iclr.cc/paper_files/paper/2026/file/e991e5587c1daa49bbf9a818b3f02f9a-Paper-Conference.pdf" target="_blank" rel="noreferrer">Read the ICLR 2026 paper <i data-lucide="arrow-up-right" aria-hidden="true"></i></a>
         </div>
 
         <footer class="site-footer">
-          <div><img src="./assets/prima-product-logo.png" alt="Prima.cpp product logo" /><span>An open-source project from Prima Lab.</span></div>
-          <div class="footer-links"><a href="https://github.com/OpenCPIL/prima.cpp" target="_blank" rel="noreferrer">GitHub</a><a href="https://proceedings.iclr.cc/paper_files/paper/2026/file/e991e5587c1daa49bbf9a818b3f02f9a-Paper-Conference.pdf" target="_blank" rel="noreferrer">Paper</a></div>
+          <a href="#intro" aria-label="Back to the top"><img src="./assets/prima-lab-lockup.webp" alt="Prima Lab" width="498" height="139" /></a>
+          <img class="product-lockup" src="./assets/prima-product-logo.png" alt="Prima.cpp product logo" width="742" height="166" />
+          <nav aria-label="Footer navigation"><a href="#product">Product</a><a href="#home">Use cases</a><a href="https://github.com/OpenCPIL/prima.cpp" target="_blank" rel="noreferrer">GitHub</a></nav>
           <span>© <span data-year></span> Prima Lab</span>
         </footer>
       </section>
