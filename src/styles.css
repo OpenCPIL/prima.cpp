@@ -1702,17 +1702,46 @@ h3 {
   border: 1px solid var(--line);
 }
 
-.sim-wifi-glyph {
+.sim-wifi-router {
   position: relative;
   display: block;
-  width: 54px;
-  height: 54px;
+  width: 62px;
+  height: 56px;
   margin: 0 !important;
-  background: var(--surface);
-  border: 1px solid var(--line);
+  font: normal normal 0/1 sans-serif !important;
 }
 
-.sim-wifi-glyph b {
+.sim-router-antenna {
+  position: absolute;
+  bottom: 16px;
+  width: 2px;
+  height: 32px;
+  background: linear-gradient(var(--ink), #777);
+  border-radius: 2px;
+  transform-origin: bottom;
+}
+
+.sim-router-antenna--left {
+  left: 12px;
+  transform: rotate(-10deg);
+}
+
+.sim-router-antenna--right {
+  right: 12px;
+  transform: rotate(10deg);
+}
+
+.sim-router-waves {
+  position: absolute;
+  top: -5px;
+  left: 50%;
+  width: 42px;
+  height: 30px;
+  margin: 0 !important;
+  transform: translateX(-50%);
+}
+
+.sim-router-waves b {
   position: absolute;
   top: 50%;
   left: 50%;
@@ -1723,30 +1752,195 @@ h3 {
   transform: translate(-50%, -50%) rotate(-45deg);
 }
 
-.sim-wifi-glyph b:nth-child(1) {
-  width: 16px;
-  height: 16px;
+.sim-router-waves b:nth-child(1) {
+  width: 12px;
+  height: 12px;
 }
 
-.sim-wifi-glyph b:nth-child(2) {
-  width: 29px;
-  height: 29px;
+.sim-router-waves b:nth-child(2) {
+  width: 24px;
+  height: 24px;
 }
 
-.sim-wifi-glyph b:nth-child(3) {
-  width: 42px;
-  height: 42px;
+.sim-router-waves b:nth-child(3) {
+  width: 36px;
+  height: 36px;
 }
 
-.sim-wifi-glyph i {
+.sim-router-body {
+  position: absolute;
+  right: 3px;
+  bottom: 3px;
+  left: 3px;
+  height: 18px;
+  margin: 0 !important;
+  background: linear-gradient(180deg, #4c4c4c, #1d1d1d 58%, #090909);
+  border: 1px solid #050505;
+  border-radius: 4px 4px 6px 6px;
+  box-shadow: 0 6px 10px rgba(23, 23, 23, 0.2), inset 0 1px rgba(255, 255, 255, 0.22);
+}
+
+.sim-router-body b {
+  position: absolute;
+  top: 7px;
+  width: 3px;
+  height: 3px;
+  background: #63d58a;
+  border-radius: 50%;
+  box-shadow: 0 0 4px rgba(99, 213, 138, 0.72);
+}
+
+.sim-router-body b:nth-child(1) { left: 9px; }
+.sim-router-body b:nth-child(2) { left: 17px; }
+.sim-router-body b:nth-child(3) { left: 25px; background: var(--orange); }
+.sim-router-body b:nth-child(4) { right: 9px; }
+
+.sim-link-core.sim-vpn-tunnel {
+  position: relative;
+  display: block;
+  width: 88px;
+  height: 72px;
+  padding: 0;
+  background: transparent;
+  border: 0;
+  border-radius: 0;
+}
+
+.sim-tunnel-ring,
+.sim-tunnel-mouth {
+  position: absolute;
+  bottom: 5px;
+  left: 50%;
+  border-radius: 50% 50% 12px 12px;
+  transform: translateX(-50%);
+}
+
+.sim-tunnel-ring {
+  width: 66px;
+  height: 58px;
+  background: #b9b8b5;
+  border: 5px solid #deddda;
+  box-shadow: inset 0 0 0 1px #8d8b88;
+}
+
+.sim-tunnel-ring--rear {
+  left: calc(50% + 10px);
+  width: 58px;
+  height: 50px;
+  background: #777572;
+  border-color: #aaa8a4;
+}
+
+.sim-tunnel-ring--middle {
+  left: calc(50% + 4px);
+  width: 62px;
+  height: 54px;
+  background: #95938f;
+  border-color: #c5c3bf;
+}
+
+.sim-tunnel-mouth {
+  display: grid;
+  place-items: center;
+  align-content: center;
+  width: 58px;
+  height: 52px;
+  background: radial-gradient(circle at 50% 48%, #3d3d3d, #111 68%);
+  color: #fff;
+  border: 5px solid var(--ink);
+  box-shadow: inset 0 0 14px #000, 0 5px 10px rgba(23, 23, 23, 0.18);
+}
+
+.sim-tunnel-mouth svg {
+  width: 17px;
+  height: 17px;
+  margin: 0 0 3px;
+  padding: 0;
+  background: transparent;
+  border: 0;
+  color: var(--orange);
+}
+
+.sim-tunnel-mouth strong {
+  font: 650 7px/1 "Geist Mono", monospace;
+  letter-spacing: 0.08em;
+}
+
+.sim-network-gateway {
+  position: relative;
+  display: block;
+  width: 76px;
+  height: 58px;
+  margin: 0 !important;
+  font: normal normal 0/1 sans-serif !important;
+}
+
+.sim-gateway-body {
+  position: absolute;
+  top: 5px;
+  left: 6px;
+  width: 49px;
+  height: 37px;
+  margin: 0 !important;
+  background: linear-gradient(145deg, #fafafa, #c8c7c4);
+  border: 1px solid #777572;
+  border-radius: 3px;
+  box-shadow: 3px 4px 0 #aaa8a4, 0 7px 11px rgba(23, 23, 23, 0.14);
+}
+
+.sim-gateway-body b {
   position: absolute;
   bottom: 8px;
-  left: 50%;
-  width: 5px;
-  height: 5px;
-  background: var(--orange);
+  width: 10px;
+  height: 8px;
+  background: #202020;
+  border: 1px solid #000;
+  box-shadow: inset 0 2px #575757;
+}
+
+.sim-gateway-body b:nth-child(1) { left: 7px; }
+.sim-gateway-body b:nth-child(2) { left: 20px; }
+.sim-gateway-body b:nth-child(3) { left: 33px; }
+
+.sim-gateway-body i {
+  position: absolute;
+  top: 7px;
+  left: 8px;
+  width: 4px;
+  height: 4px;
+  background: #52c979;
   border-radius: 50%;
-  transform: translateX(-50%);
+  box-shadow: 8px 0 var(--orange), 0 0 4px rgba(82, 201, 121, 0.55);
+}
+
+.sim-gateway-cable {
+  position: absolute;
+  top: 28px;
+  right: -24px;
+  width: 47px;
+  height: 3px;
+  margin: 0 !important;
+  background: var(--ink);
+}
+
+.sim-gateway-cable b {
+  position: absolute;
+  top: -3px;
+  right: 0;
+  width: 8px;
+  height: 9px;
+  background: #3a3a3a;
+  border: 1px solid #111;
+}
+
+.sim-network-gateway em {
+  position: absolute;
+  bottom: 0;
+  left: 7px;
+  color: var(--muted);
+  font: normal 600 5px/1 "Geist Mono", monospace;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
 }
 
 .sim-link-node span {
@@ -1781,6 +1975,22 @@ h3 {
   color: #aaa7a2;
   font: 500 8px/1.2 "Geist Mono", monospace;
   text-transform: uppercase;
+}
+
+.sim-link-core.sim-vpn-tunnel .sim-tunnel-ring,
+.sim-link-core.sim-vpn-tunnel .sim-tunnel-mouth {
+  margin: 0;
+}
+
+.sim-link-core.sim-vpn-tunnel .sim-tunnel-mouth svg {
+  width: 17px;
+  height: 17px;
+  margin: 0 0 3px;
+  color: var(--orange);
+}
+
+.sim-link-core.sim-vpn-tunnel .sim-tunnel-mouth strong {
+  font-size: 7px;
 }
 
 .sim-model-field {
