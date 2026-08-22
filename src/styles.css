@@ -1488,9 +1488,13 @@ h3 {
   display: none;
 }
 
+.sim-response-panel.is-awaiting-first-token .sim-response p::after {
+  display: none;
+}
+
 .sim-telemetry {
   display: grid;
-  grid-template-columns: repeat(2, 1fr);
+  grid-template-columns: repeat(3, 1fr);
   border-top: 1px solid var(--line);
   border-bottom: 1px solid var(--line-faint);
 }

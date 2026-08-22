@@ -237,14 +237,18 @@ function initMeasuredPlayback() {
     elapsed: panel.querySelector("[data-sim-result-elapsed]"),
     tokenCount: panel.querySelector("[data-sim-result-token-count]"),
     rateOutput: panel.querySelector("[data-sim-result-rate-output]"),
+    ttftOutput: panel.querySelector("[data-sim-result-ttft]"),
     rateOff: Number(panel.dataset.simRateOff || 0),
     rateOn: Number(panel.dataset.simRateOn || 0),
+    ttftOff: Number(panel.dataset.simTtftOff || 0),
+    ttftOn: Number(panel.dataset.simTtftOn || 0),
     playbackRate: Number(panel.dataset.simRateOn || 0),
+    ttftMs: Number(panel.dataset.simTtftOn || 0),
     paragraph: document.createElement("p"),
     visibleTokens: 0,
   }));
 
-  if (!prompt || !output || !send || !reset || !pause || !model || !dflash || !status || !elapsed || !tokenCount || !rate || results.length !== 3 || results.some((result) => !result.output || !result.status || !result.elapsed || !result.tokenCount || !result.rateOutput)) {
+  if (!prompt || !output || !send || !reset || !pause || !model || !dflash || !status || !elapsed || !tokenCount || !rate || results.length !== 3 || results.some((result) => !result.output || !result.status || !result.elapsed || !result.tokenCount || !result.rateOutput || !result.ttftOutput)) {
     return;
   }
 
@@ -284,7 +288,7 @@ function initMeasuredPlayback() {
   }
 
   let playbackTokens = makePlaybackTokens(presetResponses.get(defaultPrompt));
-  let simulatedDurationMs = (playbackTokens.length / playbackRate) * 1000;
+  let simulatedDurationMs = 0;
   let playbackState = "idle";
   let playbackFrame = 0;
   let elapsedMs = 0;
@@ -310,15 +314,28 @@ function initMeasuredPlayback() {
     return model instanceof HTMLSelectElement && model.value === "qwen38-27b-q8";
   }
 
+  function getResultDurationMs(result) {
+    if (result.playbackRate <= 0 || playbackTokens.length === 0) return 0;
+    const generationDurationMs = ((Math.max(0, playbackTokens.length - 1)) / result.playbackRate) * 1000;
+    return result.ttftMs + generationDurationMs;
+  }
+
+  function getVisibleTokenCount(result) {
+    if (result.playbackRate <= 0 || elapsedMs < result.ttftMs || playbackTokens.length === 0) return 0;
+    const generationElapsedMs = Math.max(0, elapsedMs - result.ttftMs);
+    return Math.min(playbackTokens.length, 1 + Math.floor((generationElapsedMs / 1000) * result.playbackRate));
+  }
+
   function syncResultRates() {
     const dflashEnabled = isDflashEnabled();
     results.forEach((result) => {
       result.playbackRate = dflashEnabled ? result.rateOn : result.rateOff;
+      result.ttftMs = dflashEnabled ? result.ttftOn : result.ttftOff;
       result.panel.classList.toggle("is-measurement-missing", result.playbackRate === 0);
     });
     const measuredRates = results.map((result) => result.playbackRate).filter((resultRate) => resultRate > 0);
     playbackRate = measuredRates.length ? Math.min(...measuredRates) : 0;
-    simulatedDurationMs = playbackRate > 0 ? (playbackTokens.length / playbackRate) * 1000 : 0;
+    simulatedDurationMs = Math.max(...results.map(getResultDurationMs), 0);
   }
 
   function syncConfiguration() {
@@ -353,13 +370,17 @@ function initMeasuredPlayback() {
     rate.textContent = enabled ? `${playbackRate.toFixed(1)} tok/s` : "—";
 
     results.forEach((result) => {
-      const resultDurationMs = result.playbackRate > 0 ? (playbackTokens.length / result.playbackRate) * 1000 : 0;
+      const resultDurationMs = getResultDurationMs(result);
       const resultElapsedMs = Math.min(elapsedMs, resultDurationMs);
       result.elapsed.textContent = `${(resultElapsedMs / 1000).toFixed(1)} s`;
       result.tokenCount.textContent = playbackState === "idle" || playbackState === "unavailable" ? "0" : `${result.visibleTokens}`;
       result.rateOutput.textContent = enabled ? `${result.playbackRate.toFixed(1)} tok/s` : "—";
+      result.ttftOutput.textContent = enabled ? `${result.ttftMs.toFixed(2)} ms` : "—";
+      const waitingForFirstToken = playbackState === "streaming" && result.playbackRate > 0 && elapsedMs < result.ttftMs;
+      result.panel.classList.toggle("is-awaiting-first-token", waitingForFirstToken);
       if (playbackState === "streaming") {
         if (result.playbackRate === 0) result.status.textContent = "Pending";
+        else if (waitingForFirstToken) result.status.textContent = "Waiting";
         else if (result.visibleTokens >= playbackTokens.length) result.status.textContent = "Complete";
         else result.status.textContent = "Running";
       }
@@ -425,20 +446,22 @@ function initMeasuredPlayback() {
     updateTelemetry();
   }
 
-  function renderVisibleTokens(count) {
-    visibleTokens = Math.min(playbackTokens.length, Math.max(0, count));
+  function renderVisibleTokens() {
+    visibleTokens = 0;
     results.forEach((result) => {
-      result.visibleTokens = result.playbackRate === playbackRate
-        ? visibleTokens
-        : Math.min(playbackTokens.length, Math.floor((elapsedMs / 1000) * result.playbackRate));
-      setOutputText(
-        result,
-        result.visibleTokens > 0
-          ? playbackTokens.slice(0, result.visibleTokens).join("")
-          : result.playbackRate === 0
-            ? "A4000 baseline pending · 0 tok/s"
-            : "",
-      );
+      const nextVisibleTokens = getVisibleTokenCount(result);
+      if (nextVisibleTokens !== result.visibleTokens || result.playbackRate === 0) {
+        result.visibleTokens = nextVisibleTokens;
+        setOutputText(
+          result,
+          result.visibleTokens > 0
+            ? playbackTokens.slice(0, result.visibleTokens).join("")
+            : result.playbackRate === 0
+              ? "A4000 baseline pending · 0 tok/s"
+              : "",
+        );
+      }
+      visibleTokens = Math.max(visibleTokens, result.visibleTokens);
     });
     updateTelemetry();
   }
@@ -446,7 +469,7 @@ function initMeasuredPlayback() {
   function completePlayback() {
     cancelPlaybackFrame();
     elapsedMs = simulatedDurationMs;
-    renderVisibleTokens(playbackTokens.length);
+    renderVisibleTokens();
     playbackState = "complete";
     updateInterface();
   }
@@ -458,11 +481,9 @@ function initMeasuredPlayback() {
     lastFrameTime = timestamp;
     elapsedMs = Math.min(simulatedDurationMs, elapsedMs + frameDelta);
 
-    const nextTokenCount = Math.min(playbackTokens.length, Math.floor((elapsedMs / 1000) * playbackRate));
-    if (nextTokenCount !== visibleTokens) renderVisibleTokens(nextTokenCount);
-    else updateTelemetry();
+    renderVisibleTokens();
 
-    if (nextTokenCount >= playbackTokens.length) {
+    if (elapsedMs >= simulatedDurationMs) {
       completePlayback();
       return;
     }

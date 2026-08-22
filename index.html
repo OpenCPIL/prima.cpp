@@ -243,7 +243,7 @@
             </article>
 
             <div class="sim-link-map sim-link-map--generated" aria-label="Wi-Fi access to the backbone network, crossing a secure logical VPN tunnel into a small wired Network Gateway">
-              <img src="./assets/network-path-v2.webp" alt="Wi-Fi router accessing a backbone network, secure logical VPN tunnel, and small Network Gateway" width="1400" height="460" />
+              <img src="./assets/network-path-v3.webp" alt="Realistic Wi-Fi router and backbone routing hardware carrying a secure logical VPN path to a small Network Gateway" width="1400" height="383" />
               <div class="sim-link-legend" aria-hidden="true">
                 <span>Wi‑Fi → Backbone</span>
                 <span>Secure VPN tunnel</span>
@@ -309,7 +309,7 @@
             </div>
 
             <div class="sim-results" aria-label="Side-by-side inference playback comparison">
-              <article class="sim-response-panel" data-sim-result data-sim-rate-off="3.6" data-sim-rate-on="6.8">
+              <article class="sim-response-panel" data-sim-result data-sim-rate-off="3.6" data-sim-rate-on="6.8" data-sim-ttft-off="3029.83" data-sim-ttft-on="3506.99">
                 <div class="sim-response-head">
                   <span>Home Laptop · llama.cpp</span>
                   <strong data-sim-result-rate-output>6.8 tok/s</strong>
@@ -321,10 +321,11 @@
                 <dl class="sim-telemetry" aria-label="Home Laptop playback telemetry">
                   <div><dt>Elapsed</dt><dd data-sim-result-elapsed>0.0 s</dd></div>
                   <div><dt>Output</dt><dd data-sim-result-token-count>0</dd></div>
+                  <div><dt>TTFT</dt><dd data-sim-result-ttft>3506.99 ms</dd></div>
                 </dl>
               </article>
 
-              <article class="sim-response-panel" data-sim-result data-sim-rate-off="0" data-sim-rate-on="0">
+              <article class="sim-response-panel" data-sim-result data-sim-rate-off="0" data-sim-rate-on="0" data-sim-ttft-off="0" data-sim-ttft-on="0">
                 <div class="sim-response-head">
                   <span>GPU server · llama.cpp</span>
                   <strong data-sim-result-rate-output>0.0 tok/s</strong>
@@ -336,10 +337,11 @@
                 <dl class="sim-telemetry" aria-label="GPU server playback telemetry">
                   <div><dt>Elapsed</dt><dd data-sim-result-elapsed>0.0 s</dd></div>
                   <div><dt>Output</dt><dd data-sim-result-token-count>0</dd></div>
+                  <div><dt>TTFT</dt><dd data-sim-result-ttft>0.00 ms</dd></div>
                 </dl>
               </article>
 
-              <article class="sim-response-panel sim-response-panel--prima" data-sim-result data-sim-rate-off="7.4" data-sim-rate-on="15.2">
+              <article class="sim-response-panel sim-response-panel--prima" data-sim-result data-sim-rate-off="7.4" data-sim-rate-on="15.2" data-sim-ttft-off="1351.73" data-sim-ttft-on="1585.18">
                 <div class="sim-response-head">
                   <span>Home Laptop + GPU server · PRIMA</span>
                   <strong data-sim-result-rate-output data-sim-rate>15.2 tok/s</strong>
@@ -351,6 +353,7 @@
                 <dl class="sim-telemetry" aria-label="PRIMA playback telemetry">
                   <div><dt>Elapsed</dt><dd data-sim-elapsed data-sim-result-elapsed>0.0 s</dd></div>
                   <div><dt>Output</dt><dd data-sim-token-count data-sim-result-token-count>0</dd></div>
+                  <div><dt>TTFT</dt><dd data-sim-result-ttft>1585.18 ms</dd></div>
                 </dl>
               </article>
             </div>
