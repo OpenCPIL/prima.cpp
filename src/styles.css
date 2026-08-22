@@ -77,6 +77,8 @@ button {
 
 img {
   display: block;
+  width: auto;
+  height: auto;
   max-width: 100%;
 }
 
@@ -160,8 +162,15 @@ svg {
 }
 
 .brand {
+  display: flex;
+  align-items: center;
   justify-self: start;
   width: clamp(128px, 10.4vw, 158px);
+}
+
+.brand img {
+  width: 100%;
+  height: auto;
 }
 
 .desktop-nav {
@@ -1093,37 +1102,6 @@ h3 {
   letter-spacing: -0.015em;
 }
 
-.development-results {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  border-top: 1px solid var(--line);
-}
-
-.development-results p {
-  display: grid;
-  gap: 7px;
-  padding: 17px 22px 0;
-  border-left: 1px solid var(--line);
-}
-
-.development-results p:first-child {
-  padding-left: 0;
-  border-left: 0;
-}
-
-.development-results strong {
-  font-size: clamp(20px, 1.8vw, 28px);
-  font-weight: 560;
-  letter-spacing: -0.035em;
-}
-
-.development-results small {
-  color: var(--muted);
-  font: 500 8px/1.45 "Geist Mono", monospace;
-  letter-spacing: 0.025em;
-  text-transform: uppercase;
-}
-
 .evidence-caveat {
   max-width: 900px;
   margin-left: 21%;
@@ -1565,7 +1543,7 @@ h3 {
   }
 
   .brand {
-    width: 124px;
+    width: 116px;
   }
 
   .header-link {
@@ -1918,24 +1896,6 @@ h3 {
 
   .development-note p {
     font-size: 14px;
-  }
-
-  .development-results {
-    grid-template-columns: 1fr;
-  }
-
-  .development-results p,
-  .development-results p:first-child {
-    grid-template-columns: 100px 1fr;
-    align-items: baseline;
-    gap: 10px;
-    padding: 12px 0;
-    border-bottom: 1px solid var(--line-faint);
-    border-left: 0;
-  }
-
-  .development-results strong {
-    font-size: 19px;
   }
 
   .evidence-caveat {
