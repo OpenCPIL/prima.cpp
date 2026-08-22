@@ -313,6 +313,13 @@ function initMeasuredPlayback() {
     return model instanceof HTMLSelectElement && model.value === "qwen38-27b-q8";
   }
 
+  function formatTokenRate(value) {
+    return value.toLocaleString("en-US", {
+      minimumFractionDigits: 1,
+      maximumFractionDigits: 3,
+    });
+  }
+
   function getResultDurationMs(result) {
     if (result.playbackRate <= 0 || playbackTokens.length === 0) return 0;
     const generationDurationMs = ((Math.max(0, playbackTokens.length - 1)) / result.playbackRate) * 1000;
@@ -366,14 +373,14 @@ function initMeasuredPlayback() {
     const enabled = supportsDflash();
     elapsed.textContent = `${(elapsedMs / 1000).toFixed(1)} s`;
     tokenCount.textContent = playbackState === "idle" || playbackState === "unavailable" ? "0" : `${visibleTokens}`;
-    rate.textContent = enabled ? `${playbackRate.toFixed(1)} tok/s` : "—";
+    rate.textContent = enabled ? `${formatTokenRate(playbackRate)} tok/s` : "—";
 
     results.forEach((result) => {
       const resultDurationMs = getResultDurationMs(result);
       const resultElapsedMs = Math.min(elapsedMs, resultDurationMs);
       result.elapsed.textContent = `${(resultElapsedMs / 1000).toFixed(1)} s`;
       result.tokenCount.textContent = playbackState === "idle" || playbackState === "unavailable" ? "0" : `${result.visibleTokens}`;
-      result.rateOutput.textContent = enabled ? `${result.playbackRate.toFixed(1)} tok/s` : "—";
+      result.rateOutput.textContent = enabled ? `${formatTokenRate(result.playbackRate)} tok/s` : "—";
       const waitingForFirstToken = playbackState === "streaming" && result.playbackRate > 0 && elapsedMs < result.ttftMs;
       result.panel.classList.toggle("is-awaiting-first-token", waitingForFirstToken);
       if (playbackState === "streaming") {
