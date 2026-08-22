@@ -343,12 +343,12 @@ function initMeasuredPlayback() {
     }
 
     const statusText = {
-      idle: "Ready to replay measured-rate sample",
-      unavailable: "No measured playback available",
-      streaming: "Simulation streaming · measured playback",
-      paused: "Simulation paused",
-      suspended: `Simulation paused · ${suspensionReason}`,
-      complete: "Simulated output complete",
+      idle: "Ready",
+      unavailable: "Unavailable",
+      streaming: "Running",
+      paused: "Paused",
+      suspended: `Paused · ${suspensionReason}`,
+      complete: "Complete",
     };
     status.textContent = statusText[playbackState];
     updateTelemetry();
@@ -394,7 +394,7 @@ function initMeasuredPlayback() {
     playbackState = isDflashEnabled() ? "idle" : "unavailable";
     setOutputText(
       isDflashEnabled()
-        ? "Select Run simulation to replay the fixed response at 15 output tokens/s."
+        ? "Press Run simulation to begin."
         : "Enable DFlash 2 to make the measured-rate playback available.",
     );
     updateInterface();

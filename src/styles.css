@@ -974,10 +974,10 @@ h3 {
 
 .screen--simulation {
   grid-template-columns: 1fr;
-  grid-template-rows: auto 1fr;
+  grid-template-rows: auto auto;
   align-content: center;
-  gap: clamp(25px, 3.6vh, 38px);
-  min-height: max(100svh, 840px);
+  gap: clamp(28px, 4vh, 44px);
+  min-height: max(100svh, 800px);
 }
 
 .simulation-intro {
@@ -988,7 +988,7 @@ h3 {
 }
 
 .simulation-intro .eyebrow {
-  margin-bottom: 17px;
+  margin-bottom: 12px;
 }
 
 .simulation-intro h2 {
@@ -997,25 +997,25 @@ h3 {
 
 .simulation-disclosure {
   display: grid;
-  grid-template-columns: 120px 1fr;
+  grid-template-columns: 130px 1fr;
   align-items: start;
   gap: 24px;
-  padding: 16px 0;
+  padding: 18px 0;
   border-top: 1px solid var(--ink);
   border-bottom: 1px solid var(--line);
 }
 
 .simulation-disclosure strong {
   color: var(--orange);
-  font: 600 10px/1.3 "Geist Mono", monospace;
+  font: 600 11px/1.35 "Geist Mono", monospace;
   letter-spacing: 0.06em;
   text-transform: uppercase;
 }
 
 .simulation-disclosure p {
   color: var(--muted);
-  font-size: clamp(13px, 1.05vw, 15px);
-  line-height: 1.5;
+  font-size: clamp(15px, 1.15vw, 17px);
+  line-height: 1.45;
 }
 
 .simulator-shell {
@@ -1026,11 +1026,11 @@ h3 {
 .sim-topology {
   position: relative;
   display: grid;
-  grid-template-columns: minmax(180px, 0.62fr) minmax(460px, 1.76fr) minmax(180px, 0.62fr);
+  grid-template-columns: minmax(210px, 0.7fr) minmax(360px, 1.6fr) minmax(210px, 0.7fr);
   align-items: center;
   gap: clamp(18px, 2.4vw, 38px);
   min-width: 0;
-  padding: clamp(18px, 2.7vh, 27px) 0 17px;
+  padding: clamp(22px, 3vh, 30px) 0;
   border-bottom: 1px solid var(--line);
 }
 
@@ -1072,9 +1072,8 @@ h3 {
 .sim-device div > span {
   display: block;
   color: var(--muted);
-  font: 500 8px/1.35 "Geist Mono", monospace;
-  letter-spacing: 0.035em;
-  text-transform: uppercase;
+  font: 500 12px/1.4 "Geist Mono", monospace;
+  letter-spacing: -0.01em;
 }
 
 .sim-device p {
@@ -1104,19 +1103,36 @@ h3 {
   display: grid;
   align-content: center;
   min-width: 0;
-  min-height: 118px;
-  padding-bottom: 34px;
+  min-height: 108px;
+  padding-bottom: 42px;
 }
 
 .sim-path-line {
   position: absolute;
-  top: 43px;
+  top: 24px;
   right: 5%;
   left: 5%;
   z-index: 0;
   display: block;
   height: 1px;
   background: var(--line);
+}
+
+.sim-route-summary {
+  position: relative;
+  z-index: 2;
+  align-self: start;
+  justify-self: center;
+  padding: 15px 18px;
+  background: var(--paper);
+  color: var(--ink);
+  font: 550 12px/1.2 "Geist Mono", monospace;
+  white-space: nowrap;
+}
+
+.sim-route-summary span {
+  margin: 0 8px;
+  color: var(--orange);
 }
 
 .sim-path-line::before {
@@ -1169,6 +1185,11 @@ h3 {
   color: var(--ink);
 }
 
+.sim-hops.sr-only {
+  position: absolute;
+  display: block;
+}
+
 .sim-bandwidth {
   position: absolute;
   right: 0;
@@ -1187,13 +1208,13 @@ h3 {
 
 .sim-bandwidth dt {
   color: var(--muted);
-  font: 500 8px/1.2 "Geist Mono", monospace;
+  font: 500 10px/1.2 "Geist Mono", monospace;
   letter-spacing: 0.04em;
   text-transform: uppercase;
 }
 
 .sim-bandwidth dd {
-  font: 600 11px/1.2 "Geist Mono", monospace;
+  font: 600 14px/1.2 "Geist Mono", monospace;
 }
 
 .sim-topology figcaption {
@@ -1206,6 +1227,12 @@ h3 {
   text-align: center;
 }
 
+.sim-topology figcaption.sr-only {
+  position: absolute;
+  padding: 0;
+  border: 0;
+}
+
 .sim-console {
   display: grid;
   grid-template-columns: minmax(360px, 0.82fr) minmax(520px, 1.18fr);
@@ -1216,7 +1243,7 @@ h3 {
 .sim-controls-panel,
 .sim-response-panel {
   min-width: 0;
-  padding: clamp(20px, 2.3vw, 31px) clamp(20px, 2.5vw, 36px);
+  padding: clamp(22px, 2.5vw, 34px) clamp(22px, 2.8vw, 40px);
 }
 
 .sim-controls-panel {
@@ -1242,13 +1269,13 @@ h3 {
 .sim-response-head > span:first-child,
 .sim-prompt-label {
   color: var(--muted);
-  font: 550 8px/1.2 "Geist Mono", monospace;
+  font: 550 11px/1.2 "Geist Mono", monospace;
   letter-spacing: 0.06em;
   text-transform: uppercase;
 }
 
 .sim-model-line strong {
-  font: 600 11px/1.2 "Geist Mono", monospace;
+  font: 600 14px/1.2 "Geist Mono", monospace;
 }
 
 .sim-switch {
@@ -1256,10 +1283,9 @@ h3 {
   grid-template-columns: 42px 1fr;
   align-items: center;
   gap: 13px;
-  min-height: 58px;
-  margin-top: 16px;
-  padding: 9px 0;
-  border-top: 1px solid var(--line-faint);
+  min-height: 54px;
+  margin-top: 14px;
+  padding: 8px 0;
   border-bottom: 1px solid var(--line-faint);
   cursor: pointer;
 }
@@ -1318,7 +1344,7 @@ h3 {
 }
 
 .sim-switch > span:last-child strong {
-  font-size: 12px;
+  font-size: 14px;
   font-weight: 600;
 }
 
@@ -1344,15 +1370,16 @@ h3 {
 .sim-controls-panel textarea {
   display: block;
   width: 100%;
-  min-height: 78px;
-  padding: 13px 14px;
+  min-height: 92px;
+  margin-top: 16px;
+  padding: 15px 16px;
   resize: none;
   overflow: hidden;
   background: var(--surface);
   color: var(--ink);
   border: 1px solid var(--line);
   border-radius: 0;
-  font: 450 11px/1.45 "Geist Mono", monospace;
+  font: 450 14px/1.5 "Geist Mono", monospace;
 }
 
 .sim-actions {
@@ -1378,7 +1405,7 @@ h3 {
   border: 1px solid var(--line);
   border-radius: 2px;
   cursor: pointer;
-  font: 550 9px/1 "Geist Mono", monospace;
+  font: 550 10px/1 "Geist Mono", monospace;
   text-transform: uppercase;
 }
 
@@ -1407,7 +1434,7 @@ h3 {
 
 .sim-response-head > span:last-child {
   color: var(--success);
-  font: 550 8px/1.2 "Geist Mono", monospace;
+  font: 550 10px/1.2 "Geist Mono", monospace;
   letter-spacing: 0.035em;
   text-align: right;
   text-transform: uppercase;
@@ -1416,7 +1443,7 @@ h3 {
 .sim-response {
   min-height: 112px;
   padding: 16px 0 18px;
-  font: 430 clamp(13px, 1.02vw, 15px)/1.55 "Geist Mono", monospace;
+  font: 430 clamp(14px, 1.08vw, 16px)/1.55 "Geist Mono", monospace;
   letter-spacing: -0.01em;
 }
 
@@ -1468,14 +1495,14 @@ h3 {
 
 .sim-telemetry dt {
   color: var(--muted);
-  font: 500 7px/1.2 "Geist Mono", monospace;
+  font: 500 9px/1.2 "Geist Mono", monospace;
   letter-spacing: 0.055em;
   text-transform: uppercase;
 }
 
 .sim-telemetry dd {
   margin-top: 5px;
-  font: 600 12px/1.2 "Geist Mono", monospace;
+  font: 600 14px/1.2 "Geist Mono", monospace;
 }
 
 .sim-boundary {
@@ -1483,6 +1510,22 @@ h3 {
   color: var(--muted);
   font: 450 7px/1.45 "Geist Mono", monospace;
   letter-spacing: 0.02em;
+}
+
+.sim-boundary.sr-only,
+.sim-switch-help.sr-only,
+.sim-prompt-label.sr-only,
+.sim-switch small.sr-only,
+.sim-model-line > span.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
 }
 
 .simulator-shell.is-unavailable .sim-response-head > span:last-child,
@@ -2484,8 +2527,8 @@ h3 {
   }
 
   .screen--simulation {
-    min-height: 1560px;
-    gap: 27px;
+    min-height: max(100svh, 1180px);
+    gap: 30px;
   }
 
   .simulation-intro {
@@ -2503,7 +2546,7 @@ h3 {
   }
 
   .simulation-disclosure p {
-    font-size: 13px;
+    font-size: 15px;
   }
 
   .sim-topology {
@@ -2516,7 +2559,7 @@ h3 {
   .sim-device--server {
     grid-template-columns: 52px 1fr;
     gap: 14px;
-    padding: 15px 0;
+    padding: 12px 0;
     text-align: left;
   }
 
@@ -2540,17 +2583,23 @@ h3 {
   }
 
   .sim-path {
-    min-height: 350px;
-    padding: 20px 0 94px;
+    min-height: 150px;
+    padding: 14px 0 72px;
   }
 
   .sim-path-line {
-    top: 26px;
+    top: 0;
     right: auto;
-    bottom: 103px;
+    bottom: 70px;
     left: 21px;
     width: 1px;
     height: auto;
+  }
+
+  .sim-route-summary {
+    align-self: center;
+    padding: 12px 14px;
+    font-size: 11px;
   }
 
   .sim-path-line::before {
@@ -2645,9 +2694,9 @@ h3 {
   }
 
   .sim-response {
-    min-height: 170px;
+    min-height: 140px;
     padding-block: 18px;
-    font-size: 13px;
+    font-size: 14px;
   }
 
   .sim-telemetry > div {
@@ -2655,7 +2704,7 @@ h3 {
   }
 
   .sim-telemetry dd {
-    font-size: 10px;
+    font-size: 12px;
   }
 
   .simulator-shell.is-streaming .sim-path-line b:nth-child(1),
