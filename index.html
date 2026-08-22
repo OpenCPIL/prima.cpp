@@ -231,22 +231,22 @@
                 <img src="./assets/home-laptop.webp" alt="Realistic illustration of the Home Laptop" width="900" height="600" />
               </div>
               <dl class="sim-machine-specs">
-                <div><dt>CPU</dt><dd class="is-zero">0</dd></div>
+                <div><dt>CPU</dt><dd>Intel Core Ultra 9 185H</dd></div>
                 <div><dt>System memory</dt><dd>32 GB</dd></div>
                 <div><dt>GPU</dt><dd>RTX 4090 Laptop</dd></div>
-                <div><dt>VRAM</dt><dd class="is-zero">0 GB</dd></div>
-                <div><dt>Uplink</dt><dd>145 Mbps</dd></div>
-                <div><dt>Downlink</dt><dd>27 Mbps</dd></div>
-                <div><dt>RTT</dt><dd class="is-zero">0 ms</dd></div>
+                <div><dt>VRAM</dt><dd>16 GB</dd></div>
+                <div><dt>Uplink</dt><dd>27 Mbps</dd></div>
+                <div><dt>Downlink</dt><dd>145 Mbps</dd></div>
+                <div><dt>RTT</dt><dd>50 ms</dd></div>
               </dl>
-              <span class="sr-only">Home network · subnet A. RTX 4090 Laptop GPU. 32 GB system memory. Laptop uplink 145 Mbps. Laptop downlink 27 Mbps.</span>
+              <span class="sr-only">Home network · subnet A. Intel Core Ultra 9 185H CPU. RTX 4090 Laptop GPU with 16 GB VRAM. 32 GB system memory. Laptop uplink 27 Mbps. Laptop downlink 145 Mbps. Laptop RTT 50 milliseconds.</span>
             </article>
 
             <div class="sim-link-map sim-link-map--generated" aria-label="Wi-Fi router crossing a VPN tunnel into a wired Network Gateway">
-              <img src="./assets/network-path.webp" alt="Realistic network path: Wi-Fi router, secure VPN tunnel, Network Gateway, and Ethernet cable" width="1400" height="509" />
+              <img src="./assets/network-hardware.webp" alt="Real networking hardware: Wi-Fi router, VPN security appliance, Network Gateway, and Ethernet cables" width="1400" height="434" />
               <div class="sim-link-legend" aria-hidden="true">
-                <span>Wi‑Fi</span>
-                <span>VPN tunnel</span>
+                <span>Wi‑Fi router</span>
+                <span>VPN appliance</span>
                 <span>Network Gateway</span>
               </div>
               <span class="sim-link-line" data-sim-packet-stream aria-hidden="true"><b></b><b></b><b></b><b></b></span>
@@ -259,18 +259,18 @@
                 <span class="sim-network-badge"><i data-lucide="network" aria-hidden="true"></i>Ethernet</span>
               </header>
               <div class="sim-machine-visual sim-machine-visual--server">
-                <img src="./assets/gpu-server.webp" alt="Realistic illustration of the GPU server" width="857" height="900" />
+                <img src="./assets/a4000-gpu.webp" alt="One realistic A4000-class workstation GPU card" width="900" height="565" />
               </div>
               <dl class="sim-machine-specs">
-                <div><dt>CPU</dt><dd class="is-zero">0</dd></div>
+                <div><dt>CPU</dt><dd>Intel Core i7-12700</dd></div>
                 <div><dt>System memory</dt><dd>32 GB</dd></div>
-                <div><dt>GPU</dt><dd>A4000 ×1</dd></div>
-                <div><dt>VRAM</dt><dd class="is-zero">0 GB</dd></div>
-                <div><dt>Uplink</dt><dd class="is-zero">0 Mbps</dd></div>
-                <div><dt>Downlink</dt><dd class="is-zero">0 Mbps</dd></div>
-                <div><dt>RTT</dt><dd class="is-zero">0 ms</dd></div>
+                <div><dt>GPU</dt><dd>NVIDIA RTX A4000 x1</dd></div>
+                <div><dt>VRAM</dt><dd>16 GB</dd></div>
+                <div><dt>Uplink</dt><dd>1 Gbps</dd></div>
+                <div><dt>Downlink</dt><dd>1 Gbps</dd></div>
+                <div><dt>RTT</dt><dd>&lt;1 ms</dd></div>
               </dl>
-              <span class="sr-only">Remote LAN · subnet B. GPU server with one NVIDIA A4000 GPU and 32 GB system memory.</span>
+              <span class="sr-only">Remote LAN · subnet B. GPU server with an Intel Core i7-12700 CPU, one NVIDIA RTX A4000 GPU with 16 GB VRAM, 32 GB system memory, 1 gigabit per second uplink and downlink, and RTT below 1 millisecond.</span>
             </article>
             <figcaption class="sr-only" id="sim-topology-caption">Two heterogeneous devices across different subnets. Network figures are observed from the laptop and apply to the DFlash 2-enabled trace.</figcaption>
           </figure>
@@ -292,8 +292,12 @@
               </label>
               <p class="sim-switch-help sr-only" id="dflash-help">Toggle between the measured DFlash2 on and off rates for this model.</p>
 
-              <label class="sim-prompt-label sr-only" for="simulation-prompt">Preset prompt</label>
-              <textarea id="simulation-prompt" data-sim-prompt rows="2" readonly>Explain how two heterogeneous devices can collaborate on AI inference across different networks.</textarea>
+              <label class="sim-prompt-label sr-only" for="simulation-prompt">Preset question</label>
+              <select class="sim-prompt-select" id="simulation-prompt" data-sim-prompt>
+                <option value="collaboration" selected>How can two heterogeneous devices collaborate on AI inference?</option>
+                <option value="dflash2">How does DFlash2 improve distributed inference throughput?</option>
+                <option value="cross-lan">How does PRIMA coordinate inference across different LANs?</option>
+              </select>
 
               <div class="sim-actions">
                 <button class="button button--primary" type="submit" data-sim-send aria-controls="home-response server-response simulation-response">
@@ -339,7 +343,7 @@
 
               <article class="sim-response-panel sim-response-panel--prima" data-sim-result data-sim-rate-off="7.4" data-sim-rate-on="15.2">
                 <div class="sim-response-head">
-                  <span>PRIMA · 2 devices</span>
+                  <span>Home Laptop + GPU server · PRIMA</span>
                   <strong data-sim-result-rate-output data-sim-rate>15.2 tok/s</strong>
                   <span data-sim-status data-sim-result-status role="status" aria-live="polite">Ready</span>
                 </div>

@@ -250,9 +250,21 @@ function initMeasuredPlayback() {
   }
 
   let playbackRate = 15.2;
-  const defaultPrompt = "Explain how two heterogeneous devices can collaborate on AI inference across different networks.";
-  const fixedResponse =
-    "PRIMA treats the Home Laptop and GPU server as one heterogeneous inference pool. The laptop contributes local acceleration over Wi-Fi, while the remote server contributes additional compute across the VPN-connected LAN boundary. Work is coordinated across both devices using the measured wireless path, allowing the Q8 model trace to be replayed without pretending this browser is running the model.";
+  const defaultPrompt = "collaboration";
+  const presetResponses = new Map([
+    [
+      "collaboration",
+      "PRIMA treats the Home Laptop and GPU server as one heterogeneous inference pool. The laptop contributes local acceleration over Wi-Fi, while the remote server contributes additional compute across the VPN-connected LAN boundary. Work is coordinated across both devices using the measured wireless path, allowing the Q8 model trace to be replayed without pretending this browser is running the model.",
+    ],
+    [
+      "dflash2",
+      "DFlash2 increases measured throughput by coordinating data movement and computation across the Home Laptop and GPU server. In this configuration, the recorded PRIMA rate rises from 7.4 to 15.2 tokens per second, while the Home Laptop baseline rises from 3.6 to 6.8 tokens per second.",
+    ],
+    [
+      "cross-lan",
+      "PRIMA coordinates inference across separate LANs through the VPN-connected network path. The Home Laptop reaches the Wi-Fi router wirelessly, traffic crosses the VPN appliance, and the Network Gateway provides the wired path to the remote GPU server.",
+    ],
+  ]);
 
   function makePlaybackTokens(text) {
     const pieces = text.match(/\s+|[\p{L}\p{N}]+|[^\s\p{L}\p{N}]/gu) || [];
@@ -272,7 +284,7 @@ function initMeasuredPlayback() {
     return tokens;
   }
 
-  const playbackTokens = makePlaybackTokens(fixedResponse);
+  let playbackTokens = makePlaybackTokens(presetResponses.get(defaultPrompt));
   let simulatedDurationMs = (playbackTokens.length / playbackRate) * 1000;
   let playbackState = "idle";
   let playbackFrame = 0;
@@ -283,7 +295,7 @@ function initMeasuredPlayback() {
   let suspensionReason = "outside viewport";
 
   prompt.value = prompt.value.trim() || defaultPrompt;
-  prompt.readOnly = true;
+  playbackTokens = makePlaybackTokens(presetResponses.get(prompt.value) || presetResponses.get(defaultPrompt));
 
   function isDflashEnabled() {
     if (dflash instanceof HTMLInputElement) return dflash.checked;
@@ -338,15 +350,22 @@ function initMeasuredPlayback() {
   function updateTelemetry() {
     const enabled = supportsDflash();
     elapsed.textContent = `${(elapsedMs / 1000).toFixed(1)} s`;
-    tokenCount.textContent = playbackState === "idle" || playbackState === "unavailable" ? "0" : `${visibleTokens} / ${playbackTokens.length}`;
+    tokenCount.textContent = playbackState === "idle" || playbackState === "unavailable" ? "0" : `${visibleTokens}`;
     rate.textContent = enabled ? `${playbackRate.toFixed(1)} tok/s` : "—";
 
     results.forEach((result) => {
-      result.elapsed.textContent = `${(elapsedMs / 1000).toFixed(1)} s`;
-      result.tokenCount.textContent = playbackState === "idle" || playbackState === "unavailable" ? "0" : `${result.visibleTokens} / ${playbackTokens.length}`;
+      const resultDurationMs = result.playbackRate > 0 ? (playbackTokens.length / result.playbackRate) * 1000 : 0;
+      const resultElapsedMs = Math.min(elapsedMs, resultDurationMs);
+      result.elapsed.textContent = `${(resultElapsedMs / 1000).toFixed(1)} s`;
+      result.tokenCount.textContent = playbackState === "idle" || playbackState === "unavailable" ? "0" : `${result.visibleTokens}`;
       result.rateOutput.textContent = enabled ? `${result.playbackRate.toFixed(1)} tok/s` : "—";
       const resultProgress = playbackTokens.length ? result.visibleTokens / playbackTokens.length : 0;
       result.progress.style.setProperty("--result-progress", resultProgress.toFixed(4));
+      if (playbackState === "streaming") {
+        if (result.playbackRate === 0) result.status.textContent = "Pending";
+        else if (result.visibleTokens >= playbackTokens.length) result.status.textContent = "Complete";
+        else result.status.textContent = "Running";
+      }
     });
 
     const progress = playbackTokens.length ? visibleTokens / playbackTokens.length : 0;
@@ -550,6 +569,12 @@ function initMeasuredPlayback() {
 
   model.addEventListener("change", () => {
     syncConfiguration();
+    resetPlayback();
+  });
+
+  prompt.addEventListener("change", () => {
+    playbackTokens = makePlaybackTokens(presetResponses.get(prompt.value) || presetResponses.get(defaultPrompt));
+    syncResultRates();
     resetPlayback();
   });
 

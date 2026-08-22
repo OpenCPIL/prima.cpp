@@ -1485,7 +1485,7 @@ h3 {
   font-weight: 600;
 }
 
-.sim-response::after {
+.sim-response p::after {
   display: inline-block;
   width: 1px;
   height: 1.05em;
@@ -1496,9 +1496,13 @@ h3 {
   opacity: 0;
 }
 
-.simulator-shell.is-streaming .sim-response::after {
+.simulator-shell.is-streaming .sim-response p::after {
   opacity: 1;
   animation: cursorBlink 1s steps(1) infinite;
+}
+
+.sim-response-panel.is-measurement-missing .sim-response p::after {
+  display: none;
 }
 
 .sim-telemetry {
@@ -2074,7 +2078,8 @@ h3 {
   text-transform: uppercase;
 }
 
-.sim-model-field select {
+.sim-model-field select,
+.sim-prompt-select {
   width: 100%;
   min-height: 48px;
   padding: 0 42px 0 14px;
@@ -2091,11 +2096,13 @@ h3 {
   transition: border-color 160ms ease, box-shadow 160ms ease;
 }
 
-.sim-model-field select:hover {
+.sim-model-field select:hover,
+.sim-prompt-select:hover {
   border-color: var(--ink);
 }
 
-.sim-model-field select:focus-visible {
+.sim-model-field select:focus-visible,
+.sim-prompt-select:focus-visible {
   border-color: var(--orange);
   outline: 0;
   box-shadow: 0 0 0 2px rgba(239, 91, 14, 0.16);
@@ -2126,7 +2133,7 @@ h3 {
   margin-top: 0;
 }
 
-.sim-controls-panel > textarea {
+.sim-controls-panel > .sim-prompt-select {
   grid-column: 2;
   grid-row: 1 / span 2;
   min-height: 90px;
@@ -2238,7 +2245,7 @@ h3 {
 }
 
 .simulator-shell.is-paused .sim-path-line b,
-.simulator-shell.is-paused .sim-response::after {
+.simulator-shell.is-paused .sim-response p::after {
   animation-play-state: paused !important;
 }
 
@@ -3595,13 +3602,13 @@ h3 {
 
   .sim-controls-panel > .sim-model-field,
   .sim-controls-panel > .sim-switch,
-  .sim-controls-panel > textarea,
+  .sim-controls-panel > .sim-prompt-select,
   .sim-controls-panel > .sim-actions {
     grid-column: 1;
     grid-row: auto;
   }
 
-  .sim-controls-panel > textarea {
+  .sim-controls-panel > .sim-prompt-select {
     margin-top: 0;
   }
 
@@ -3890,7 +3897,7 @@ h3 {
 
   .sim-controls-panel > .sim-model-field,
   .sim-controls-panel > .sim-switch,
-  .sim-controls-panel > textarea,
+  .sim-controls-panel > .sim-prompt-select,
   .sim-controls-panel > .sim-actions {
     grid-row: 1;
   }
@@ -3908,14 +3915,16 @@ h3 {
     border-bottom: 0;
   }
 
-  .sim-controls-panel > textarea {
+  .sim-controls-panel > .sim-prompt-select {
     grid-column: 3;
     min-height: 46px;
     max-height: 46px;
     margin: 0;
-    padding: 12px 14px;
+    padding: 0 42px 0 14px;
+    background-color: transparent;
+    background-position: calc(100% - 19px) 20px, calc(100% - 14px) 20px;
+    border-color: var(--ink);
     font-size: 13px;
-    line-height: 1.35;
   }
 
   .sim-controls-panel > .sim-actions {
