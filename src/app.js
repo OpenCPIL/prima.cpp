@@ -219,7 +219,9 @@ function initMeasuredPlayback() {
   const send = form.querySelector("[data-sim-send]");
   const reset = form.querySelector("[data-sim-reset]");
   const pause = form.querySelector("[data-sim-pause]");
+  const model = form.querySelector("[data-sim-model]");
   const dflash = form.querySelector("[data-sim-dflash]");
+  const dflashControl = form.querySelector("[data-sim-dflash-control]");
   const dflashState = form.querySelector("[data-sim-dflash-state]");
   const status = form.querySelector("[data-sim-status]");
   const elapsed = form.querySelector("[data-sim-elapsed]");
@@ -228,15 +230,26 @@ function initMeasuredPlayback() {
   const packetStream = document.querySelector("[data-sim-packet-stream]");
   const simulator = form.closest("[data-simulator]") || form;
   const simulationSection = form.closest("[data-slide]") || simulator;
+  const results = [...form.querySelectorAll("[data-sim-result]")].map((panel) => ({
+    panel,
+    output: panel.querySelector("[data-sim-result-output]"),
+    status: panel.querySelector("[data-sim-result-status]"),
+    elapsed: panel.querySelector("[data-sim-result-elapsed]"),
+    tokenCount: panel.querySelector("[data-sim-result-token-count]"),
+    rateOutput: panel.querySelector("[data-sim-result-rate-output]"),
+    playbackRate: Number(panel.dataset.simResultRate || 0),
+    paragraph: document.createElement("p"),
+    visibleTokens: 0,
+  }));
 
-  if (!prompt || !output || !send || !reset || !pause || !dflash || !status || !elapsed || !tokenCount || !rate) {
+  if (!prompt || !output || !send || !reset || !pause || !model || !dflash || !status || !elapsed || !tokenCount || !rate || results.length !== 3 || results.some((result) => !result.output || !result.status || !result.elapsed || !result.tokenCount || !result.rateOutput)) {
     return;
   }
 
   const playbackRate = 15;
   const defaultPrompt = "Explain how two heterogeneous devices can collaborate on AI inference across different networks.";
   const fixedResponse =
-    "Prima treats the laptop and server as one heterogeneous inference pool. The 4090 laptop contributes local acceleration from the home network, while the remote A4000 server contributes additional compute through the VPN-connected path. Work is coordinated across the two subnets using the measured wireless link, allowing the Q8_0 model to be replayed here without pretending this browser is running the model.";
+    "PRIMA treats the Home Laptop and GPU server as one heterogeneous inference pool. The laptop contributes local acceleration over Wi-Fi, while the remote server contributes additional compute across the VPN-connected LAN boundary. Work is coordinated across both devices using the measured wireless path, allowing the Q8 model trace to be replayed without pretending this browser is running the model.";
 
   function makePlaybackTokens(text) {
     const pieces = text.match(/\s+|[\p{L}\p{N}]+|[^\s\p{L}\p{N}]/gu) || [];
@@ -258,7 +271,6 @@ function initMeasuredPlayback() {
 
   const playbackTokens = makePlaybackTokens(fixedResponse);
   const simulatedDurationMs = (playbackTokens.length / playbackRate) * 1000;
-  const responseParagraph = document.createElement("p");
   let playbackState = "idle";
   let playbackFrame = 0;
   let elapsedMs = 0;
@@ -280,6 +292,16 @@ function initMeasuredPlayback() {
     dflash.setAttribute("aria-checked", String(enabled));
   }
 
+  function supportsDflash() {
+    return model instanceof HTMLSelectElement && model.value === "qwen38-27b-q8";
+  }
+
+  function syncConfiguration() {
+    const dflashAvailable = supportsDflash();
+    if (dflashControl) dflashControl.hidden = !dflashAvailable;
+    if (!dflashAvailable) setDflashEnabled(false);
+  }
+
   function setButtonLabel(button, label) {
     const labelNode = button.querySelector("[data-label], span");
     if (labelNode) labelNode.textContent = label;
@@ -291,10 +313,10 @@ function initMeasuredPlayback() {
     playbackFrame = 0;
   }
 
-  function setOutputText(text) {
-    responseParagraph.textContent = text;
-    if (output.firstElementChild !== responseParagraph || output.childElementCount !== 1) {
-      output.replaceChildren(responseParagraph);
+  function setOutputText(result, text) {
+    result.paragraph.textContent = text;
+    if (result.output.firstElementChild !== result.paragraph || result.output.childElementCount !== 1) {
+      result.output.replaceChildren(result.paragraph);
     }
   }
 
@@ -303,6 +325,12 @@ function initMeasuredPlayback() {
     elapsed.textContent = `${(elapsedMs / 1000).toFixed(1)} s`;
     tokenCount.textContent = playbackState === "idle" || playbackState === "unavailable" ? "0" : `${visibleTokens} / ${playbackTokens.length}`;
     rate.textContent = enabled ? `${playbackRate.toFixed(1)} tok/s` : "—";
+
+    results.forEach((result) => {
+      result.elapsed.textContent = `${(elapsedMs / 1000).toFixed(1)} s`;
+      result.tokenCount.textContent = playbackState === "idle" || playbackState === "unavailable" ? "0" : `${result.visibleTokens} / ${playbackTokens.length}`;
+      result.rateOutput.textContent = enabled ? `${result.playbackRate.toFixed(1)} tok/s` : "—";
+    });
 
     const progress = playbackTokens.length ? visibleTokens / playbackTokens.length : 0;
     packetStream?.style.setProperty("--sim-progress", progress.toFixed(4));
@@ -325,10 +353,10 @@ function initMeasuredPlayback() {
     packetStream?.classList.toggle("is-active", streaming);
     packetStream?.classList.toggle("is-paused", playbackState === "paused" || playbackState === "suspended");
 
-    output.setAttribute("aria-busy", String(streaming));
+    results.forEach((result) => result.output.setAttribute("aria-busy", String(streaming)));
     send.disabled = !enabled;
-    send.setAttribute("aria-label", active ? "Restart measured output simulation" : "Start measured output simulation");
-    setButtonLabel(send, active ? "Restart simulation" : "Run simulation");
+    send.setAttribute("aria-label", active ? "Restart all measured output simulations" : "Start all measured output simulations");
+    setButtonLabel(send, active ? "Restart all" : "Run all");
     pause.disabled = !active || playbackState === "suspended";
     pause.setAttribute("aria-pressed", String(playbackState === "paused"));
     pause.setAttribute("aria-label", playbackState === "paused" ? "Resume measured output simulation" : "Pause measured output simulation");
@@ -339,7 +367,7 @@ function initMeasuredPlayback() {
     dflash.setAttribute("aria-disabled", String(active));
 
     if (dflashState) {
-      dflashState.textContent = enabled ? (active ? "ON · playback in progress" : "ON · measured playback available") : "OFF · no measured playback";
+      dflashState.textContent = enabled ? (active ? "ON · playback in progress" : "ON · comparison available") : "OFF · no measured playback";
     }
 
     const statusText = {
@@ -351,12 +379,29 @@ function initMeasuredPlayback() {
       complete: "Complete",
     };
     status.textContent = statusText[playbackState];
+    results.forEach((result) => {
+      if (playbackState === "streaming" && result.playbackRate === 0) result.status.textContent = "Running · 0 tok/s";
+      else if (playbackState === "complete" && result.playbackRate === 0) result.status.textContent = "0 output";
+      else result.status.textContent = statusText[playbackState];
+    });
     updateTelemetry();
   }
 
   function renderVisibleTokens(count) {
     visibleTokens = Math.min(playbackTokens.length, Math.max(0, count));
-    setOutputText(playbackTokens.slice(0, visibleTokens).join(""));
+    results.forEach((result) => {
+      result.visibleTokens = result.playbackRate === playbackRate
+        ? visibleTokens
+        : Math.min(playbackTokens.length, Math.floor((elapsedMs / 1000) * result.playbackRate));
+      setOutputText(
+        result,
+        result.visibleTokens > 0
+          ? playbackTokens.slice(0, result.visibleTokens).join("")
+          : result.playbackRate === 0
+            ? "No measured output · 0 tok/s"
+            : "",
+      );
+    });
     updateTelemetry();
   }
 
@@ -392,11 +437,10 @@ function initMeasuredPlayback() {
     elapsedMs = 0;
     visibleTokens = 0;
     playbackState = isDflashEnabled() ? "idle" : "unavailable";
-    setOutputText(
-      isDflashEnabled()
-        ? "Press Run simulation to begin."
-        : "Enable DFlash 2 to make the measured-rate playback available.",
-    );
+    results.forEach((result) => {
+      result.visibleTokens = 0;
+      setOutputText(result, isDflashEnabled() ? "Press Run all to begin." : "Enable DFlash 2 to compare playback.");
+    });
     updateInterface();
   }
 
@@ -409,7 +453,10 @@ function initMeasuredPlayback() {
     cancelPlaybackFrame();
     elapsedMs = 0;
     visibleTokens = 0;
-    setOutputText("");
+    results.forEach((result) => {
+      result.visibleTokens = 0;
+      setOutputText(result, result.playbackRate === 0 ? "No measured output · 0 tok/s" : "");
+    });
 
     if (reduceMotion.matches) {
       completePlayback();
@@ -475,6 +522,11 @@ function initMeasuredPlayback() {
     });
   }
 
+  model.addEventListener("change", () => {
+    syncConfiguration();
+    resetPlayback();
+  });
+
   document.addEventListener("visibilitychange", syncAutomaticPlayback);
 
   if ("IntersectionObserver" in window) {
@@ -503,6 +555,7 @@ function initMeasuredPlayback() {
     reduceMotion.addListener(applySimulationMotionPreference);
   }
 
+  syncConfiguration();
   setDflashEnabled(true);
   resetPlayback();
 }

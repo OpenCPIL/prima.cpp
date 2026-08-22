@@ -216,68 +216,76 @@
       </section>
 
       <section class="screen screen--simulation" id="simulation" data-slide="simulation" aria-labelledby="simulation-title">
-        <div class="simulation-intro reveal">
-          <div>
-            <p class="eyebrow">Prima simulation</p>
-            <h2 id="simulation-title">See distributed inference<br /> in motion.</h2>
-          </div>
-          <div class="simulation-disclosure" id="simulation-disclosure" role="note">
-            <strong>Simulation only</strong>
-            <p>Fixed response, replayed at 15 tokens/s. No live model or device connection.</p>
-            <span class="sr-only">Simulated playback. This browser displays a fixed prompt and response at the measured rate of 15 output tokens/s. The rate and all hardware and network figures shown correspond to a DFlash 2-enabled run. It does not run Qwen, start Prima.cpp, or connect to either device.</span>
-          </div>
+        <div class="simulation-intro simulation-intro--playground reveal">
+          <h2 id="simulation-title">Playground</h2>
         </div>
 
         <div class="simulator-shell reveal reveal--late" data-simulator>
-          <figure class="sim-topology" aria-labelledby="sim-topology-caption">
-            <article class="sim-device sim-device--laptop" aria-label="Laptop in the home network">
-              <span class="sim-zone sr-only">Home network · subnet A</span>
-              <i data-lucide="laptop" aria-hidden="true"></i>
-              <div>
-                <h3>4090 laptop</h3>
-                <p>RTX 4090 Laptop GPU</p>
-                <span class="sr-only">32 GB system memory</span>
+          <figure class="sim-topology sim-topology--devices" aria-labelledby="sim-topology-caption">
+            <article class="sim-machine-card sim-machine-card--home" aria-label="Home Laptop in the home network">
+              <header class="sim-machine-head">
+                <div><span>Home LAN</span><h3>Home Laptop</h3></div>
+                <span class="sim-network-badge"><i data-lucide="network" aria-hidden="true"></i>Wireless</span>
+              </header>
+              <div class="sim-machine-visual sim-machine-visual--laptop">
+                <img src="./assets/home-laptop.webp" alt="Realistic illustration of the Home Laptop" width="900" height="600" />
               </div>
+              <dl class="sim-machine-specs">
+                <div><dt>CPU</dt><dd class="is-zero">0</dd></div>
+                <div><dt>System memory</dt><dd>32 GB</dd></div>
+                <div><dt>GPU</dt><dd>RTX 4090 Laptop</dd></div>
+                <div><dt>VRAM</dt><dd class="is-zero">0 GB</dd></div>
+                <div><dt>Uplink</dt><dd>145 Mbps</dd></div>
+                <div><dt>Downlink</dt><dd>27 Mbps</dd></div>
+                <div><dt>RTT</dt><dd class="is-zero">0 ms</dd></div>
+              </dl>
+              <span class="sr-only">Home network · subnet A. RTX 4090 Laptop GPU. 32 GB system memory. Laptop uplink 145 Mbps. Laptop downlink 27 Mbps.</span>
             </article>
 
-            <div class="sim-path">
-              <span class="sim-path-line" data-sim-packet-stream aria-hidden="true"><b></b><b></b><b></b><b></b></span>
-              <p class="sim-route-summary" aria-hidden="true">Home Wi‑Fi <span>→</span> VPN <span>→</span> Remote LAN</p>
-              <ol class="sim-hops sr-only" aria-label="Wireless route from the home laptop to the remote server">
-                <li><i data-lucide="network" aria-hidden="true"></i><span>Home Wi‑Fi</span></li>
-                <li><i data-lucide="route" aria-hidden="true"></i><span>SIM gateway</span></li>
-                <li><i data-lucide="network" aria-hidden="true"></i><span>Access network</span></li>
-                <li><i data-lucide="shield-check" aria-hidden="true"></i><span>VPN tunnel</span></li>
-              </ol>
-              <dl class="sim-bandwidth" aria-label="Measured laptop network throughput with DFlash 2 enabled">
-                <div><dt>Laptop uplink</dt><dd>145 Mbps</dd></div>
-                <div><dt>Laptop downlink</dt><dd>27 Mbps</dd></div>
-              </dl>
+            <div class="sim-link-map" aria-label="Wireless home connection crossing LAN boundaries to the remote GPU server">
+              <span class="sim-link-line" data-sim-packet-stream aria-hidden="true"><b></b><b></b><b></b><b></b></span>
+              <div class="sim-link-node sim-link-node--home"><i data-lucide="network" aria-hidden="true"></i><span>Home Wi‑Fi</span></div>
+              <div class="sim-link-core"><i data-lucide="route" aria-hidden="true"></i><strong>Cross-LAN</strong><span>VPN path</span></div>
+              <div class="sim-link-node sim-link-node--remote"><i data-lucide="network" aria-hidden="true"></i><span>Remote LAN</span></div>
+              <span class="sr-only">Home Wi‑Fi. SIM gateway. Access network. VPN tunnel.</span>
             </div>
 
-            <article class="sim-device sim-device--server" aria-label="Server in the remote local network">
-              <span class="sim-zone sr-only">Remote LAN · subnet B</span>
-              <i data-lucide="server" aria-hidden="true"></i>
-              <div>
-                <h3>A4000 server</h3>
-                <p>RTX A4000 GPU</p>
-                <span class="sr-only">32 GB system memory</span>
+            <article class="sim-machine-card sim-machine-card--server" aria-label="GPU server in the remote local network">
+              <header class="sim-machine-head">
+                <div><span>Remote LAN</span><h3>GPU server</h3></div>
+                <span class="sim-network-badge"><i data-lucide="network" aria-hidden="true"></i>Ethernet</span>
+              </header>
+              <div class="sim-machine-visual sim-machine-visual--server">
+                <img src="./assets/gpu-server.webp" alt="Realistic illustration of the GPU server" width="857" height="900" />
               </div>
+              <dl class="sim-machine-specs">
+                <div><dt>CPU</dt><dd class="is-zero">0</dd></div>
+                <div><dt>System memory</dt><dd>32 GB</dd></div>
+                <div><dt>GPU</dt><dd>RTX A4000</dd></div>
+                <div><dt>VRAM</dt><dd class="is-zero">0 GB</dd></div>
+                <div><dt>Uplink</dt><dd class="is-zero">0 Mbps</dd></div>
+                <div><dt>Downlink</dt><dd class="is-zero">0 Mbps</dd></div>
+                <div><dt>RTT</dt><dd class="is-zero">0 ms</dd></div>
+              </dl>
+              <span class="sr-only">Remote LAN · subnet B. A4000 server. RTX A4000 GPU. 32 GB system memory.</span>
             </article>
             <figcaption class="sr-only" id="sim-topology-caption">Two heterogeneous devices across different subnets. Network figures are observed from the laptop and apply to the DFlash 2-enabled trace.</figcaption>
           </figure>
 
           <form class="sim-console" data-sim-form aria-describedby="simulation-disclosure simulation-boundary">
             <div class="sim-controls-panel">
-              <div class="sim-model-line">
-                <span class="sr-only">Model preset</span>
-                <strong>Qwen3.8-27B · Q8_0</strong>
-              </div>
+              <label class="sim-model-field" for="simulation-model">
+                <span>Model · quantization</span>
+                <select id="simulation-model" data-sim-model>
+                  <option value="qwen38-27b-q8" selected>Qwen3.8-27B · Q8</option>
+                </select>
+              </label>
+              <span class="sr-only">Qwen3.8-27B · Q8_0</span>
 
-              <label class="sim-switch">
+              <label class="sim-switch" data-sim-dflash-control>
                 <input type="checkbox" role="switch" checked data-sim-dflash aria-describedby="dflash-help" />
                 <span class="sim-switch-track" aria-hidden="true"><b></b></span>
-                <span><strong>DFlash 2</strong><small class="sr-only" data-sim-dflash-state>ON · measured playback available</small></span>
+                <span><strong>DFlash2</strong><small class="sr-only" data-sim-dflash-state>ON · measured playback available</small></span>
               </label>
               <p class="sim-switch-help sr-only" id="dflash-help">The measured-rate 15 tok/s playback is available only with DFlash 2 enabled.</p>
 
@@ -285,30 +293,68 @@
               <textarea id="simulation-prompt" data-sim-prompt rows="3" readonly>Explain how two heterogeneous devices can collaborate on AI inference across different networks.</textarea>
 
               <div class="sim-actions">
-                <button class="button button--primary" type="submit" data-sim-send aria-controls="simulation-response">
-                  <span>Run simulation</span><i data-lucide="arrow-up-right" aria-hidden="true"></i>
+                <button class="button button--primary" type="submit" data-sim-send aria-controls="home-response server-response simulation-response">
+                  <span>Run all</span><i data-lucide="arrow-up-right" aria-hidden="true"></i>
                 </button>
                 <button type="button" data-sim-pause disabled><i class="pause-icon" data-lucide="pause" aria-hidden="true"></i><i class="play-icon" data-lucide="play" aria-hidden="true"></i><span>Pause</span></button>
                 <button type="button" data-sim-reset disabled><i data-lucide="rotate-ccw" aria-hidden="true"></i><span>Reset</span></button>
               </div>
             </div>
 
-            <div class="sim-response-panel">
-              <div class="sim-response-head">
-                <span>Response</span>
-                <span data-sim-status role="status" aria-live="polite">Ready</span>
-              </div>
-              <div class="sim-response" id="simulation-response" data-sim-output aria-busy="false">
-                <p>Press <strong>Run simulation</strong> to begin.</p>
-              </div>
-              <dl class="sim-telemetry" aria-label="Simulation playback telemetry">
-                <div><dt>Elapsed</dt><dd data-sim-elapsed>0.0 s</dd></div>
-                <div><dt>Output units</dt><dd data-sim-token-count>0</dd></div>
-                <div><dt>Playback rate</dt><dd data-sim-rate>15.0 tok/s</dd></div>
-              </dl>
-              <p class="sim-boundary sr-only" id="simulation-boundary">Fixed illustrative input and output · configuration-specific measured-rate playback. Startup and first-token latency are not simulated.</p>
+            <div class="sim-results" aria-label="Side-by-side inference playback comparison">
+              <article class="sim-response-panel" data-sim-result data-sim-result-rate="0">
+                <div class="sim-response-head">
+                  <span>Home Laptop</span>
+                  <span data-sim-result-status role="status" aria-live="polite">Ready</span>
+                </div>
+                <div class="sim-response" id="home-response" data-sim-result-output aria-busy="false">
+                  <p>Press <strong>Run all</strong> to begin.</p>
+                </div>
+                <dl class="sim-telemetry" aria-label="Home Laptop playback telemetry">
+                  <div><dt>Elapsed</dt><dd data-sim-result-elapsed>0.0 s</dd></div>
+                  <div><dt>Output</dt><dd data-sim-result-token-count>0</dd></div>
+                  <div><dt>Rate</dt><dd data-sim-result-rate-output>0.0 tok/s</dd></div>
+                </dl>
+              </article>
+
+              <article class="sim-response-panel" data-sim-result data-sim-result-rate="0">
+                <div class="sim-response-head">
+                  <span>GPU server</span>
+                  <span data-sim-result-status role="status" aria-live="polite">Ready</span>
+                </div>
+                <div class="sim-response" id="server-response" data-sim-result-output aria-busy="false">
+                  <p>Press <strong>Run all</strong> to begin.</p>
+                </div>
+                <dl class="sim-telemetry" aria-label="GPU server playback telemetry">
+                  <div><dt>Elapsed</dt><dd data-sim-result-elapsed>0.0 s</dd></div>
+                  <div><dt>Output</dt><dd data-sim-result-token-count>0</dd></div>
+                  <div><dt>Rate</dt><dd data-sim-result-rate-output>0.0 tok/s</dd></div>
+                </dl>
+              </article>
+
+              <article class="sim-response-panel sim-response-panel--prima" data-sim-result data-sim-result-rate="15">
+                <div class="sim-response-head">
+                  <span>PRIMA · 2 devices</span>
+                  <span data-sim-status data-sim-result-status role="status" aria-live="polite">Ready</span>
+                </div>
+                <div class="sim-response" id="simulation-response" data-sim-output data-sim-result-output aria-busy="false">
+                  <p>Press <strong>Run all</strong> to begin.</p>
+                </div>
+                <dl class="sim-telemetry" aria-label="PRIMA playback telemetry">
+                  <div><dt>Elapsed</dt><dd data-sim-elapsed data-sim-result-elapsed>0.0 s</dd></div>
+                  <div><dt>Output</dt><dd data-sim-token-count data-sim-result-token-count>0</dd></div>
+                  <div><dt>Rate</dt><dd data-sim-result-rate-output data-sim-rate>15.0 tok/s</dd></div>
+                </dl>
+              </article>
             </div>
           </form>
+
+          <footer class="sim-disclaimer" id="simulation-disclosure" role="note">
+            <strong>Simulation only.</strong>
+            Fixed illustrative input and output. Missing measurements are shown as 0. No live model or device connection. Startup and first-token latency are not simulated.
+            <span class="sr-only">Simulated playback at the measured rate of 15 output tokens/s. The rate and all hardware and network figures shown correspond to a DFlash 2-enabled run. It does not run Qwen, start Prima.cpp, or connect to either device.</span>
+          </footer>
+          <span class="sr-only" id="simulation-boundary">Configuration-specific measured-rate playback.</span>
         </div>
       </section>
 
