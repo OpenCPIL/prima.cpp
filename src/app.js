@@ -316,7 +316,7 @@ function initMeasuredPlayback() {
   function formatTokenRate(value) {
     return value.toLocaleString("en-US", {
       minimumFractionDigits: 1,
-      maximumFractionDigits: 3,
+      maximumFractionDigits: 1,
     });
   }
 
