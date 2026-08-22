@@ -209,3 +209,302 @@ applyMotionPreference();
 revealSections();
 renderIcons();
 window.addEventListener("load", renderIcons, { once: true });
+
+function initMeasuredPlayback() {
+  const form = document.querySelector("[data-sim-form]");
+  if (!form) return;
+
+  const prompt = form.querySelector("[data-sim-prompt]");
+  const output = form.querySelector("[data-sim-output]");
+  const send = form.querySelector("[data-sim-send]");
+  const reset = form.querySelector("[data-sim-reset]");
+  const pause = form.querySelector("[data-sim-pause]");
+  const dflash = form.querySelector("[data-sim-dflash]");
+  const dflashState = form.querySelector("[data-sim-dflash-state]");
+  const status = form.querySelector("[data-sim-status]");
+  const elapsed = form.querySelector("[data-sim-elapsed]");
+  const tokenCount = form.querySelector("[data-sim-token-count]");
+  const rate = form.querySelector("[data-sim-rate]");
+  const packetStream = document.querySelector("[data-sim-packet-stream]");
+  const simulator = form.closest("[data-simulator]") || form;
+  const simulationSection = form.closest("[data-slide]") || simulator;
+
+  if (!prompt || !output || !send || !reset || !pause || !dflash || !status || !elapsed || !tokenCount || !rate) {
+    return;
+  }
+
+  const playbackRate = 15;
+  const defaultPrompt = "Explain how two heterogeneous devices can collaborate on AI inference across different networks.";
+  const fixedResponse =
+    "Prima treats the laptop and server as one heterogeneous inference pool. The 4090 laptop contributes local acceleration from the home network, while the remote A4000 server contributes additional compute through the VPN-connected path. Work is coordinated across the two subnets using the measured wireless link, allowing the Q8_0 model to be replayed here without pretending this browser is running the model.";
+
+  function makePlaybackTokens(text) {
+    const pieces = text.match(/\s+|[\p{L}\p{N}]+|[^\s\p{L}\p{N}]/gu) || [];
+    const tokens = [];
+    let whitespace = "";
+
+    pieces.forEach((piece) => {
+      if (/^\s+$/.test(piece)) {
+        whitespace += piece;
+      } else {
+        tokens.push(`${whitespace}${piece}`);
+        whitespace = "";
+      }
+    });
+
+    if (whitespace && tokens.length) tokens[tokens.length - 1] += whitespace;
+    return tokens;
+  }
+
+  const playbackTokens = makePlaybackTokens(fixedResponse);
+  const simulatedDurationMs = (playbackTokens.length / playbackRate) * 1000;
+  const responseParagraph = document.createElement("p");
+  let playbackState = "idle";
+  let playbackFrame = 0;
+  let elapsedMs = 0;
+  let lastFrameTime = 0;
+  let visibleTokens = 0;
+  let simulationInView = true;
+  let suspensionReason = "outside viewport";
+
+  prompt.value = prompt.value.trim() || defaultPrompt;
+  prompt.readOnly = true;
+
+  function isDflashEnabled() {
+    if (dflash instanceof HTMLInputElement) return dflash.checked;
+    return dflash.getAttribute("aria-checked") !== "false";
+  }
+
+  function setDflashEnabled(enabled) {
+    if (dflash instanceof HTMLInputElement) dflash.checked = enabled;
+    dflash.setAttribute("aria-checked", String(enabled));
+  }
+
+  function setButtonLabel(button, label) {
+    const labelNode = button.querySelector("[data-label], span");
+    if (labelNode) labelNode.textContent = label;
+  }
+
+  function cancelPlaybackFrame() {
+    if (!playbackFrame) return;
+    window.cancelAnimationFrame(playbackFrame);
+    playbackFrame = 0;
+  }
+
+  function setOutputText(text) {
+    responseParagraph.textContent = text;
+    if (output.firstElementChild !== responseParagraph || output.childElementCount !== 1) {
+      output.replaceChildren(responseParagraph);
+    }
+  }
+
+  function updateTelemetry() {
+    const enabled = isDflashEnabled();
+    elapsed.textContent = `${(elapsedMs / 1000).toFixed(1)} s`;
+    tokenCount.textContent = playbackState === "idle" || playbackState === "unavailable" ? "0" : `${visibleTokens} / ${playbackTokens.length}`;
+    rate.textContent = enabled ? `${playbackRate.toFixed(1)} tok/s` : "—";
+
+    const progress = playbackTokens.length ? visibleTokens / playbackTokens.length : 0;
+    packetStream?.style.setProperty("--sim-progress", progress.toFixed(4));
+    packetStream?.style.setProperty("--sim-progress-percent", `${(progress * 100).toFixed(2)}%`);
+    if (packetStream) packetStream.dataset.pulse = String(visibleTokens % 4);
+  }
+
+  function updateInterface() {
+    const enabled = isDflashEnabled();
+    const active = playbackState === "streaming" || playbackState === "paused" || playbackState === "suspended";
+    const streaming = playbackState === "streaming";
+
+    simulator.dataset.simState = playbackState;
+    simulator.classList.toggle("is-streaming", streaming);
+    simulator.classList.toggle("is-paused", playbackState === "paused" || playbackState === "suspended");
+    simulator.classList.toggle("is-suspended", playbackState === "suspended");
+    simulator.classList.toggle("is-complete", playbackState === "complete");
+    simulator.classList.toggle("is-unavailable", !enabled);
+
+    packetStream?.classList.toggle("is-active", streaming);
+    packetStream?.classList.toggle("is-paused", playbackState === "paused" || playbackState === "suspended");
+
+    output.setAttribute("aria-busy", String(streaming));
+    send.disabled = !enabled;
+    send.setAttribute("aria-label", active ? "Restart measured output simulation" : "Start measured output simulation");
+    setButtonLabel(send, active ? "Restart simulation" : "Run simulation");
+    pause.disabled = !active || playbackState === "suspended";
+    pause.setAttribute("aria-pressed", String(playbackState === "paused"));
+    pause.setAttribute("aria-label", playbackState === "paused" ? "Resume measured output simulation" : "Pause measured output simulation");
+    setButtonLabel(pause, playbackState === "paused" ? "Resume" : "Pause");
+    reset.disabled = playbackState === "idle" || playbackState === "unavailable";
+
+    if ("disabled" in dflash) dflash.disabled = active;
+    dflash.setAttribute("aria-disabled", String(active));
+
+    if (dflashState) {
+      dflashState.textContent = enabled ? (active ? "ON · playback in progress" : "ON · measured playback available") : "OFF · no measured playback";
+    }
+
+    const statusText = {
+      idle: "Ready to replay measured-rate sample",
+      unavailable: "No measured playback available",
+      streaming: "Simulation streaming · measured playback",
+      paused: "Simulation paused",
+      suspended: `Simulation paused · ${suspensionReason}`,
+      complete: "Simulated output complete",
+    };
+    status.textContent = statusText[playbackState];
+    updateTelemetry();
+  }
+
+  function renderVisibleTokens(count) {
+    visibleTokens = Math.min(playbackTokens.length, Math.max(0, count));
+    setOutputText(playbackTokens.slice(0, visibleTokens).join(""));
+    updateTelemetry();
+  }
+
+  function completePlayback() {
+    cancelPlaybackFrame();
+    elapsedMs = simulatedDurationMs;
+    renderVisibleTokens(playbackTokens.length);
+    playbackState = "complete";
+    updateInterface();
+  }
+
+  function playbackTick(timestamp) {
+    if (playbackState !== "streaming") return;
+
+    const frameDelta = Math.max(0, timestamp - lastFrameTime);
+    lastFrameTime = timestamp;
+    elapsedMs = Math.min(simulatedDurationMs, elapsedMs + frameDelta);
+
+    const nextTokenCount = Math.min(playbackTokens.length, Math.floor((elapsedMs / 1000) * playbackRate));
+    if (nextTokenCount !== visibleTokens) renderVisibleTokens(nextTokenCount);
+    else updateTelemetry();
+
+    if (nextTokenCount >= playbackTokens.length) {
+      completePlayback();
+      return;
+    }
+
+    playbackFrame = window.requestAnimationFrame(playbackTick);
+  }
+
+  function resetPlayback() {
+    cancelPlaybackFrame();
+    elapsedMs = 0;
+    visibleTokens = 0;
+    playbackState = isDflashEnabled() ? "idle" : "unavailable";
+    setOutputText(
+      isDflashEnabled()
+        ? "Select Run simulation to replay the fixed response at 15 output tokens/s."
+        : "Enable DFlash 2 to make the measured-rate playback available.",
+    );
+    updateInterface();
+  }
+
+  function startPlayback() {
+    if (!isDflashEnabled()) {
+      resetPlayback();
+      return;
+    }
+
+    cancelPlaybackFrame();
+    elapsedMs = 0;
+    visibleTokens = 0;
+    setOutputText("");
+
+    if (reduceMotion.matches) {
+      completePlayback();
+      return;
+    }
+
+    playbackState = "streaming";
+    lastFrameTime = performance.now();
+    updateInterface();
+    syncAutomaticPlayback();
+    if (playbackState === "streaming") playbackFrame = window.requestAnimationFrame(playbackTick);
+  }
+
+  function syncAutomaticPlayback() {
+    const shouldSuspend = document.hidden || !simulationInView;
+
+    if (playbackState === "streaming" && shouldSuspend) {
+      cancelPlaybackFrame();
+      suspensionReason = document.hidden ? "tab inactive" : "outside viewport";
+      playbackState = "suspended";
+      updateInterface();
+      return;
+    }
+
+    if (playbackState === "suspended" && !shouldSuspend) {
+      playbackState = "streaming";
+      lastFrameTime = performance.now();
+      updateInterface();
+      playbackFrame = window.requestAnimationFrame(playbackTick);
+    }
+  }
+
+  form.addEventListener("submit", (event) => {
+    event.preventDefault();
+    startPlayback();
+  });
+
+  pause.addEventListener("click", () => {
+    if (playbackState === "streaming") {
+      cancelPlaybackFrame();
+      playbackState = "paused";
+      updateInterface();
+      return;
+    }
+
+    if (playbackState === "paused") {
+      playbackState = "streaming";
+      lastFrameTime = performance.now();
+      updateInterface();
+      playbackFrame = window.requestAnimationFrame(playbackTick);
+    }
+  });
+
+  reset.addEventListener("click", resetPlayback);
+
+  if (dflash instanceof HTMLInputElement) {
+    dflash.addEventListener("change", resetPlayback);
+  } else {
+    dflash.addEventListener("click", () => {
+      if (playbackState === "streaming" || playbackState === "paused") return;
+      setDflashEnabled(!isDflashEnabled());
+      resetPlayback();
+    });
+  }
+
+  document.addEventListener("visibilitychange", syncAutomaticPlayback);
+
+  if ("IntersectionObserver" in window) {
+    const playbackObserver = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.target !== simulationSection) return;
+          simulationInView = entry.isIntersecting;
+          syncAutomaticPlayback();
+        });
+      },
+      { threshold: 0.08 },
+    );
+    playbackObserver.observe(simulationSection);
+  }
+
+  function applySimulationMotionPreference() {
+    if (reduceMotion.matches && (playbackState === "streaming" || playbackState === "paused" || playbackState === "suspended")) {
+      completePlayback();
+    }
+  }
+
+  if (reduceMotion.addEventListener) {
+    reduceMotion.addEventListener("change", applySimulationMotionPreference);
+  } else {
+    reduceMotion.addListener(applySimulationMotionPreference);
+  }
+
+  setDflashEnabled(true);
+  resetPlayback();
+}
+
+initMeasuredPlayback();

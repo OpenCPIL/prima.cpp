@@ -968,6 +968,609 @@ h3 {
   text-transform: uppercase;
 }
 
+.screen--simulation {
+  grid-template-columns: 1fr;
+  grid-template-rows: auto 1fr;
+  align-content: center;
+  gap: clamp(25px, 3.6vh, 38px);
+  min-height: max(100svh, 840px);
+}
+
+.simulation-intro {
+  display: grid;
+  grid-template-columns: minmax(430px, 0.9fr) minmax(520px, 1.1fr);
+  align-items: end;
+  gap: clamp(50px, 8vw, 128px);
+}
+
+.simulation-intro .eyebrow {
+  margin-bottom: 17px;
+}
+
+.simulation-intro h2 {
+  font-size: clamp(39px, 3.6vw, 56px);
+}
+
+.simulation-disclosure {
+  display: grid;
+  grid-template-columns: 120px 1fr;
+  align-items: start;
+  gap: 24px;
+  padding: 16px 0;
+  border-top: 1px solid var(--ink);
+  border-bottom: 1px solid var(--line);
+}
+
+.simulation-disclosure strong {
+  color: var(--orange);
+  font: 600 10px/1.3 "Geist Mono", monospace;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.simulation-disclosure p {
+  color: var(--muted);
+  font-size: clamp(13px, 1.05vw, 15px);
+  line-height: 1.5;
+}
+
+.simulator-shell {
+  min-width: 0;
+  border-top: 1px solid var(--ink);
+}
+
+.sim-topology {
+  position: relative;
+  display: grid;
+  grid-template-columns: minmax(180px, 0.62fr) minmax(460px, 1.76fr) minmax(180px, 0.62fr);
+  align-items: center;
+  gap: clamp(18px, 2.4vw, 38px);
+  min-width: 0;
+  padding: clamp(18px, 2.7vh, 27px) 0 17px;
+  border-bottom: 1px solid var(--line);
+}
+
+.sim-device {
+  display: grid;
+  grid-template-columns: 54px 1fr;
+  align-items: center;
+  gap: 15px;
+  min-width: 0;
+}
+
+.sim-device--server {
+  grid-template-columns: 1fr 54px;
+  text-align: right;
+}
+
+.sim-device--server > svg {
+  order: 2;
+}
+
+.sim-device--server > div {
+  order: 1;
+}
+
+.sim-device > svg {
+  width: 54px;
+  height: 54px;
+  padding: 13px;
+  background: var(--surface);
+  border: 1px solid var(--line);
+}
+
+.sim-device h3 {
+  font-size: clamp(17px, 1.5vw, 22px);
+  letter-spacing: -0.025em;
+}
+
+.sim-device p,
+.sim-device div > span {
+  display: block;
+  color: var(--muted);
+  font: 500 8px/1.35 "Geist Mono", monospace;
+  letter-spacing: 0.035em;
+  text-transform: uppercase;
+}
+
+.sim-device p {
+  margin-top: 7px;
+  color: var(--ink);
+}
+
+.sim-device div > span {
+  margin-top: 3px;
+}
+
+.sim-zone {
+  grid-column: 1 / -1;
+  margin-bottom: -2px;
+  color: var(--orange);
+  font: 550 8px/1.2 "Geist Mono", monospace;
+  letter-spacing: 0.055em;
+  text-transform: uppercase;
+}
+
+.sim-device--server .sim-zone {
+  text-align: right;
+}
+
+.sim-path {
+  position: relative;
+  display: grid;
+  align-content: center;
+  min-width: 0;
+  min-height: 118px;
+  padding-bottom: 34px;
+}
+
+.sim-path-line {
+  position: absolute;
+  top: 43px;
+  right: 5%;
+  left: 5%;
+  z-index: 0;
+  display: block;
+  height: 1px;
+  background: var(--line);
+}
+
+.sim-path-line::before {
+  position: absolute;
+  inset: 0;
+  background: var(--orange);
+  content: "";
+  opacity: 0.7;
+  transform: scaleX(0.18);
+  transform-origin: left;
+}
+
+.sim-path-line b {
+  position: absolute;
+  top: 50%;
+  left: 0;
+  width: 5px;
+  height: 5px;
+  background: var(--orange);
+  border-radius: 50%;
+  opacity: 0;
+  transform: translateY(-50%);
+}
+
+.sim-hops {
+  position: relative;
+  z-index: 2;
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: clamp(8px, 1.3vw, 19px);
+}
+
+.sim-hops li {
+  display: grid;
+  justify-items: center;
+  gap: 8px;
+  color: var(--muted);
+  font: 500 8px/1.25 "Geist Mono", monospace;
+  letter-spacing: 0.035em;
+  text-align: center;
+  text-transform: uppercase;
+}
+
+.sim-hops svg {
+  width: 40px;
+  height: 40px;
+  padding: 10px;
+  background: var(--paper);
+  border: 1px solid var(--line);
+  color: var(--ink);
+}
+
+.sim-bandwidth {
+  position: absolute;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  display: flex;
+  justify-content: center;
+  gap: clamp(20px, 4vw, 58px);
+}
+
+.sim-bandwidth > div {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+}
+
+.sim-bandwidth dt {
+  color: var(--muted);
+  font: 500 8px/1.2 "Geist Mono", monospace;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.sim-bandwidth dd {
+  font: 600 11px/1.2 "Geist Mono", monospace;
+}
+
+.sim-topology figcaption {
+  grid-column: 1 / -1;
+  padding-top: 12px;
+  border-top: 1px solid var(--line-faint);
+  color: var(--muted);
+  font: 450 8px/1.45 "Geist Mono", monospace;
+  letter-spacing: 0.025em;
+  text-align: center;
+}
+
+.sim-console {
+  display: grid;
+  grid-template-columns: minmax(360px, 0.82fr) minmax(520px, 1.18fr);
+  min-width: 0;
+  border-bottom: 1px solid var(--ink);
+}
+
+.sim-controls-panel,
+.sim-response-panel {
+  min-width: 0;
+  padding: clamp(20px, 2.3vw, 31px) clamp(20px, 2.5vw, 36px);
+}
+
+.sim-controls-panel {
+  padding-left: 0;
+  border-right: 1px solid var(--line);
+}
+
+.sim-response-panel {
+  display: grid;
+  grid-template-rows: auto 1fr auto auto;
+  padding-right: 0;
+}
+
+.sim-model-line,
+.sim-response-head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 18px;
+}
+
+.sim-model-line > span,
+.sim-response-head > span:first-child,
+.sim-prompt-label {
+  color: var(--muted);
+  font: 550 8px/1.2 "Geist Mono", monospace;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.sim-model-line strong {
+  font: 600 11px/1.2 "Geist Mono", monospace;
+}
+
+.sim-switch {
+  display: grid;
+  grid-template-columns: 42px 1fr;
+  align-items: center;
+  gap: 13px;
+  min-height: 58px;
+  margin-top: 16px;
+  padding: 9px 0;
+  border-top: 1px solid var(--line-faint);
+  border-bottom: 1px solid var(--line-faint);
+  cursor: pointer;
+}
+
+.sim-switch input {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  overflow: hidden;
+  opacity: 0;
+}
+
+.sim-switch-track {
+  position: relative;
+  width: 42px;
+  height: 22px;
+  background: var(--line);
+  border: 1px solid #aaa8a4;
+  border-radius: 22px;
+  transition: background-color 180ms ease, border-color 180ms ease;
+}
+
+.sim-switch-track b {
+  position: absolute;
+  top: 3px;
+  left: 3px;
+  width: 14px;
+  height: 14px;
+  background: #fff;
+  border-radius: 50%;
+  transition: transform 220ms var(--ease);
+}
+
+.sim-switch input:checked + .sim-switch-track {
+  background: var(--orange);
+  border-color: var(--orange);
+}
+
+.sim-switch input:checked + .sim-switch-track b {
+  transform: translateX(19px);
+}
+
+.sim-switch input:focus-visible + .sim-switch-track {
+  outline: 2px solid var(--orange);
+  outline-offset: 3px;
+}
+
+.sim-switch input:disabled + .sim-switch-track {
+  opacity: 0.5;
+}
+
+.sim-switch > span:last-child strong,
+.sim-switch > span:last-child small {
+  display: block;
+}
+
+.sim-switch > span:last-child strong {
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.sim-switch > span:last-child small {
+  margin-top: 4px;
+  color: var(--muted);
+  font: 500 8px/1.25 "Geist Mono", monospace;
+  letter-spacing: 0.035em;
+  text-transform: uppercase;
+}
+
+.sim-switch-help {
+  margin-top: 8px;
+  color: var(--muted);
+  font: 450 8px/1.4 "Geist Mono", monospace;
+}
+
+.sim-prompt-label {
+  display: block;
+  margin: 15px 0 8px;
+}
+
+.sim-controls-panel textarea {
+  display: block;
+  width: 100%;
+  min-height: 78px;
+  padding: 13px 14px;
+  resize: none;
+  overflow: hidden;
+  background: var(--surface);
+  color: var(--ink);
+  border: 1px solid var(--line);
+  border-radius: 0;
+  font: 450 11px/1.45 "Geist Mono", monospace;
+}
+
+.sim-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 13px;
+}
+
+.sim-actions .button {
+  min-height: 44px;
+  padding-inline: 15px;
+}
+
+.sim-actions > button:not(.button) {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+  min-height: 44px;
+  padding: 0 12px;
+  background: transparent;
+  border: 1px solid var(--line);
+  border-radius: 2px;
+  cursor: pointer;
+  font: 550 9px/1 "Geist Mono", monospace;
+  text-transform: uppercase;
+}
+
+.sim-actions button:disabled {
+  color: #9b9995;
+  cursor: default;
+  opacity: 0.62;
+}
+
+.sim-actions svg {
+  font-size: 14px;
+}
+
+.simulator-shell.is-paused .sim-actions .pause-icon {
+  display: none;
+}
+
+.simulator-shell.is-paused .sim-actions .play-icon {
+  display: block;
+}
+
+.sim-response-head {
+  padding-bottom: 12px;
+  border-bottom: 1px solid var(--line-faint);
+}
+
+.sim-response-head > span:last-child {
+  color: var(--success);
+  font: 550 8px/1.2 "Geist Mono", monospace;
+  letter-spacing: 0.035em;
+  text-align: right;
+  text-transform: uppercase;
+}
+
+.sim-response {
+  min-height: 112px;
+  padding: 16px 0 18px;
+  font: 430 clamp(13px, 1.02vw, 15px)/1.55 "Geist Mono", monospace;
+  letter-spacing: -0.01em;
+}
+
+.sim-response p {
+  color: var(--muted);
+}
+
+.sim-response strong {
+  color: var(--ink);
+  font-weight: 600;
+}
+
+.sim-response::after {
+  display: inline-block;
+  width: 1px;
+  height: 1.05em;
+  margin-left: 3px;
+  background: var(--orange);
+  vertical-align: -0.14em;
+  content: "";
+  opacity: 0;
+}
+
+.simulator-shell.is-streaming .sim-response::after {
+  opacity: 1;
+  animation: cursorBlink 1s steps(1) infinite;
+}
+
+.sim-telemetry {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  border-top: 1px solid var(--line);
+  border-bottom: 1px solid var(--line-faint);
+}
+
+.sim-telemetry > div {
+  padding: 10px 12px;
+  border-right: 1px solid var(--line-faint);
+}
+
+.sim-telemetry > div:first-child {
+  padding-left: 0;
+}
+
+.sim-telemetry > div:last-child {
+  padding-right: 0;
+  border-right: 0;
+}
+
+.sim-telemetry dt {
+  color: var(--muted);
+  font: 500 7px/1.2 "Geist Mono", monospace;
+  letter-spacing: 0.055em;
+  text-transform: uppercase;
+}
+
+.sim-telemetry dd {
+  margin-top: 5px;
+  font: 600 12px/1.2 "Geist Mono", monospace;
+}
+
+.sim-boundary {
+  margin-top: 9px;
+  color: var(--muted);
+  font: 450 7px/1.45 "Geist Mono", monospace;
+  letter-spacing: 0.02em;
+}
+
+.simulator-shell.is-unavailable .sim-response-head > span:last-child,
+.simulator-shell.is-unavailable .sim-response {
+  color: var(--muted);
+}
+
+.simulator-shell.is-streaming .sim-path-line b:nth-child(1),
+.simulator-shell.is-streaming .sim-path-line b:nth-child(2) {
+  animation: simPacketForward 2.1s linear infinite;
+}
+
+.simulator-shell.is-streaming .sim-path-line b:nth-child(2) {
+  animation-delay: 0.7s;
+}
+
+.simulator-shell.is-streaming .sim-path-line b:nth-child(3),
+.simulator-shell.is-streaming .sim-path-line b:nth-child(4) {
+  right: 0;
+  left: auto;
+  animation: simPacketReverse 2.5s linear infinite;
+}
+
+.simulator-shell.is-streaming .sim-path-line b:nth-child(4) {
+  animation-delay: 0.85s;
+}
+
+.simulator-shell.is-paused .sim-path-line b,
+.simulator-shell.is-paused .sim-response::after {
+  animation-play-state: paused !important;
+}
+
+@keyframes simPacketForward {
+  0% {
+    left: 0;
+    opacity: 0;
+  }
+  8%,
+  90% {
+    opacity: 1;
+  }
+  100% {
+    left: calc(100% - 5px);
+    opacity: 0;
+  }
+}
+
+@keyframes simPacketReverse {
+  0% {
+    right: 0;
+    opacity: 0;
+  }
+  8%,
+  90% {
+    opacity: 1;
+  }
+  100% {
+    right: calc(100% - 5px);
+    opacity: 0;
+  }
+}
+
+@keyframes simPacketDown {
+  0% {
+    top: 0;
+    opacity: 0;
+  }
+  8%,
+  90% {
+    opacity: 1;
+  }
+  100% {
+    top: calc(100% - 5px);
+    opacity: 0;
+  }
+}
+
+@keyframes simPacketUp {
+  0% {
+    top: calc(100% - 5px);
+    opacity: 0;
+  }
+  8%,
+  90% {
+    opacity: 1;
+  }
+  100% {
+    top: 0;
+    opacity: 0;
+  }
+}
+
 .screen--advantages {
   grid-template-columns: minmax(350px, 0.76fr) minmax(560px, 1.24fr);
   align-items: center;
@@ -1378,6 +1981,20 @@ h3 {
     grid-template-columns: minmax(280px, 0.65fr) minmax(540px, 1.35fr);
   }
 
+  .simulation-intro {
+    grid-template-columns: minmax(360px, 0.82fr) minmax(460px, 1.18fr);
+    gap: 48px;
+  }
+
+  .sim-topology {
+    grid-template-columns: minmax(160px, 0.55fr) minmax(400px, 1.9fr) minmax(160px, 0.55fr);
+    gap: 18px;
+  }
+
+  .sim-console {
+    grid-template-columns: minmax(330px, 0.76fr) minmax(470px, 1.24fr);
+  }
+
   .inference-track {
     grid-template-columns: 1fr;
     gap: 20px;
@@ -1430,6 +2047,7 @@ h3 {
   .screen--scenario,
   .screen--product,
   .screen--lan,
+  .screen--simulation,
   .screen--advantages,
   .screen--cta {
     grid-template-columns: 1fr;
@@ -1472,6 +2090,55 @@ h3 {
   .screen--lan {
     min-height: 960px;
     align-content: start;
+  }
+
+  .screen--simulation {
+    min-height: 1120px;
+    align-content: start;
+  }
+
+  .simulation-intro {
+    grid-template-columns: 1fr;
+    gap: 26px;
+  }
+
+  .simulation-disclosure {
+    grid-template-columns: 120px 1fr;
+  }
+
+  .sim-topology {
+    grid-template-columns: minmax(145px, 0.58fr) minmax(330px, 1.84fr) minmax(145px, 0.58fr);
+    gap: 14px;
+  }
+
+  .sim-device {
+    grid-template-columns: 44px 1fr;
+    gap: 10px;
+  }
+
+  .sim-device--server {
+    grid-template-columns: 1fr 44px;
+  }
+
+  .sim-device > svg {
+    width: 44px;
+    height: 44px;
+    padding: 10px;
+  }
+
+  .sim-console {
+    grid-template-columns: 1fr;
+  }
+
+  .sim-controls-panel,
+  .sim-response-panel {
+    padding-right: 0;
+    padding-left: 0;
+  }
+
+  .sim-controls-panel {
+    border-right: 0;
+    border-bottom: 1px solid var(--line);
   }
 
   .inference-visual {
@@ -1810,6 +2477,191 @@ h3 {
     left: calc(50% + 34px);
     transform: translateY(-50%);
     white-space: nowrap;
+  }
+
+  .screen--simulation {
+    min-height: 1560px;
+    gap: 27px;
+  }
+
+  .simulation-intro {
+    gap: 20px;
+  }
+
+  .simulation-intro h2 br {
+    display: none;
+  }
+
+  .simulation-disclosure {
+    grid-template-columns: 1fr;
+    gap: 8px;
+    padding: 13px 0;
+  }
+
+  .simulation-disclosure p {
+    font-size: 13px;
+  }
+
+  .sim-topology {
+    grid-template-columns: 1fr;
+    gap: 0;
+    padding-top: 18px;
+  }
+
+  .sim-device,
+  .sim-device--server {
+    grid-template-columns: 52px 1fr;
+    gap: 14px;
+    padding: 15px 0;
+    text-align: left;
+  }
+
+  .sim-device--server > svg,
+  .sim-device--server > div {
+    order: initial;
+  }
+
+  .sim-device--server .sim-zone {
+    text-align: left;
+  }
+
+  .sim-device > svg {
+    width: 52px;
+    height: 52px;
+    padding: 12px;
+  }
+
+  .sim-zone {
+    margin-bottom: -4px;
+  }
+
+  .sim-path {
+    min-height: 350px;
+    padding: 20px 0 94px;
+  }
+
+  .sim-path-line {
+    top: 26px;
+    right: auto;
+    bottom: 103px;
+    left: 21px;
+    width: 1px;
+    height: auto;
+  }
+
+  .sim-path-line::before {
+    transform: scaleY(0.18);
+    transform-origin: top;
+  }
+
+  .sim-path-line b,
+  .simulator-shell.is-streaming .sim-path-line b:nth-child(3),
+  .simulator-shell.is-streaming .sim-path-line b:nth-child(4) {
+    top: 0;
+    right: auto;
+    left: 50%;
+    transform: translateX(-50%);
+  }
+
+  .sim-hops {
+    grid-template-columns: 1fr;
+    gap: 12px;
+  }
+
+  .sim-hops li {
+    grid-template-columns: 42px 1fr;
+    align-items: center;
+    justify-items: start;
+    gap: 13px;
+    text-align: left;
+  }
+
+  .sim-hops svg {
+    width: 42px;
+    height: 42px;
+  }
+
+  .sim-bandwidth {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0;
+    border-top: 1px solid var(--line-faint);
+  }
+
+  .sim-bandwidth > div {
+    display: grid;
+    gap: 5px;
+    padding-top: 12px;
+  }
+
+  .sim-console {
+    display: block;
+  }
+
+  .sim-controls-panel,
+  .sim-response-panel {
+    padding: 22px 0;
+  }
+
+  .sim-model-line {
+    display: grid;
+    gap: 7px;
+  }
+
+  .sim-switch {
+    min-height: 62px;
+  }
+
+  .sim-controls-panel textarea {
+    min-height: 112px;
+    font-size: 16px;
+  }
+
+  .sim-actions {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .sim-actions .button {
+    grid-column: 1 / -1;
+    width: 100%;
+  }
+
+  .sim-actions > button:not(.button) {
+    min-height: 44px;
+  }
+
+  .sim-response-head {
+    display: grid;
+    gap: 7px;
+  }
+
+  .sim-response-head > span:last-child {
+    text-align: left;
+  }
+
+  .sim-response {
+    min-height: 170px;
+    padding-block: 18px;
+    font-size: 13px;
+  }
+
+  .sim-telemetry > div {
+    padding: 10px 8px;
+  }
+
+  .sim-telemetry dd {
+    font-size: 10px;
+  }
+
+  .simulator-shell.is-streaming .sim-path-line b:nth-child(1),
+  .simulator-shell.is-streaming .sim-path-line b:nth-child(2) {
+    animation-name: simPacketDown;
+  }
+
+  .simulator-shell.is-streaming .sim-path-line b:nth-child(3),
+  .simulator-shell.is-streaming .sim-path-line b:nth-child(4) {
+    animation-name: simPacketUp;
   }
 
   .screen--advantages {
