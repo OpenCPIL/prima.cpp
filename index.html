@@ -242,31 +242,15 @@
               <span class="sr-only">Home network · subnet A. RTX 4090 Laptop GPU. 32 GB system memory. Laptop uplink 145 Mbps. Laptop downlink 27 Mbps.</span>
             </article>
 
-            <div class="sim-link-map" aria-label="Wireless home connection crossing LAN boundaries to the remote GPU server">
+            <div class="sim-link-map sim-link-map--generated" aria-label="Wi-Fi router crossing a VPN tunnel into a wired Network Gateway">
+              <img src="./assets/network-path.webp" alt="Realistic network path: Wi-Fi router, secure VPN tunnel, Network Gateway, and Ethernet cable" width="1400" height="509" />
+              <div class="sim-link-legend" aria-hidden="true">
+                <span>Wi‑Fi</span>
+                <span>VPN tunnel</span>
+                <span>Network Gateway</span>
+              </div>
               <span class="sim-link-line" data-sim-packet-stream aria-hidden="true"><b></b><b></b><b></b><b></b></span>
-              <div class="sim-link-node sim-link-node--home">
-                <span class="sim-wifi-router" aria-hidden="true">
-                  <i class="sim-router-antenna sim-router-antenna--left"></i>
-                  <i class="sim-router-antenna sim-router-antenna--right"></i>
-                  <span class="sim-router-waves"><b></b><b></b><b></b></span>
-                  <span class="sim-router-body"><b></b><b></b><b></b><b></b></span>
-                </span>
-                <span class="sr-only">Home Laptop connects wirelessly through a Wi‑Fi router.</span>
-              </div>
-              <div class="sim-link-core sim-vpn-tunnel" aria-hidden="true">
-                <span class="sim-tunnel-ring sim-tunnel-ring--rear"></span>
-                <span class="sim-tunnel-ring sim-tunnel-ring--middle"></span>
-                <span class="sim-tunnel-mouth"><i data-lucide="shield-check"></i><strong>VPN</strong></span>
-              </div>
-              <div class="sim-link-node sim-link-node--remote">
-                <span class="sim-network-gateway" aria-hidden="true">
-                  <span class="sim-gateway-body"><b></b><b></b><b></b><i></i></span>
-                  <span class="sim-gateway-cable"><b></b></span>
-                  <em>Network Gateway</em>
-                </span>
-                <span class="sr-only">The VPN tunnel exits through a wired Network Gateway connected to the GPU server.</span>
-              </div>
-              <span class="sr-only">Home Wi‑Fi router. Cross-LAN VPN tunnel. Wired Network Gateway. GPU server.</span>
+              <span class="sr-only">The Home Laptop connects over Wi‑Fi, crosses LAN boundaries through a VPN tunnel, then exits through a wired Network Gateway to the GPU server.</span>
             </div>
 
             <article class="sim-machine-card sim-machine-card--server" aria-label="GPU server in the remote local network">
@@ -280,13 +264,13 @@
               <dl class="sim-machine-specs">
                 <div><dt>CPU</dt><dd class="is-zero">0</dd></div>
                 <div><dt>System memory</dt><dd>32 GB</dd></div>
-                <div><dt>GPU</dt><dd>RTX A4000</dd></div>
+                <div><dt>GPU</dt><dd>A4000 ×1</dd></div>
                 <div><dt>VRAM</dt><dd class="is-zero">0 GB</dd></div>
                 <div><dt>Uplink</dt><dd class="is-zero">0 Mbps</dd></div>
                 <div><dt>Downlink</dt><dd class="is-zero">0 Mbps</dd></div>
                 <div><dt>RTT</dt><dd class="is-zero">0 ms</dd></div>
               </dl>
-              <span class="sr-only">Remote LAN · subnet B. A4000 server. RTX A4000 GPU. 32 GB system memory.</span>
+              <span class="sr-only">Remote LAN · subnet B. GPU server with one NVIDIA A4000 GPU and 32 GB system memory.</span>
             </article>
             <figcaption class="sr-only" id="sim-topology-caption">Two heterogeneous devices across different subnets. Network figures are observed from the laptop and apply to the DFlash 2-enabled trace.</figcaption>
           </figure>
@@ -324,45 +308,48 @@
               <article class="sim-response-panel" data-sim-result data-sim-rate-off="3.6" data-sim-rate-on="6.8">
                 <div class="sim-response-head">
                   <span>Home Laptop · llama.cpp</span>
+                  <strong data-sim-result-rate-output>6.8 tok/s</strong>
                   <span data-sim-result-status role="status" aria-live="polite">Ready</span>
                 </div>
+                <span class="sim-result-progress" aria-hidden="true"><b data-sim-result-progress></b></span>
                 <div class="sim-response" id="home-response" data-sim-result-output aria-busy="false">
                   <p>Press <strong>Run</strong> to begin.</p>
                 </div>
                 <dl class="sim-telemetry" aria-label="Home Laptop playback telemetry">
                   <div><dt>Elapsed</dt><dd data-sim-result-elapsed>0.0 s</dd></div>
                   <div><dt>Output</dt><dd data-sim-result-token-count>0</dd></div>
-                  <div><dt>Rate</dt><dd data-sim-result-rate-output>6.8 tok/s</dd></div>
                 </dl>
               </article>
 
               <article class="sim-response-panel" data-sim-result data-sim-rate-off="0" data-sim-rate-on="0">
                 <div class="sim-response-head">
                   <span>GPU server · llama.cpp</span>
+                  <strong data-sim-result-rate-output>0.0 tok/s</strong>
                   <span data-sim-result-status role="status" aria-live="polite">Ready</span>
                 </div>
+                <span class="sim-result-progress" aria-hidden="true"><b data-sim-result-progress></b></span>
                 <div class="sim-response" id="server-response" data-sim-result-output aria-busy="false">
                   <p>Press <strong>Run</strong> to begin.</p>
                 </div>
                 <dl class="sim-telemetry" aria-label="GPU server playback telemetry">
                   <div><dt>Elapsed</dt><dd data-sim-result-elapsed>0.0 s</dd></div>
                   <div><dt>Output</dt><dd data-sim-result-token-count>0</dd></div>
-                  <div><dt>Rate</dt><dd data-sim-result-rate-output>0.0 tok/s</dd></div>
                 </dl>
               </article>
 
               <article class="sim-response-panel sim-response-panel--prima" data-sim-result data-sim-rate-off="7.4" data-sim-rate-on="15.2">
                 <div class="sim-response-head">
                   <span>PRIMA · 2 devices</span>
+                  <strong data-sim-result-rate-output data-sim-rate>15.2 tok/s</strong>
                   <span data-sim-status data-sim-result-status role="status" aria-live="polite">Ready</span>
                 </div>
+                <span class="sim-result-progress" aria-hidden="true"><b data-sim-result-progress></b></span>
                 <div class="sim-response" id="simulation-response" data-sim-output data-sim-result-output aria-busy="false">
                   <p>Press <strong>Run</strong> to begin.</p>
                 </div>
                 <dl class="sim-telemetry" aria-label="PRIMA playback telemetry">
                   <div><dt>Elapsed</dt><dd data-sim-elapsed data-sim-result-elapsed>0.0 s</dd></div>
                   <div><dt>Output</dt><dd data-sim-token-count data-sim-result-token-count>0</dd></div>
-                  <div><dt>Rate</dt><dd data-sim-result-rate-output data-sim-rate>15.2 tok/s</dd></div>
                 </dl>
               </article>
             </div>

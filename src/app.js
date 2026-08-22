@@ -237,6 +237,7 @@ function initMeasuredPlayback() {
     elapsed: panel.querySelector("[data-sim-result-elapsed]"),
     tokenCount: panel.querySelector("[data-sim-result-token-count]"),
     rateOutput: panel.querySelector("[data-sim-result-rate-output]"),
+    progress: panel.querySelector("[data-sim-result-progress]"),
     rateOff: Number(panel.dataset.simRateOff || 0),
     rateOn: Number(panel.dataset.simRateOn || 0),
     playbackRate: Number(panel.dataset.simRateOn || 0),
@@ -244,7 +245,7 @@ function initMeasuredPlayback() {
     visibleTokens: 0,
   }));
 
-  if (!prompt || !output || !send || !reset || !pause || !model || !dflash || !status || !elapsed || !tokenCount || !rate || results.length !== 3 || results.some((result) => !result.output || !result.status || !result.elapsed || !result.tokenCount || !result.rateOutput)) {
+  if (!prompt || !output || !send || !reset || !pause || !model || !dflash || !status || !elapsed || !tokenCount || !rate || results.length !== 3 || results.some((result) => !result.output || !result.status || !result.elapsed || !result.tokenCount || !result.rateOutput || !result.progress)) {
     return;
   }
 
@@ -302,8 +303,10 @@ function initMeasuredPlayback() {
     const dflashEnabled = isDflashEnabled();
     results.forEach((result) => {
       result.playbackRate = dflashEnabled ? result.rateOn : result.rateOff;
+      result.panel.classList.toggle("is-measurement-missing", result.playbackRate === 0);
     });
-    playbackRate = Math.max(...results.map((result) => result.playbackRate), 0);
+    const measuredRates = results.map((result) => result.playbackRate).filter((resultRate) => resultRate > 0);
+    playbackRate = measuredRates.length ? Math.min(...measuredRates) : 0;
     simulatedDurationMs = playbackRate > 0 ? (playbackTokens.length / playbackRate) * 1000 : 0;
   }
 
@@ -342,6 +345,8 @@ function initMeasuredPlayback() {
       result.elapsed.textContent = `${(elapsedMs / 1000).toFixed(1)} s`;
       result.tokenCount.textContent = playbackState === "idle" || playbackState === "unavailable" ? "0" : `${result.visibleTokens} / ${playbackTokens.length}`;
       result.rateOutput.textContent = enabled ? `${result.playbackRate.toFixed(1)} tok/s` : "—";
+      const resultProgress = playbackTokens.length ? result.visibleTokens / playbackTokens.length : 0;
+      result.progress.style.setProperty("--result-progress", resultProgress.toFixed(4));
     });
 
     const progress = playbackTokens.length ? visibleTokens / playbackTokens.length : 0;
@@ -396,8 +401,9 @@ function initMeasuredPlayback() {
     };
     status.textContent = statusText[playbackState];
     results.forEach((result) => {
-      if (playbackState === "streaming" && result.playbackRate === 0) result.status.textContent = "Running · 0 tok/s";
-      else if (playbackState === "complete" && result.playbackRate === 0) result.status.textContent = "0 output";
+      const resultComplete = result.playbackRate > 0 && result.visibleTokens >= playbackTokens.length;
+      if (result.playbackRate === 0) result.status.textContent = "Pending";
+      else if (playbackState === "streaming" && resultComplete) result.status.textContent = "Complete";
       else result.status.textContent = statusText[playbackState];
     });
     updateTelemetry();
@@ -414,7 +420,7 @@ function initMeasuredPlayback() {
         result.visibleTokens > 0
           ? playbackTokens.slice(0, result.visibleTokens).join("")
           : result.playbackRate === 0
-            ? "No measured output · 0 tok/s"
+            ? "A4000 baseline pending · 0 tok/s"
             : "",
       );
     });
@@ -471,7 +477,7 @@ function initMeasuredPlayback() {
     visibleTokens = 0;
     results.forEach((result) => {
       result.visibleTokens = 0;
-      setOutputText(result, result.playbackRate === 0 ? "No measured output · 0 tok/s" : "");
+      setOutputText(result, result.playbackRate === 0 ? "A4000 baseline pending · 0 tok/s" : "");
     });
 
     if (reduceMotion.matches) {

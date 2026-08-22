@@ -1440,6 +1440,35 @@ h3 {
   text-transform: uppercase;
 }
 
+.sim-response-head > strong {
+  margin-left: auto;
+  color: var(--orange);
+  font: 700 13px/1.2 "Geist Mono", monospace;
+  letter-spacing: -0.02em;
+  white-space: nowrap;
+}
+
+.sim-result-progress {
+  display: block;
+  height: 3px;
+  overflow: hidden;
+  background: var(--line-faint);
+}
+
+.sim-result-progress b {
+  display: block;
+  width: 100%;
+  height: 100%;
+  background: var(--orange);
+  transform: scaleX(var(--result-progress, 0));
+  transform-origin: left center;
+  transition: transform 80ms linear;
+}
+
+.sim-response-panel.is-measurement-missing .sim-response-head > strong {
+  color: #8e8b86;
+}
+
 .sim-response {
   min-height: 112px;
   padding: 16px 0 18px;
@@ -1474,7 +1503,7 @@ h3 {
 
 .sim-telemetry {
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
+  grid-template-columns: repeat(2, 1fr);
   border-top: 1px solid var(--line);
   border-bottom: 1px solid var(--line-faint);
 }
@@ -1993,6 +2022,45 @@ h3 {
   font-size: 7px;
 }
 
+.sim-link-map--generated {
+  display: grid;
+  grid-template-columns: 1fr;
+  grid-template-rows: minmax(0, 1fr) auto;
+  align-content: center;
+  gap: 7px;
+  min-height: 0;
+}
+
+.sim-link-map--generated > img {
+  display: block;
+  width: 100%;
+  height: auto;
+  object-fit: contain;
+  filter: drop-shadow(0 12px 18px rgba(23, 23, 23, 0.14));
+}
+
+.sim-link-legend {
+  display: grid;
+  grid-template-columns: 0.9fr 1.1fr 1fr;
+  width: 100%;
+  color: var(--ink);
+  font: 650 10px/1.2 "Geist Mono", monospace;
+  text-align: center;
+}
+
+.sim-link-legend span:first-child {
+  color: var(--orange);
+  text-align: left;
+}
+
+.sim-link-legend span:last-child {
+  text-align: right;
+}
+
+.sim-link-map--generated .sim-link-line {
+  display: none;
+}
+
 .sim-model-field {
   position: relative;
   display: grid;
@@ -2078,7 +2146,7 @@ h3 {
 }
 
 .sim-results .sim-response-panel {
-  grid-template-rows: auto minmax(156px, 1fr) auto;
+  grid-template-rows: auto 3px minmax(156px, 1fr) auto;
   padding: 22px;
   border-right: 1px solid var(--line);
 }
@@ -3485,6 +3553,12 @@ h3 {
     min-height: 220px;
   }
 
+  .sim-link-map--generated {
+    grid-template-columns: 1fr;
+    grid-template-rows: auto auto;
+    min-height: 0;
+  }
+
   .sim-link-line {
     top: 5%;
     right: auto;
@@ -3634,13 +3708,13 @@ h3 {
 
   .simulator-shell {
     display: grid;
-    grid-template-rows: minmax(190px, 27vh) minmax(0, 1fr) auto;
+    grid-template-rows: minmax(205px, 29vh) minmax(0, 1fr) auto;
     min-height: 0;
   }
 
   .sim-topology.sim-topology--devices {
-    grid-template-columns: minmax(320px, 1fr) minmax(180px, 0.48fr) minmax(320px, 1fr);
-    gap: clamp(14px, 1.8vw, 28px);
+    grid-template-columns: minmax(310px, 1fr) minmax(300px, 0.72fr) minmax(310px, 1fr);
+    gap: clamp(12px, 1.35vw, 20px);
     min-height: 0;
     padding: clamp(7px, 1.1vh, 11px) 0;
   }
@@ -3658,18 +3732,18 @@ h3 {
   }
 
   .sim-machine-head > div > span {
-    font-size: 7px;
+    font-size: 9px;
   }
 
   .sim-machine-head h3 {
     margin-top: 2px;
-    font-size: clamp(17px, 2.2vh, 22px);
+    font-size: clamp(20px, 2.55vh, 25px);
   }
 
   .sim-network-badge {
-    min-height: 24px;
-    padding-inline: 7px;
-    font-size: 7px;
+    min-height: 28px;
+    padding-inline: 9px;
+    font-size: 9px;
   }
 
   .sim-machine-visual {
@@ -3702,16 +3776,24 @@ h3 {
   }
 
   .sim-machine-specs dt {
-    font-size: 6px;
+    font-size: 8px;
   }
 
   .sim-machine-specs dd {
-    margin-top: 2px;
-    font-size: clamp(8px, 1.15vh, 10px);
+    margin-top: 3px;
+    font-size: clamp(10px, 1.45vh, 12px);
   }
 
   .sim-link-map {
     min-height: 0;
+  }
+
+  .sim-link-map--generated > img {
+    max-height: clamp(132px, 20vh, 170px);
+  }
+
+  .sim-link-legend {
+    font-size: clamp(9px, 1.25vh, 11px);
   }
 
   .sim-link-line {
@@ -3832,7 +3914,7 @@ h3 {
     max-height: 46px;
     margin: 0;
     padding: 12px 14px;
-    font-size: 12px;
+    font-size: 13px;
     line-height: 1.35;
   }
 
@@ -3846,7 +3928,7 @@ h3 {
   }
 
   .sim-model-field > span {
-    font-size: 7px;
+    font-size: 9px;
   }
 
   .sim-model-field select {
@@ -3856,11 +3938,11 @@ h3 {
     background-position: calc(100% - 19px) 20px, calc(100% - 14px) 20px;
     border-color: var(--ink);
     box-shadow: inset 4px 0 0 var(--orange);
-    font-size: 11px;
+    font-size: 13px;
   }
 
   .sim-switch > span:last-child strong {
-    font-size: 11px;
+    font-size: 13px;
   }
 
   .sim-switch-track {
@@ -3889,7 +3971,7 @@ h3 {
   }
 
   .sim-results .sim-response-panel {
-    grid-template-rows: auto minmax(0, 1fr) auto;
+    grid-template-rows: auto 3px minmax(0, 1fr) auto;
     min-height: 0;
     padding: clamp(9px, 1.3vh, 13px);
   }
@@ -3900,15 +3982,19 @@ h3 {
 
   .sim-results .sim-response-head > span:first-child,
   .sim-results .sim-response-head > span:last-child {
-    font-size: 7px;
+    font-size: 9px;
+  }
+
+  .sim-results .sim-response-head > strong {
+    font-size: clamp(11px, 1.55vh, 13px);
   }
 
   .sim-results .sim-response {
     min-height: 0;
     padding: clamp(7px, 1vh, 11px) 0;
     overflow: hidden;
-    font-size: clamp(9px, 1.25vh, 12px);
-    line-height: 1.38;
+    font-size: clamp(11px, 1.55vh, 14px);
+    line-height: 1.42;
   }
 
   .sim-results .sim-telemetry > div {
@@ -3916,18 +4002,18 @@ h3 {
   }
 
   .sim-results .sim-telemetry dt {
-    font-size: 6px;
+    font-size: 8px;
   }
 
   .sim-results .sim-telemetry dd {
     margin-top: 3px;
-    font-size: 8px;
+    font-size: 11px;
   }
 
   .sim-disclaimer {
     overflow: hidden;
     padding: clamp(4px, 0.7vh, 7px) 0 0;
-    font-size: 7px;
+    font-size: 8px;
     line-height: 1.35;
     text-overflow: ellipsis;
     white-space: nowrap;
