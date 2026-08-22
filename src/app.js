@@ -237,7 +237,6 @@ function initMeasuredPlayback() {
     elapsed: panel.querySelector("[data-sim-result-elapsed]"),
     tokenCount: panel.querySelector("[data-sim-result-token-count]"),
     rateOutput: panel.querySelector("[data-sim-result-rate-output]"),
-    progress: panel.querySelector("[data-sim-result-progress]"),
     rateOff: Number(panel.dataset.simRateOff || 0),
     rateOn: Number(panel.dataset.simRateOn || 0),
     playbackRate: Number(panel.dataset.simRateOn || 0),
@@ -245,7 +244,7 @@ function initMeasuredPlayback() {
     visibleTokens: 0,
   }));
 
-  if (!prompt || !output || !send || !reset || !pause || !model || !dflash || !status || !elapsed || !tokenCount || !rate || results.length !== 3 || results.some((result) => !result.output || !result.status || !result.elapsed || !result.tokenCount || !result.rateOutput || !result.progress)) {
+  if (!prompt || !output || !send || !reset || !pause || !model || !dflash || !status || !elapsed || !tokenCount || !rate || results.length !== 3 || results.some((result) => !result.output || !result.status || !result.elapsed || !result.tokenCount || !result.rateOutput)) {
     return;
   }
 
@@ -262,7 +261,7 @@ function initMeasuredPlayback() {
     ],
     [
       "cross-lan",
-      "PRIMA coordinates inference across separate LANs through the VPN-connected network path. The Home Laptop reaches the Wi-Fi router wirelessly, traffic crosses the VPN appliance, and the Network Gateway provides the wired path to the remote GPU server.",
+      "PRIMA coordinates inference across separate LANs through the VPN-connected network path. The Home Laptop reaches the backbone network over Wi-Fi, traffic crosses the secure logical VPN tunnel, and the Network Gateway provides the wired path to the remote GPU server.",
     ],
   ]);
 
@@ -359,8 +358,6 @@ function initMeasuredPlayback() {
       result.elapsed.textContent = `${(resultElapsedMs / 1000).toFixed(1)} s`;
       result.tokenCount.textContent = playbackState === "idle" || playbackState === "unavailable" ? "0" : `${result.visibleTokens}`;
       result.rateOutput.textContent = enabled ? `${result.playbackRate.toFixed(1)} tok/s` : "—";
-      const resultProgress = playbackTokens.length ? result.visibleTokens / playbackTokens.length : 0;
-      result.progress.style.setProperty("--result-progress", resultProgress.toFixed(4));
       if (playbackState === "streaming") {
         if (result.playbackRate === 0) result.status.textContent = "Pending";
         else if (result.visibleTokens >= playbackTokens.length) result.status.textContent = "Complete";

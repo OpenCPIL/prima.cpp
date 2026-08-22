@@ -233,20 +233,20 @@
               <dl class="sim-machine-specs">
                 <div><dt>CPU</dt><dd>Intel Core Ultra 9 185H</dd></div>
                 <div><dt>System memory</dt><dd>32 GB</dd></div>
-                <div><dt>GPU</dt><dd>RTX 4090 Laptop</dd></div>
+                <div><dt>GPU</dt><dd>NVIDIA RTX 4090 Laptop</dd></div>
                 <div><dt>VRAM</dt><dd>16 GB</dd></div>
                 <div><dt>Uplink</dt><dd>27 Mbps</dd></div>
                 <div><dt>Downlink</dt><dd>145 Mbps</dd></div>
-                <div><dt>RTT</dt><dd>50 ms</dd></div>
+                <div><dt>RTT</dt><dd>≈ 50 ms</dd></div>
               </dl>
-              <span class="sr-only">Home network · subnet A. Intel Core Ultra 9 185H CPU. RTX 4090 Laptop GPU with 16 GB VRAM. 32 GB system memory. Laptop uplink 27 Mbps. Laptop downlink 145 Mbps. Laptop RTT 50 milliseconds.</span>
+              <span class="sr-only">Home network · subnet A. Intel Core Ultra 9 185H CPU. NVIDIA RTX 4090 Laptop GPU with 16 GB VRAM. 32 GB system memory. Laptop uplink 27 Mbps. Laptop downlink 145 Mbps. Laptop RTT approximately 50 milliseconds.</span>
             </article>
 
-            <div class="sim-link-map sim-link-map--generated" aria-label="Wi-Fi router crossing a VPN tunnel into a wired Network Gateway">
-              <img src="./assets/network-hardware.webp" alt="Real networking hardware: Wi-Fi router, VPN security appliance, Network Gateway, and Ethernet cables" width="1400" height="434" />
+            <div class="sim-link-map sim-link-map--generated" aria-label="Wi-Fi access to the backbone network, crossing a secure logical VPN tunnel into a small wired Network Gateway">
+              <img src="./assets/network-path-v2.webp" alt="Wi-Fi router accessing a backbone network, secure logical VPN tunnel, and small Network Gateway" width="1400" height="460" />
               <div class="sim-link-legend" aria-hidden="true">
-                <span>Wi‑Fi router</span>
-                <span>VPN appliance</span>
+                <span>Wi‑Fi → Backbone</span>
+                <span>Secure VPN tunnel</span>
                 <span>Network Gateway</span>
               </div>
               <span class="sim-link-line" data-sim-packet-stream aria-hidden="true"><b></b><b></b><b></b><b></b></span>
@@ -259,7 +259,7 @@
                 <span class="sim-network-badge"><i data-lucide="network" aria-hidden="true"></i>Ethernet</span>
               </header>
               <div class="sim-machine-visual sim-machine-visual--server">
-                <img src="./assets/a4000-gpu.webp" alt="One realistic A4000-class workstation GPU card" width="900" height="565" />
+                <img src="./assets/gpu-server-a4000.webp" alt="GPU server tower with one small A4000-class GPU card beside it" width="900" height="755" />
               </div>
               <dl class="sim-machine-specs">
                 <div><dt>CPU</dt><dd>Intel Core i7-12700</dd></div>
@@ -268,7 +268,7 @@
                 <div><dt>VRAM</dt><dd>16 GB</dd></div>
                 <div><dt>Uplink</dt><dd>1 Gbps</dd></div>
                 <div><dt>Downlink</dt><dd>1 Gbps</dd></div>
-                <div><dt>RTT</dt><dd>&lt;1 ms</dd></div>
+                <div><dt>RTT</dt><dd>&lt; 1 ms</dd></div>
               </dl>
               <span class="sr-only">Remote LAN · subnet B. GPU server with an Intel Core i7-12700 CPU, one NVIDIA RTX A4000 GPU with 16 GB VRAM, 32 GB system memory, 1 gigabit per second uplink and downlink, and RTT below 1 millisecond.</span>
             </article>
@@ -315,7 +315,6 @@
                   <strong data-sim-result-rate-output>6.8 tok/s</strong>
                   <span data-sim-result-status role="status" aria-live="polite">Ready</span>
                 </div>
-                <span class="sim-result-progress" aria-hidden="true"><b data-sim-result-progress></b></span>
                 <div class="sim-response" id="home-response" data-sim-result-output aria-busy="false">
                   <p>Press <strong>Run</strong> to begin.</p>
                 </div>
@@ -331,7 +330,6 @@
                   <strong data-sim-result-rate-output>0.0 tok/s</strong>
                   <span data-sim-result-status role="status" aria-live="polite">Ready</span>
                 </div>
-                <span class="sim-result-progress" aria-hidden="true"><b data-sim-result-progress></b></span>
                 <div class="sim-response" id="server-response" data-sim-result-output aria-busy="false">
                   <p>Press <strong>Run</strong> to begin.</p>
                 </div>
@@ -347,7 +345,6 @@
                   <strong data-sim-result-rate-output data-sim-rate>15.2 tok/s</strong>
                   <span data-sim-status data-sim-result-status role="status" aria-live="polite">Ready</span>
                 </div>
-                <span class="sim-result-progress" aria-hidden="true"><b data-sim-result-progress></b></span>
                 <div class="sim-response" id="simulation-response" data-sim-output data-sim-result-output aria-busy="false">
                   <p>Press <strong>Run</strong> to begin.</p>
                 </div>

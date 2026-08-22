@@ -1253,7 +1253,7 @@ h3 {
 
 .sim-response-panel {
   display: grid;
-  grid-template-rows: auto 1fr auto auto;
+  grid-template-rows: auto 1fr auto;
   padding-right: 0;
 }
 
@@ -1446,23 +1446,6 @@ h3 {
   font: 700 13px/1.2 "Geist Mono", monospace;
   letter-spacing: -0.02em;
   white-space: nowrap;
-}
-
-.sim-result-progress {
-  display: block;
-  height: 3px;
-  overflow: hidden;
-  background: var(--line-faint);
-}
-
-.sim-result-progress b {
-  display: block;
-  width: 100%;
-  height: 100%;
-  background: var(--orange);
-  transform: scaleX(var(--result-progress, 0));
-  transform-origin: left center;
-  transition: transform 80ms linear;
 }
 
 .sim-response-panel.is-measurement-missing .sim-response-head > strong {
@@ -2153,7 +2136,7 @@ h3 {
 }
 
 .sim-results .sim-response-panel {
-  grid-template-rows: auto 3px minmax(156px, 1fr) auto;
+  grid-template-rows: auto minmax(156px, 1fr) auto;
   padding: 22px;
   border-right: 1px solid var(--line);
 }
@@ -3980,7 +3963,7 @@ h3 {
   }
 
   .sim-results .sim-response-panel {
-    grid-template-rows: auto 3px minmax(0, 1fr) auto;
+    grid-template-rows: auto minmax(0, 1fr) auto;
     min-height: 0;
     padding: clamp(9px, 1.3vh, 13px);
   }
