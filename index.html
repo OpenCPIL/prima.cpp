@@ -24,16 +24,16 @@
     <a class="skip-link" href="#main">Skip to content</a>
 
     <header class="site-header" aria-label="Primary navigation">
-      <a class="brand" href="#intro" aria-label="Prima Lab home">
+      <a class="brand" href="#simulation" aria-label="Prima Lab simulation">
         <img src="./assets/prima-lab-lockup.webp" alt="Prima Lab" width="1340" height="289" />
       </a>
       <nav class="desktop-nav" aria-label="Site sections">
-        <a href="#product">Product</a>
-        <a href="#home">Use cases</a>
+        <a href="#product" hidden>Product</a>
+        <a href="#home" hidden>Use cases</a>
         <a href="#simulation">Simulation</a>
-        <a href="#evidence">Evidence</a>
+        <a href="#evidence" hidden>Evidence</a>
       </nav>
-      <a class="header-link" href="https://github.com/OpenCPIL/prima.cpp" target="_blank" rel="noreferrer">
+      <a class="header-link" href="https://github.com/OpenCPIL/prima.cpp" target="_blank" rel="noreferrer" hidden>
         GitHub
         <i data-lucide="arrow-up-right" aria-hidden="true"></i>
       </a>
@@ -41,7 +41,7 @@
     </header>
 
     <main id="main">
-      <section class="screen screen--hero" id="intro" data-slide="intro" aria-labelledby="hero-title">
+      <section class="screen screen--hero" id="intro" data-slide="intro" aria-labelledby="hero-title" hidden>
         <div class="screen-meta" aria-hidden="true"><span>Prima.cpp</span><span>Local-first distributed inference</span></div>
         <div class="hero-copy reveal">
           <h1 id="hero-title">Scale local AI<br />beyond one device.</h1>
@@ -68,7 +68,7 @@
         </figure>
       </section>
 
-      <section class="screen screen--scenario" id="home" data-slide="home" aria-labelledby="home-title">
+      <section class="screen screen--scenario" id="home" data-slide="home" aria-labelledby="home-title" hidden>
         <div class="screen-meta" aria-hidden="true"><span>01</span><span>Private home</span></div>
         <div class="scenario-copy reveal">
           <h2 id="home-title">Private AI<br />at home.</h2>
@@ -81,7 +81,7 @@
         </figure>
       </section>
 
-      <section class="screen screen--scenario" id="lab" data-slide="lab" aria-labelledby="lab-title">
+      <section class="screen screen--scenario" id="lab" data-slide="lab" aria-labelledby="lab-title" hidden>
         <div class="screen-meta" aria-hidden="true"><span>02</span><span>Shared lab</span></div>
         <div class="scenario-copy reveal">
           <h2 id="lab-title">A shared runtime<br />for the lab.</h2>
@@ -94,7 +94,7 @@
         </figure>
       </section>
 
-      <section class="screen screen--scenario" id="edge" data-slide="edge" aria-labelledby="edge-title">
+      <section class="screen screen--scenario" id="edge" data-slide="edge" aria-labelledby="edge-title" hidden>
         <div class="screen-meta" aria-hidden="true"><span>03</span><span>Private edge</span></div>
         <div class="scenario-copy reveal">
           <h2 id="edge-title">Edge intelligence,<br />kept close.</h2>
@@ -107,7 +107,7 @@
         </figure>
       </section>
 
-      <section class="screen screen--product motion-scene" id="product" data-slide="product" data-animation-section aria-labelledby="product-title">
+      <section class="screen screen--product motion-scene" id="product" data-slide="product" data-animation-section aria-labelledby="product-title" hidden>
         <div class="screen-meta" aria-hidden="true"><span>Prima.cpp</span><span>Continuous inference</span></div>
         <div class="product-copy reveal">
           <h2 id="product-title">One runtime.<br />Many devices.<br />Continuous inference.</h2>
@@ -169,7 +169,7 @@
         </div>
       </section>
 
-      <section class="screen screen--lan motion-scene" id="lan" data-slide="lan" data-animation-section aria-labelledby="lan-title">
+      <section class="screen screen--lan motion-scene" id="lan" data-slide="lan" data-animation-section aria-labelledby="lan-title" hidden>
         <div class="screen-meta" aria-hidden="true"><span>Cross-LAN</span><span>Reachable locations</span></div>
         <div class="lan-copy reveal">
           <h2 id="lan-title">Collaborate across<br />locations. On hardware<br />you control.</h2>
@@ -312,7 +312,7 @@
         </div>
       </section>
 
-      <section class="screen screen--advantages" id="advantages" data-slide="advantages" aria-labelledby="advantages-title">
+      <section class="screen screen--advantages" id="advantages" data-slide="advantages" aria-labelledby="advantages-title" hidden>
         <div class="screen-meta" aria-hidden="true"><span>More model</span><span>Less new infrastructure</span></div>
         <div class="advantages-copy reveal">
           <h2 id="advantages-title">Useful AI capacity<br />is already around you.</h2>
@@ -334,7 +334,7 @@
         </div>
       </section>
 
-      <section class="screen screen--evidence" id="evidence" data-slide="evidence" aria-labelledby="evidence-title">
+      <section class="screen screen--evidence" id="evidence" data-slide="evidence" aria-labelledby="evidence-title" hidden>
         <div class="screen-meta" aria-hidden="true"><span>Evidence</span><span>Public and caveated</span></div>
         <div class="evidence-copy reveal">
           <p class="eyebrow">Evidence you can inspect</p>
@@ -354,7 +354,7 @@
         <p class="evidence-caveat">Published results depend on the cited model, quantization, hardware, networking and workload; they are not universal performance claims.</p>
       </section>
 
-      <section class="screen screen--cta" id="open-source" data-slide="open-source" aria-labelledby="cta-title">
+      <section class="screen screen--cta" id="open-source" data-slide="open-source" aria-labelledby="cta-title" hidden>
         <div class="screen-meta" aria-hidden="true"><span>Open source</span><span>Prima Lab</span></div>
         <div class="cta-copy reveal">
           <p class="eyebrow">Start with Prima.cpp</p>
