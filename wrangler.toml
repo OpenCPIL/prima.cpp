@@ -1,9 +1,0 @@
-name = "cpil-website"
-pages_build_output_dir = "./dist"
-compatibility_date = "2026-05-02"
-
-# Plain, non-secret Pages Function variables live here because this project
-# uses wrangler.toml as Cloudflare Pages configuration.
-[vars]
-GITHUB_CLIENT_ID = "Ov23liIimCDAsY3lm4hJ"
-GITHUB_OAUTH_SCOPE = "public_repo user:email"
