@@ -258,20 +258,11 @@ function initMeasuredPlayback() {
   const presetResponses = new Map(presetConversations.map((preset) => [preset.id, preset]));
 
   function makePlaybackTokens(preset) {
-    const characters = [...preset.output];
-    const tokenCount = Math.min(characters.length, Math.max(1, preset.tokenCount));
-    const tokens = [];
-    let cursor = 0;
-
-    for (let index = 0; index < tokenCount; index += 1) {
-      const remainingCharacters = characters.length - cursor;
-      const remainingTokens = tokenCount - index;
-      const chunkSize = Math.ceil(remainingCharacters / remainingTokens);
-      tokens.push(characters.slice(cursor, cursor + chunkSize).join(""));
-      cursor += chunkSize;
+    const tokens = Array.isArray(preset.tokens) ? preset.tokens : [];
+    if (tokens.length !== preset.tokenCount || tokens.join("") !== preset.output) {
+      throw new Error(`Invalid playback token sequence for preset: ${preset.id}`);
     }
-
-    return tokens;
+    return [...tokens];
   }
 
   let playbackTokens = makePlaybackTokens(presetResponses.get(defaultPrompt));
