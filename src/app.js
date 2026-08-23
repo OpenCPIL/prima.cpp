@@ -1,4 +1,4 @@
-import { presetConversations } from "./preset-conversations.js";
+import { presetConversations } from "./preset-conversations.js?v=complete-presets-v1-20260823";
 import { renderMarkdownInto } from "./markdown-renderer.js";
 
 document.documentElement.classList.add("js");
