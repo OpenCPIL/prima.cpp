@@ -1,4 +1,5 @@
 import { presetConversations } from "./preset-conversations.js";
+import { renderMarkdownInto } from "./markdown-renderer.js";
 
 document.documentElement.classList.add("js");
 
@@ -245,7 +246,6 @@ function initMeasuredPlayback() {
     ttftOn: Number(panel.dataset.simTtftOn || 0),
     playbackRate: Number(panel.dataset.simRateOn || 0),
     ttftMs: Number(panel.dataset.simTtftOn || 0),
-    paragraph: document.createElement("p"),
     visibleTokens: 0,
   }));
 
@@ -351,11 +351,7 @@ function initMeasuredPlayback() {
   }
 
   function setOutputText(result, text) {
-    result.paragraph.textContent = text;
-    if (result.output.firstElementChild !== result.paragraph || result.output.childElementCount !== 1) {
-      result.output.replaceChildren(result.paragraph);
-    }
-    result.output.scrollTop = result.output.scrollHeight;
+    renderMarkdownInto(result.output, text);
   }
 
   function updateTelemetry() {

@@ -1495,17 +1495,144 @@ h3 {
   letter-spacing: -0.01em;
 }
 
-.sim-response p {
+.sim-markdown {
   color: var(--muted);
-  white-space: pre-wrap;
+  overflow-wrap: anywhere;
 }
 
-.sim-response strong {
+.sim-markdown > :first-child {
+  margin-top: 0;
+}
+
+.sim-markdown > :last-child {
+  margin-bottom: 0;
+}
+
+.sim-markdown p,
+.sim-markdown ul,
+.sim-markdown ol,
+.sim-markdown blockquote,
+.sim-markdown pre,
+.sim-markdown table,
+.sim-markdown .katex-display {
+  margin: 0 0 0.85em;
+}
+
+.sim-markdown h1,
+.sim-markdown h2,
+.sim-markdown h3,
+.sim-markdown h4,
+.sim-markdown h5,
+.sim-markdown h6 {
+  margin: 1em 0 0.45em;
+  color: var(--ink);
+  font-family: "Geist", sans-serif;
+  font-weight: 650;
+  line-height: 1.2;
+}
+
+.sim-markdown h1 {
+  font-size: 1.35em;
+}
+
+.sim-markdown h2 {
+  font-size: 1.22em;
+}
+
+.sim-markdown h3,
+.sim-markdown h4,
+.sim-markdown h5,
+.sim-markdown h6 {
+  font-size: 1.08em;
+}
+
+.sim-markdown strong {
   color: var(--ink);
   font-weight: 600;
 }
 
-.sim-response p::after {
+.sim-markdown em {
+  color: var(--ink);
+}
+
+.sim-markdown ul,
+.sim-markdown ol {
+  padding-left: 1.55em;
+}
+
+.sim-markdown li + li {
+  margin-top: 0.3em;
+}
+
+.sim-markdown blockquote {
+  padding-left: 0.8em;
+  border-left: 2px solid var(--orange);
+  color: var(--muted);
+}
+
+.sim-markdown code {
+  padding: 0.12em 0.28em;
+  background: #efede9;
+  color: var(--ink);
+  font: 500 0.92em/1.45 "Geist Mono", monospace;
+}
+
+.sim-markdown pre {
+  padding: 0.75em 0.85em;
+  overflow-x: auto;
+  background: #eceae6;
+  border: 1px solid var(--line-faint);
+}
+
+.sim-markdown pre code {
+  padding: 0;
+  background: transparent;
+  white-space: pre;
+}
+
+.sim-markdown a {
+  color: var(--ink);
+  text-decoration-color: var(--orange);
+  text-decoration-thickness: 1px;
+  text-underline-offset: 0.16em;
+}
+
+.sim-markdown hr {
+  margin: 1em 0;
+  border: 0;
+  border-top: 1px solid var(--line);
+}
+
+.sim-markdown table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.9em;
+}
+
+.sim-markdown th,
+.sim-markdown td {
+  padding: 0.35em 0.45em;
+  border: 1px solid var(--line-faint);
+  text-align: left;
+}
+
+.sim-markdown th {
+  color: var(--ink);
+  font-weight: 650;
+}
+
+.sim-markdown .katex {
+  color: var(--ink);
+  font-size: 1.06em;
+}
+
+.sim-markdown .katex-display {
+  padding: 0.25em 0;
+  overflow-x: auto;
+  overflow-y: hidden;
+}
+
+.sim-stream-cursor {
   display: inline-block;
   width: 1px;
   height: 1.05em;
@@ -1516,16 +1643,16 @@ h3 {
   opacity: 0;
 }
 
-.simulator-shell.is-streaming .sim-response p::after {
+.simulator-shell.is-streaming .sim-stream-cursor {
   opacity: 1;
   animation: cursorBlink 1s steps(1) infinite;
 }
 
-.sim-response-panel.is-measurement-missing .sim-response p::after {
+.sim-response-panel.is-measurement-missing .sim-stream-cursor {
   display: none;
 }
 
-.sim-response-panel.is-awaiting-first-token .sim-response p::after {
+.sim-response-panel.is-awaiting-first-token .sim-stream-cursor {
   display: none;
 }
 
@@ -2269,7 +2396,7 @@ h3 {
 }
 
 .simulator-shell.is-paused .sim-path-line b,
-.simulator-shell.is-paused .sim-response p::after {
+.simulator-shell.is-paused .sim-stream-cursor {
   animation-play-state: paused !important;
 }
 
