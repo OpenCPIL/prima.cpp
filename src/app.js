@@ -218,6 +218,7 @@ function initMeasuredPlayback() {
   if (!form) return;
 
   const caseSelect = document.querySelector("[data-sim-case]");
+  const serverImage = document.querySelector("[data-sim-server-image]");
   const prompt = form.querySelector("[data-sim-prompt]");
   const output = form.querySelector("[data-sim-output]");
   const send = form.querySelector("[data-sim-send]");
@@ -250,7 +251,7 @@ function initMeasuredPlayback() {
     visibleTokens: 0,
   }));
 
-  if (!(caseSelect instanceof HTMLSelectElement) || !prompt || !output || !send || !reset || !pause || !model || !dflash || !status || !elapsed || !tokenCount || !rate || results.length !== 3 || results.some((result) => !result.output || !result.status || !result.elapsed || !result.tokenCount || !result.rateOutput)) {
+  if (!(caseSelect instanceof HTMLSelectElement) || !(serverImage instanceof HTMLImageElement) || !prompt || !output || !send || !reset || !pause || !model || !dflash || !status || !elapsed || !tokenCount || !rate || results.length !== 3 || results.some((result) => !result.output || !result.status || !result.elapsed || !result.tokenCount || !result.rateOutput)) {
     return;
   }
 
@@ -259,8 +260,20 @@ function initMeasuredPlayback() {
   const defaultPrompt = presetConversations[0].id;
   const presetResponses = new Map(presetConversations.map((preset) => [preset.id, preset]));
   const caseConfigurations = new Map([
-    ["case-1", { model: "qwen38-27b-q8", prompt: defaultPrompt, dflash: true }],
-    ["case-2", { model: "hy4-770b-iq1", prompt: defaultPrompt, dflash: true }],
+    ["case-1", {
+      model: "qwen38-27b-q8",
+      prompt: defaultPrompt,
+      dflash: true,
+      serverImage: "./assets/gpu-server-a4000.webp",
+      serverImageAlt: "GPU server tower with one small A4000-class GPU card beside it",
+    }],
+    ["case-2", {
+      model: "hy4-770b-iq1",
+      prompt: defaultPrompt,
+      dflash: true,
+      serverImage: "./assets/gpu-server-a4000-x4.webp",
+      serverImageAlt: "GPU server tower with four small A4000-class GPU cards beside it",
+    }],
   ]);
 
   function makePlaybackTokens(preset) {
@@ -497,6 +510,8 @@ function initMeasuredPlayback() {
     caseSelect.value = caseConfigurations.has(caseId) ? caseId : defaultCase;
     model.value = configuration.model;
     prompt.value = configuration.prompt;
+    serverImage.src = configuration.serverImage;
+    serverImage.alt = configuration.serverImageAlt;
     setDflashEnabled(configuration.dflash);
     playbackTokens = makePlaybackTokens(presetResponses.get(configuration.prompt) || presetResponses.get(defaultPrompt));
     syncConfiguration();
