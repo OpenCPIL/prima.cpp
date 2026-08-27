@@ -260,7 +260,7 @@ function initMeasuredPlayback() {
   const presetResponses = new Map(presetConversations.map((preset) => [preset.id, preset]));
   const caseConfigurations = new Map([
     ["case-1", { model: "qwen38-27b-q8", prompt: defaultPrompt, dflash: true }],
-    ["case-2", { model: "qwen38-27b-q8", prompt: defaultPrompt, dflash: true }],
+    ["case-2", { model: "hy4-770b-iq1", prompt: defaultPrompt, dflash: true }],
   ]);
 
   function makePlaybackTokens(preset) {
