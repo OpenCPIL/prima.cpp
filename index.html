@@ -18,7 +18,7 @@
     <link rel="preload" as="font" href="./assets/fonts/Geist-Variable.woff2" type="font/woff2" crossorigin />
     <link rel="preload" as="image" href="./assets/hero-topology.webp" />
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.18.1/dist/katex.min.css" crossorigin="anonymous" />
-    <link rel="stylesheet" href="./src/styles.css?v=markdown-math-v1-20260823" />
+    <link rel="stylesheet" href="./src/styles.css?v=case-selector-v1-20260827" />
     <title>Prima Lab — Local AI, beyond one device</title>
   </head>
   <body>
@@ -219,6 +219,13 @@
       <section class="screen screen--simulation" id="simulation" data-slide="simulation" aria-labelledby="simulation-title">
         <div class="simulation-intro simulation-intro--playground reveal">
           <h2 id="simulation-title">Playground</h2>
+          <label class="sim-case-field" for="simulation-case">
+            <span>Case</span>
+            <select id="simulation-case" data-sim-case>
+              <option value="case-1" selected>CASE 1</option>
+              <option value="case-2">CASE 2</option>
+            </select>
+          </label>
         </div>
 
         <div class="simulator-shell reveal reveal--late" data-simulator>
@@ -431,6 +438,6 @@
     </main>
 
     <script defer src="./vendor/lucide-prima.js"></script>
-    <script type="module" src="./src/app.js?v=appended-presets-v2-20260823"></script>
+    <script type="module" src="./src/app.js?v=case-selector-v1-20260827"></script>
   </body>
 </html>

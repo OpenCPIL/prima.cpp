@@ -217,6 +217,7 @@ function initMeasuredPlayback() {
   const form = document.querySelector("[data-sim-form]");
   if (!form) return;
 
+  const caseSelect = document.querySelector("[data-sim-case]");
   const prompt = form.querySelector("[data-sim-prompt]");
   const output = form.querySelector("[data-sim-output]");
   const send = form.querySelector("[data-sim-send]");
@@ -249,13 +250,18 @@ function initMeasuredPlayback() {
     visibleTokens: 0,
   }));
 
-  if (!prompt || !output || !send || !reset || !pause || !model || !dflash || !status || !elapsed || !tokenCount || !rate || results.length !== 3 || results.some((result) => !result.output || !result.status || !result.elapsed || !result.tokenCount || !result.rateOutput)) {
+  if (!(caseSelect instanceof HTMLSelectElement) || !prompt || !output || !send || !reset || !pause || !model || !dflash || !status || !elapsed || !tokenCount || !rate || results.length !== 3 || results.some((result) => !result.output || !result.status || !result.elapsed || !result.tokenCount || !result.rateOutput)) {
     return;
   }
 
   let playbackRate = 15.2;
+  const defaultCase = "case-1";
   const defaultPrompt = presetConversations[0].id;
   const presetResponses = new Map(presetConversations.map((preset) => [preset.id, preset]));
+  const caseConfigurations = new Map([
+    ["case-1", { model: "qwen38-27b-q8", prompt: defaultPrompt, dflash: true }],
+    ["case-2", { model: "qwen38-27b-q8", prompt: defaultPrompt, dflash: true }],
+  ]);
 
   function makePlaybackTokens(preset) {
     const tokens = Array.isArray(preset.tokens) ? preset.tokens : [];
@@ -486,6 +492,17 @@ function initMeasuredPlayback() {
     updateInterface();
   }
 
+  function applyCaseConfiguration(caseId) {
+    const configuration = caseConfigurations.get(caseId) || caseConfigurations.get(defaultCase);
+    caseSelect.value = caseConfigurations.has(caseId) ? caseId : defaultCase;
+    model.value = configuration.model;
+    prompt.value = configuration.prompt;
+    setDflashEnabled(configuration.dflash);
+    playbackTokens = makePlaybackTokens(presetResponses.get(configuration.prompt) || presetResponses.get(defaultPrompt));
+    syncConfiguration();
+    resetPlayback();
+  }
+
   function startPlayback() {
     if (!supportsDflash()) {
       resetPlayback();
@@ -589,6 +606,8 @@ function initMeasuredPlayback() {
     resetPlayback();
   });
 
+  caseSelect.addEventListener("change", () => applyCaseConfiguration(caseSelect.value));
+
   document.addEventListener("visibilitychange", syncAutomaticPlayback);
 
   if ("IntersectionObserver" in window) {
@@ -617,9 +636,7 @@ function initMeasuredPlayback() {
     reduceMotion.addListener(applySimulationMotionPreference);
   }
 
-  syncConfiguration();
-  setDflashEnabled(true);
-  resetPlayback();
+  applyCaseConfiguration(caseSelect.value);
 }
 
 initMeasuredPlayback();

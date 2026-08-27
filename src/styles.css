@@ -1713,12 +1713,31 @@ h3 {
 }
 
 .simulation-intro--playground {
-  display: block;
+  display: grid;
+  grid-template-columns: 1fr;
+  align-items: start;
+  justify-items: start;
+  gap: 8px;
 }
 
 .simulation-intro--playground h2 {
   font-size: clamp(56px, 6vw, 92px);
   letter-spacing: -0.065em;
+}
+
+.sim-case-field {
+  display: grid;
+  grid-template-columns: auto minmax(150px, 190px);
+  align-items: center;
+  gap: 10px;
+  width: max-content;
+}
+
+.sim-case-field > span {
+  color: var(--muted);
+  font: 600 10px/1.2 "Geist Mono", monospace;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
 }
 
 .screen--simulation {
@@ -2229,6 +2248,7 @@ h3 {
   text-transform: uppercase;
 }
 
+.sim-case-field select,
 .sim-model-field select,
 .sim-prompt-select {
   width: 100%;
@@ -2247,16 +2267,26 @@ h3 {
   transition: border-color 160ms ease, box-shadow 160ms ease;
 }
 
+.sim-case-field select:hover,
 .sim-model-field select:hover,
 .sim-prompt-select:hover {
   border-color: var(--ink);
 }
 
+.sim-case-field select:focus-visible,
 .sim-model-field select:focus-visible,
 .sim-prompt-select:focus-visible {
   border-color: var(--orange);
   outline: 0;
   box-shadow: 0 0 0 2px rgba(239, 91, 14, 0.16);
+}
+
+.sim-case-field select {
+  min-height: 38px;
+  padding-left: 13px;
+  background-position: calc(100% - 18px) 16px, calc(100% - 13px) 16px;
+  border-color: var(--ink);
+  box-shadow: inset 4px 0 0 var(--orange);
 }
 
 .sim-console {
@@ -3785,6 +3815,11 @@ h3 {
     font-size: 52px;
   }
 
+  .sim-case-field {
+    grid-template-columns: 52px minmax(0, 1fr);
+    width: 100%;
+  }
+
   .sim-machine-card {
     grid-template-rows: auto 180px auto;
     padding: 16px;
@@ -3862,6 +3897,15 @@ h3 {
   .simulation-intro--playground h2 {
     font-size: clamp(38px, 4.1vh, 48px);
     line-height: 0.94;
+  }
+
+  .simulation-intro--playground {
+    gap: clamp(4px, 0.7vh, 7px);
+  }
+
+  .sim-case-field select {
+    min-height: clamp(32px, 4vh, 38px);
+    background-position: calc(100% - 18px) 50%, calc(100% - 13px) 50%;
   }
 
   .simulator-shell {
