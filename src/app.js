@@ -271,8 +271,8 @@ function initMeasuredPlayback() {
       serverImageAlt: "GPU server tower with one small A4000-class GPU card beside it",
       serverGpu: "NVIDIA RTX A4000 x1",
       serverGpuCount: "1",
-      serverVram: "15 GB",
-      serverSummary: "Remote LAN · subnet B. GPU server with an Intel Core i7-12700 CPU, one NVIDIA RTX A4000 GPU with 15 GB VRAM, 32 GB system memory, 1 gigabit per second uplink and downlink, and RTT approximately 50 milliseconds.",
+      serverVram: "16 GB",
+      serverSummary: "Remote LAN · subnet B. GPU server with an Intel Core i7-12700 CPU, one NVIDIA RTX A4000 GPU with 16 GB VRAM, 32 GB system memory, 1 gigabit per second uplink and downlink, and RTT approximately 50 milliseconds.",
     }],
     ["case-2", {
       model: "hy4-770b-iq1",
@@ -282,8 +282,8 @@ function initMeasuredPlayback() {
       serverImageAlt: "GPU server tower with four small A4000-class GPU cards beside it",
       serverGpu: "NVIDIA RTX A4000 x4",
       serverGpuCount: "4",
-      serverVram: "15 GB x4",
-      serverSummary: "Remote LAN · subnet B. GPU server with an Intel Core i7-12700 CPU, four NVIDIA RTX A4000 GPUs with 15 GB VRAM each, 32 GB system memory, 1 gigabit per second uplink and downlink, and RTT approximately 50 milliseconds.",
+      serverVram: "16 GB x4",
+      serverSummary: "Remote LAN · subnet B. GPU server with an Intel Core i7-12700 CPU, four NVIDIA RTX A4000 GPUs with 16 GB VRAM each, 32 GB system memory, 1 gigabit per second uplink and downlink, and RTT approximately 50 milliseconds.",
     }],
   ]);
 
