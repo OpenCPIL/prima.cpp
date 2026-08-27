@@ -219,6 +219,9 @@ function initMeasuredPlayback() {
 
   const caseSelect = document.querySelector("[data-sim-case]");
   const serverImage = document.querySelector("[data-sim-server-image]");
+  const serverGpu = document.querySelector("[data-sim-server-gpu]");
+  const serverVram = document.querySelector("[data-sim-server-vram]");
+  const serverSummary = document.querySelector("[data-sim-server-summary]");
   const prompt = form.querySelector("[data-sim-prompt]");
   const output = form.querySelector("[data-sim-output]");
   const send = form.querySelector("[data-sim-send]");
@@ -251,7 +254,7 @@ function initMeasuredPlayback() {
     visibleTokens: 0,
   }));
 
-  if (!(caseSelect instanceof HTMLSelectElement) || !(serverImage instanceof HTMLImageElement) || !prompt || !output || !send || !reset || !pause || !model || !dflash || !status || !elapsed || !tokenCount || !rate || results.length !== 3 || results.some((result) => !result.output || !result.status || !result.elapsed || !result.tokenCount || !result.rateOutput)) {
+  if (!(caseSelect instanceof HTMLSelectElement) || !(serverImage instanceof HTMLImageElement) || !serverGpu || !serverVram || !serverSummary || !prompt || !output || !send || !reset || !pause || !model || !dflash || !status || !elapsed || !tokenCount || !rate || results.length !== 3 || results.some((result) => !result.output || !result.status || !result.elapsed || !result.tokenCount || !result.rateOutput)) {
     return;
   }
 
@@ -266,6 +269,10 @@ function initMeasuredPlayback() {
       dflash: true,
       serverImage: "./assets/gpu-server-a4000.webp",
       serverImageAlt: "GPU server tower with one small A4000-class GPU card beside it",
+      serverGpu: "NVIDIA RTX A4000 x1",
+      serverGpuCount: "1",
+      serverVram: "15 GB",
+      serverSummary: "Remote LAN · subnet B. GPU server with an Intel Core i7-12700 CPU, one NVIDIA RTX A4000 GPU with 15 GB VRAM, 32 GB system memory, 1 gigabit per second uplink and downlink, and RTT approximately 50 milliseconds.",
     }],
     ["case-2", {
       model: "hy4-770b-iq1",
@@ -273,6 +280,10 @@ function initMeasuredPlayback() {
       dflash: true,
       serverImage: "./assets/gpu-server-a4000-x4.webp",
       serverImageAlt: "GPU server tower with four small A4000-class GPU cards beside it",
+      serverGpu: "NVIDIA RTX A4000 x4",
+      serverGpuCount: "4",
+      serverVram: "15 GB x4",
+      serverSummary: "Remote LAN · subnet B. GPU server with an Intel Core i7-12700 CPU, four NVIDIA RTX A4000 GPUs with 15 GB VRAM each, 32 GB system memory, 1 gigabit per second uplink and downlink, and RTT approximately 50 milliseconds.",
     }],
   ]);
 
@@ -512,6 +523,10 @@ function initMeasuredPlayback() {
     prompt.value = configuration.prompt;
     serverImage.src = configuration.serverImage;
     serverImage.alt = configuration.serverImageAlt;
+    serverGpu.textContent = configuration.serverGpu;
+    serverGpu.dataset.simGpuCount = configuration.serverGpuCount;
+    serverVram.textContent = configuration.serverVram;
+    serverSummary.textContent = configuration.serverSummary;
     setDflashEnabled(configuration.dflash);
     playbackTokens = makePlaybackTokens(presetResponses.get(configuration.prompt) || presetResponses.get(defaultPrompt));
     syncConfiguration();

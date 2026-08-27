@@ -1851,6 +1851,12 @@ h3 {
   line-height: 1.25;
 }
 
+[data-sim-server-gpu][data-sim-gpu-count="4"] {
+  overflow-wrap: normal;
+  font-size: 11px;
+  white-space: nowrap;
+}
+
 .sim-machine-specs dd.is-pending,
 .sim-machine-specs dd.is-zero {
   color: #9a9792;
