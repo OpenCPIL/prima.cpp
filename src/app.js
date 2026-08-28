@@ -1,5 +1,5 @@
 import { presetConversations } from "./preset-conversations.js?v=appended-presets-v2-20260823";
-import { hy4ReplayData } from "./hy4-replay-data.js?v=native-baselines-v5-20260828";
+import { hy4ReplayData } from "./hy4-replay-data.js?v=home-visible-stop-v6-20260828";
 import { renderMarkdownInto } from "./markdown-renderer.js";
 
 document.documentElement.classList.add("js");
@@ -390,9 +390,12 @@ function initMeasuredPlayback() {
     if (recordedPrompt) {
       results.forEach((result) => {
         const measurement = recordedPrompt.results[result.id];
-        const firstTokenAtSeconds = measurement?.events?.[0]?.[0] ?? 0;
+        const sourceEvents = measurement?.replayExcludesFinalEos
+          ? measurement.events.slice(0, -1)
+          : measurement?.events;
+        const firstTokenAtSeconds = sourceEvents?.[0]?.[0] ?? 0;
         let removedAnomalySeconds = 0;
-        result.recordedEvents = measurement?.events?.map(([atSeconds, gapSeconds, delta, ...metadata], index) => {
+        result.recordedEvents = sourceEvents?.map(([atSeconds, gapSeconds, delta, ...metadata], index) => {
           const tokenOrdinal = index + 1;
           const replayGapSeconds = measurement.replayGapOverridesSeconds?.[tokenOrdinal] ?? gapSeconds;
           if (gapSeconds !== null && replayGapSeconds < gapSeconds) {
