@@ -1,4 +1,5 @@
 import { presetConversations } from "./preset-conversations.js?v=appended-presets-v2-20260823";
+import { hy4ReplayData } from "./hy4-replay-data.js?v=first50-audited-v1-20260828";
 import { renderMarkdownInto } from "./markdown-renderer.js";
 
 document.documentElement.classList.add("js");
@@ -239,6 +240,7 @@ function initMeasuredPlayback() {
   const simulator = form.closest("[data-simulator]") || form;
   const simulationSection = form.closest("[data-slide]") || simulator;
   const results = [...form.querySelectorAll("[data-sim-result]")].map((panel) => ({
+    id: panel.dataset.simResultId,
     panel,
     output: panel.querySelector("[data-sim-result-output]"),
     status: panel.querySelector("[data-sim-result-status]"),
@@ -251,10 +253,12 @@ function initMeasuredPlayback() {
     ttftOn: Number(panel.dataset.simTtftOn || 0),
     playbackRate: Number(panel.dataset.simRateOn || 0),
     ttftMs: Number(panel.dataset.simTtftOn || 0),
+    recordedEvents: null,
+    observedMeanInterEventSeconds: null,
     visibleTokens: 0,
   }));
 
-  if (!(caseSelect instanceof HTMLSelectElement) || !(serverImage instanceof HTMLImageElement) || !serverGpu || !serverVram || !serverSummary || !prompt || !output || !send || !reset || !pause || !model || !dflash || !status || !elapsed || !tokenCount || !rate || results.length !== 3 || results.some((result) => !result.output || !result.status || !result.elapsed || !result.tokenCount || !result.rateOutput)) {
+  if (!(caseSelect instanceof HTMLSelectElement) || !(serverImage instanceof HTMLImageElement) || !serverGpu || !serverVram || !serverSummary || !prompt || !output || !send || !reset || !pause || !model || !dflash || !status || !elapsed || !tokenCount || !rate || results.length !== 3 || results.some((result) => !result.id || !result.output || !result.status || !result.elapsed || !result.tokenCount || !result.rateOutput)) {
     return;
   }
 
@@ -319,7 +323,16 @@ function initMeasuredPlayback() {
   }
 
   function supportsDflash() {
-    return model instanceof HTMLSelectElement && model.value === "qwen38-27b-q8";
+    return caseSelect.value === "case-1" && model instanceof HTMLSelectElement && model.value === "qwen38-27b-q8";
+  }
+
+  function getRecordedPrompt() {
+    if (caseSelect.value !== "case-2" || !(model instanceof HTMLSelectElement) || model.value !== "hy4-770b-iq1") return null;
+    return hy4ReplayData.prompts[prompt.value] || null;
+  }
+
+  function hasPlaybackData() {
+    return supportsDflash() || Boolean(getRecordedPrompt());
   }
 
   function formatTokenRate(value) {
@@ -329,21 +342,60 @@ function initMeasuredPlayback() {
     });
   }
 
+  function formatEventInterval(value) {
+    return value.toLocaleString("en-US", {
+      minimumFractionDigits: 3,
+      maximumFractionDigits: 3,
+    });
+  }
+
+  function getResultEventCount(result) {
+    return result.recordedEvents?.length ?? playbackTokens.length;
+  }
+
   function getResultDurationMs(result) {
+    if (result.recordedEvents?.length) return result.recordedEvents.at(-1)[0] * 1000;
     if (result.playbackRate <= 0 || playbackTokens.length === 0) return 0;
     const generationDurationMs = ((Math.max(0, playbackTokens.length - 1)) / result.playbackRate) * 1000;
     return result.ttftMs + generationDurationMs;
   }
 
   function getVisibleTokenCount(result) {
+    if (result.recordedEvents) {
+      let low = 0;
+      let high = result.recordedEvents.length;
+      while (low < high) {
+        const middle = Math.floor((low + high) / 2);
+        if (result.recordedEvents[middle][0] * 1000 <= elapsedMs) low = middle + 1;
+        else high = middle;
+      }
+      return low;
+    }
     if (result.playbackRate <= 0 || elapsedMs < result.ttftMs || playbackTokens.length === 0) return 0;
     const generationElapsedMs = Math.max(0, elapsedMs - result.ttftMs);
     return Math.min(playbackTokens.length, 1 + Math.floor((generationElapsedMs / 1000) * result.playbackRate));
   }
 
   function syncResultRates() {
+    const recordedPrompt = getRecordedPrompt();
+    if (recordedPrompt) {
+      results.forEach((result) => {
+        const measurement = recordedPrompt.results[result.id];
+        result.recordedEvents = measurement?.events || null;
+        result.observedMeanInterEventSeconds = measurement?.observedMeanInterEventSeconds ?? null;
+        result.ttftMs = (measurement?.ttftSeconds ?? 0) * 1000;
+        result.playbackRate = measurement ? 1 / measurement.observedMeanInterEventSeconds : 0;
+        result.panel.classList.toggle("is-measurement-missing", !measurement);
+      });
+      playbackRate = recordedPrompt.results.prima ? 1 / recordedPrompt.results.prima.observedMeanInterEventSeconds : 0;
+      simulatedDurationMs = Math.max(...results.map(getResultDurationMs), 0);
+      return;
+    }
+
     const dflashEnabled = isDflashEnabled();
     results.forEach((result) => {
+      result.recordedEvents = null;
+      result.observedMeanInterEventSeconds = null;
       result.playbackRate = dflashEnabled ? result.rateOn : result.rateOff;
       result.ttftMs = dflashEnabled ? result.ttftOn : result.ttftOff;
       result.panel.classList.toggle("is-measurement-missing", result.playbackRate === 0);
@@ -376,35 +428,46 @@ function initMeasuredPlayback() {
   }
 
   function updateTelemetry() {
-    const enabled = supportsDflash();
+    const recordedReplay = Boolean(getRecordedPrompt());
+    const available = hasPlaybackData();
     elapsed.textContent = `${(elapsedMs / 1000).toFixed(1)} s`;
     tokenCount.textContent = playbackState === "idle" || playbackState === "unavailable" ? "0" : `${visibleTokens}`;
-    rate.textContent = enabled ? `${formatTokenRate(playbackRate)} tok/s` : "—";
+    rate.textContent = recordedReplay
+      ? `${formatEventInterval(getRecordedPrompt().results.prima.observedMeanInterEventSeconds)} s/evt`
+      : available
+        ? `${formatTokenRate(playbackRate)} tok/s`
+        : "—";
 
     results.forEach((result) => {
       const resultDurationMs = getResultDurationMs(result);
       const resultElapsedMs = Math.min(elapsedMs, resultDurationMs);
       result.elapsed.textContent = `${(resultElapsedMs / 1000).toFixed(1)} s`;
       result.tokenCount.textContent = playbackState === "idle" || playbackState === "unavailable" ? "0" : `${result.visibleTokens}`;
-      result.rateOutput.textContent = enabled ? `${formatTokenRate(result.playbackRate)} tok/s` : "—";
+      result.rateOutput.textContent = recordedReplay && result.observedMeanInterEventSeconds
+        ? `${formatEventInterval(result.observedMeanInterEventSeconds)} s/evt`
+        : available
+          ? `${formatTokenRate(result.playbackRate)} tok/s`
+          : "—";
+      result.rateOutput.title = recordedReplay ? "Measured mean interval between the first 50 visible SSE output events" : "Measured output rate";
       const waitingForFirstToken = playbackState === "streaming" && result.playbackRate > 0 && elapsedMs < result.ttftMs;
       result.panel.classList.toggle("is-awaiting-first-token", waitingForFirstToken);
       if (playbackState === "streaming") {
         if (result.playbackRate === 0) result.status.textContent = "Pending";
         else if (waitingForFirstToken) result.status.textContent = "Waiting";
-        else if (result.visibleTokens >= playbackTokens.length) result.status.textContent = "Complete";
+        else if (result.visibleTokens >= getResultEventCount(result)) result.status.textContent = "Complete";
         else result.status.textContent = "Running";
       }
     });
 
-    const progress = playbackTokens.length ? visibleTokens / playbackTokens.length : 0;
+    const totalEvents = Math.max(...results.map(getResultEventCount), 0);
+    const progress = totalEvents ? visibleTokens / totalEvents : 0;
     packetStream?.style.setProperty("--sim-progress", progress.toFixed(4));
     packetStream?.style.setProperty("--sim-progress-percent", `${(progress * 100).toFixed(2)}%`);
     if (packetStream) packetStream.dataset.pulse = String(visibleTokens % 4);
   }
 
   function updateInterface() {
-    const enabled = supportsDflash();
+    const enabled = hasPlaybackData();
     const active = playbackState === "streaming" || playbackState === "paused" || playbackState === "suspended";
     const streaming = playbackState === "streaming";
 
@@ -451,7 +514,7 @@ function initMeasuredPlayback() {
     };
     status.textContent = statusText[playbackState];
     results.forEach((result) => {
-      const resultComplete = result.playbackRate > 0 && result.visibleTokens >= playbackTokens.length;
+      const resultComplete = result.playbackRate > 0 && result.visibleTokens >= getResultEventCount(result);
       if (result.playbackRate === 0) result.status.textContent = "Pending";
       else if (playbackState === "streaming" && resultComplete) result.status.textContent = "Complete";
       else result.status.textContent = statusText[playbackState];
@@ -465,12 +528,15 @@ function initMeasuredPlayback() {
       const nextVisibleTokens = getVisibleTokenCount(result);
       if (nextVisibleTokens !== result.visibleTokens || result.playbackRate === 0) {
         result.visibleTokens = nextVisibleTokens;
+        const visibleOutput = result.recordedEvents
+          ? result.recordedEvents.slice(0, result.visibleTokens).map((event) => event[2]).join("")
+          : playbackTokens.slice(0, result.visibleTokens).join("");
         setOutputText(
           result,
           result.visibleTokens > 0
-            ? playbackTokens.slice(0, result.visibleTokens).join("")
+            ? visibleOutput
             : result.playbackRate === 0
-              ? "A4000 baseline pending · 0 tok/s"
+              ? "No measured playback for this configuration."
               : "",
         );
       }
@@ -508,10 +574,10 @@ function initMeasuredPlayback() {
     cancelPlaybackFrame();
     elapsedMs = 0;
     visibleTokens = 0;
-    playbackState = supportsDflash() ? "idle" : "unavailable";
+    playbackState = hasPlaybackData() ? "idle" : "unavailable";
     results.forEach((result) => {
       result.visibleTokens = 0;
-      setOutputText(result, supportsDflash() ? "Press Run to begin." : "No measured playback for this model.");
+      setOutputText(result, hasPlaybackData() ? "Press Run to begin." : "No measured playback for this model.");
     });
     updateInterface();
   }
@@ -534,7 +600,7 @@ function initMeasuredPlayback() {
   }
 
   function startPlayback() {
-    if (!supportsDflash()) {
+    if (!hasPlaybackData()) {
       resetPlayback();
       return;
     }
@@ -544,7 +610,7 @@ function initMeasuredPlayback() {
     visibleTokens = 0;
     results.forEach((result) => {
       result.visibleTokens = 0;
-      setOutputText(result, result.playbackRate === 0 ? "A4000 baseline pending · 0 tok/s" : "");
+      setOutputText(result, result.playbackRate === 0 ? "No measured playback for this configuration." : "");
     });
 
     if (reduceMotion.matches) {
