@@ -218,7 +218,7 @@ function initMeasuredPlayback() {
   const form = document.querySelector("[data-sim-form]");
   if (!form) return;
 
-  const caseSelect = document.querySelector("[data-sim-case]");
+  const testbedSelect = document.querySelector("[data-sim-testbed]");
   const serverImage = document.querySelector("[data-sim-server-image]");
   const serverGpu = document.querySelector("[data-sim-server-gpu]");
   const serverVram = document.querySelector("[data-sim-server-vram]");
@@ -258,20 +258,21 @@ function initMeasuredPlayback() {
     visibleTokens: 0,
   }));
 
-  if (!(caseSelect instanceof HTMLSelectElement) || !(serverImage instanceof HTMLImageElement) || !serverGpu || !serverVram || !serverSummary || !prompt || !output || !send || !reset || !pause || !model || !dflash || !status || !elapsed || !tokenCount || !rate || results.length !== 3 || results.some((result) => !result.id || !result.output || !result.status || !result.elapsed || !result.tokenCount || !result.rateOutput)) {
+  if (!(testbedSelect instanceof HTMLSelectElement) || !(serverImage instanceof HTMLImageElement) || !serverGpu || !serverVram || !serverSummary || !prompt || !output || !send || !reset || !pause || !model || !dflash || !status || !elapsed || !tokenCount || !rate || results.length !== 3 || results.some((result) => !result.id || !result.output || !result.status || !result.elapsed || !result.tokenCount || !result.rateOutput)) {
     return;
   }
 
   let playbackRate = 15.2;
-  const defaultCase = "case-1";
+  const defaultTestbed = "testbed-1";
   const defaultPrompt = presetConversations[0].id;
   const presetResponses = new Map(presetConversations.map((preset) => [preset.id, preset]));
   const promptOptions = new Map([
-    ["case-1", presetConversations.map((preset) => ({ value: preset.id, label: preset.prompt }))],
-    ["case-2", Object.entries(hy4ReplayData.prompts).map(([value, replay]) => ({ value, label: replay.prompt }))],
+    ["testbed-1", presetConversations.map((preset) => ({ value: preset.id, label: preset.prompt }))],
+    ["testbed-2", Object.entries(hy4ReplayData.prompts).map(([value, replay]) => ({ value, label: replay.prompt }))],
   ]);
-  const caseConfigurations = new Map([
-    ["case-1", {
+  const testbedConfigurations = new Map([
+    ["testbed-1", {
+      label: "TESTBED 1",
       model: "qwen38-27b-q8",
       prompt: defaultPrompt,
       dflash: true,
@@ -282,7 +283,8 @@ function initMeasuredPlayback() {
       serverVram: "16 GB",
       serverSummary: "Remote LAN · subnet B. GPU server with an Intel Core i7-12700 CPU, one NVIDIA RTX A4000 GPU with 16 GB VRAM, 32 GB system memory, 1 gigabit per second uplink and downlink, and RTT approximately 50 milliseconds.",
     }],
-    ["case-2", {
+    ["testbed-2", {
+      label: "TESTBED 2",
       model: "hy4-770b-iq1",
       prompt: "model-name",
       dflash: true,
@@ -294,6 +296,10 @@ function initMeasuredPlayback() {
       serverSummary: "Remote LAN · subnet B. GPU server with an Intel Core i7-12700 CPU, four NVIDIA RTX A4000 GPUs with 16 GB VRAM each, 32 GB system memory, 1 gigabit per second uplink and downlink, and RTT approximately 50 milliseconds.",
     }],
   ]);
+  const modelTestbeds = new Map([
+    ["qwen38-27b-q8", ["testbed-1"]],
+    ["hy4-770b-iq1", ["testbed-2"]],
+  ]);
 
   function makePlaybackTokens(preset) {
     const tokens = Array.isArray(preset.tokens) ? preset.tokens : [];
@@ -303,9 +309,22 @@ function initMeasuredPlayback() {
     return [...tokens];
   }
 
-  function syncPromptOptions(caseId) {
-    const options = promptOptions.get(caseId) || promptOptions.get(defaultCase);
+  function syncPromptOptions(testbedId) {
+    const options = promptOptions.get(testbedId) || promptOptions.get(defaultTestbed);
     prompt.replaceChildren(...options.map(({ value, label }) => new Option(label, value)));
+  }
+
+  function syncTestbedOptions(modelId, preferredTestbedId) {
+    const availableTestbeds = modelTestbeds.get(modelId) || [defaultTestbed];
+    const selectedTestbed = availableTestbeds.includes(preferredTestbedId)
+      ? preferredTestbedId
+      : availableTestbeds[0];
+    testbedSelect.replaceChildren(...availableTestbeds.map((testbedId) => {
+      const configuration = testbedConfigurations.get(testbedId);
+      return new Option(configuration?.label || testbedId.toUpperCase(), testbedId);
+    }));
+    testbedSelect.value = selectedTestbed;
+    return selectedTestbed;
   }
 
   let playbackTokens = makePlaybackTokens(presetResponses.get(defaultPrompt));
@@ -332,11 +351,11 @@ function initMeasuredPlayback() {
   }
 
   function supportsDflash() {
-    return caseSelect.value === "case-1" && model instanceof HTMLSelectElement && model.value === "qwen38-27b-q8";
+    return testbedSelect.value === "testbed-1" && model instanceof HTMLSelectElement && model.value === "qwen38-27b-q8";
   }
 
   function getRecordedPrompt() {
-    if (caseSelect.value !== "case-2" || !(model instanceof HTMLSelectElement) || model.value !== "hy4-770b-iq1") return null;
+    if (testbedSelect.value !== "testbed-2" || !(model instanceof HTMLSelectElement) || model.value !== "hy4-770b-iq1") return null;
     return hy4ReplayData.prompts[prompt.value] || null;
   }
 
@@ -621,11 +640,12 @@ function initMeasuredPlayback() {
     updateInterface();
   }
 
-  function applyCaseConfiguration(caseId) {
-    const configuration = caseConfigurations.get(caseId) || caseConfigurations.get(defaultCase);
-    caseSelect.value = caseConfigurations.has(caseId) ? caseId : defaultCase;
+  function applyTestbedConfiguration(testbedId) {
+    const resolvedTestbed = testbedConfigurations.has(testbedId) ? testbedId : defaultTestbed;
+    const configuration = testbedConfigurations.get(resolvedTestbed);
     model.value = configuration.model;
-    syncPromptOptions(caseSelect.value);
+    syncTestbedOptions(configuration.model, resolvedTestbed);
+    syncPromptOptions(resolvedTestbed);
     prompt.value = configuration.prompt;
     serverImage.src = configuration.serverImage;
     serverImage.alt = configuration.serverImageAlt;
@@ -634,7 +654,7 @@ function initMeasuredPlayback() {
     serverVram.textContent = configuration.serverVram;
     serverSummary.textContent = configuration.serverSummary;
     setDflashEnabled(configuration.dflash);
-    if (caseSelect.value === "case-1") {
+    if (resolvedTestbed === "testbed-1") {
       playbackTokens = makePlaybackTokens(presetResponses.get(configuration.prompt) || presetResponses.get(defaultPrompt));
     }
     syncConfiguration();
@@ -735,19 +755,19 @@ function initMeasuredPlayback() {
   }
 
   model.addEventListener("change", () => {
-    syncConfiguration();
-    resetPlayback();
+    const testbedId = syncTestbedOptions(model.value, testbedSelect.value);
+    applyTestbedConfiguration(testbedId);
   });
 
   prompt.addEventListener("change", () => {
-    if (caseSelect.value === "case-1") {
+    if (testbedSelect.value === "testbed-1") {
       playbackTokens = makePlaybackTokens(presetResponses.get(prompt.value) || presetResponses.get(defaultPrompt));
     }
     syncResultRates();
     resetPlayback();
   });
 
-  caseSelect.addEventListener("change", () => applyCaseConfiguration(caseSelect.value));
+  testbedSelect.addEventListener("change", () => applyTestbedConfiguration(testbedSelect.value));
 
   document.addEventListener("visibilitychange", syncAutomaticPlayback);
 
@@ -777,7 +797,7 @@ function initMeasuredPlayback() {
     reduceMotion.addListener(applySimulationMotionPreference);
   }
 
-  applyCaseConfiguration(caseSelect.value);
+  applyTestbedConfiguration(testbedSelect.value);
 }
 
 initMeasuredPlayback();

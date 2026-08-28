@@ -18,7 +18,7 @@
     <link rel="preload" as="font" href="./assets/fonts/Geist-Variable.woff2" type="font/woff2" crossorigin />
     <link rel="preload" as="image" href="./assets/hero-topology.webp" />
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.18.1/dist/katex.min.css" crossorigin="anonymous" />
-    <link rel="stylesheet" href="./src/styles.css?v=case2-gpu-specs-x4-v1-20260827" />
+    <link rel="stylesheet" href="./src/styles.css?v=testbed-controls-v7-20260828" />
     <title>Prima Lab — Local AI, beyond one device</title>
   </head>
   <body>
@@ -219,17 +219,53 @@
       <section class="screen screen--simulation" id="simulation" data-slide="simulation" aria-labelledby="simulation-title">
         <div class="simulation-intro simulation-intro--playground reveal">
           <h2 id="simulation-title">Playground</h2>
-          <label class="sim-case-field" for="simulation-case">
-            <span>Case</span>
-            <select id="simulation-case" data-sim-case>
-              <option value="case-1" selected>CASE 1</option>
-              <option value="case-2">CASE 2</option>
-            </select>
-          </label>
         </div>
 
         <div class="simulator-shell reveal reveal--late" data-simulator>
-          <figure class="sim-topology sim-topology--devices" aria-labelledby="sim-topology-caption">
+          <form class="sim-console" data-sim-form aria-describedby="simulation-disclosure simulation-boundary">
+            <div class="sim-controls-panel">
+              <div class="sim-model-cluster">
+                <label class="sim-model-field" for="simulation-model">
+                  <span>Model · quantization</span>
+                  <select id="simulation-model" data-sim-model>
+                    <option value="qwen38-27b-q8" selected>Qwen3.8-27B · Q8</option>
+                    <option value="hy4-770b-iq1">HY4-770B · IQ1</option>
+                  </select>
+                </label>
+                <span class="sr-only">Qwen3.8-27B · Q8_0</span>
+
+                <label class="sim-switch" data-sim-dflash-control>
+                  <input type="checkbox" role="switch" checked data-sim-dflash aria-describedby="dflash-help" />
+                  <span class="sim-switch-track" aria-hidden="true"><b></b></span>
+                  <span><strong>DFlash2</strong><small class="sr-only" data-sim-dflash-state>ON · measured playback available</small></span>
+                </label>
+                <p class="sim-switch-help sr-only" id="dflash-help">Toggle between the measured DFlash2 on and off rates for this model.</p>
+              </div>
+
+              <label class="sim-testbed-field" for="simulation-testbed">
+                <span>Testbed</span>
+                <select id="simulation-testbed" data-sim-testbed>
+                  <option value="testbed-1" selected>TESTBED 1</option>
+                </select>
+              </label>
+
+              <label class="sim-prompt-label sr-only" for="simulation-prompt">Preset question</label>
+              <select class="sim-prompt-select" id="simulation-prompt" data-sim-prompt>
+                <option value="math" selected>Find every residue class n modulo 12 for which n² + 3n + 2 is divisible by 12.</option>
+                <option value="cs">Write a Python function that merges overlapping closed intervals.</option>
+                <option value="literature">Analyze how perspective and silence create emotion in “The lone sail fades…”</option>
+              </select>
+
+              <div class="sim-actions">
+                <button class="button button--primary" type="submit" data-sim-send aria-controls="home-response server-response simulation-response">
+                  <span data-label>Run</span><i class="sim-action-icon sim-run-icon" aria-hidden="true"></i><i class="sim-action-icon sim-stop-icon" aria-hidden="true"></i>
+                </button>
+                <button type="button" data-sim-pause disabled hidden aria-hidden="true" tabindex="-1"><span>Pause</span></button>
+                <button type="button" data-sim-reset disabled hidden aria-hidden="true" tabindex="-1"><span>Reset</span></button>
+              </div>
+            </div>
+
+            <figure class="sim-topology sim-topology--devices" aria-labelledby="sim-topology-caption">
             <article class="sim-machine-card sim-machine-card--home" aria-label="Home Laptop in the home network">
               <header class="sim-machine-head">
                 <div><span>Home LAN</span><h3>Home Laptop</h3></div>
@@ -281,41 +317,7 @@
               <span class="sr-only" data-sim-server-summary>Remote LAN · subnet B. GPU server with an Intel Core i7-12700 CPU, one NVIDIA RTX A4000 GPU with 16 GB VRAM, 32 GB system memory, 1 gigabit per second uplink and downlink, and RTT approximately 50 milliseconds.</span>
             </article>
             <figcaption class="sr-only" id="sim-topology-caption">Two heterogeneous devices across different subnets. Network figures are observed from the laptop and apply to the DFlash 2-enabled trace.</figcaption>
-          </figure>
-
-          <form class="sim-console" data-sim-form aria-describedby="simulation-disclosure simulation-boundary">
-            <div class="sim-controls-panel">
-              <label class="sim-model-field" for="simulation-model">
-                <span>Model · quantization</span>
-                <select id="simulation-model" data-sim-model>
-                  <option value="qwen38-27b-q8" selected>Qwen3.8-27B · Q8</option>
-                  <option value="hy4-770b-iq1">HY4-770B · IQ1</option>
-                </select>
-              </label>
-              <span class="sr-only">Qwen3.8-27B · Q8_0</span>
-
-              <label class="sim-switch" data-sim-dflash-control>
-                <input type="checkbox" role="switch" checked data-sim-dflash aria-describedby="dflash-help" />
-                <span class="sim-switch-track" aria-hidden="true"><b></b></span>
-                <span><strong>DFlash2</strong><small class="sr-only" data-sim-dflash-state>ON · measured playback available</small></span>
-              </label>
-              <p class="sim-switch-help sr-only" id="dflash-help">Toggle between the measured DFlash2 on and off rates for this model.</p>
-
-              <label class="sim-prompt-label sr-only" for="simulation-prompt">Preset question</label>
-              <select class="sim-prompt-select" id="simulation-prompt" data-sim-prompt>
-                <option value="math" selected>Find every residue class n modulo 12 for which n² + 3n + 2 is divisible by 12.</option>
-                <option value="cs">Write a Python function that merges overlapping closed intervals.</option>
-                <option value="literature">Analyze how perspective and silence create emotion in “The lone sail fades…”</option>
-              </select>
-
-              <div class="sim-actions">
-                <button class="button button--primary" type="submit" data-sim-send aria-controls="home-response server-response simulation-response">
-                  <span data-label>Run</span><i class="sim-action-icon sim-run-icon" aria-hidden="true"></i><i class="sim-action-icon sim-stop-icon" aria-hidden="true"></i>
-                </button>
-                <button type="button" data-sim-pause disabled hidden aria-hidden="true" tabindex="-1"><span>Pause</span></button>
-                <button type="button" data-sim-reset disabled hidden aria-hidden="true" tabindex="-1"><span>Reset</span></button>
-              </div>
-            </div>
+            </figure>
 
             <div class="sim-results" aria-label="Side-by-side inference playback comparison">
               <article class="sim-response-panel" data-sim-result data-sim-result-id="home" data-sim-rate-off="3.6" data-sim-rate-on="6.8" data-sim-ttft-off="3029.83" data-sim-ttft-on="3506.99">
@@ -439,6 +441,6 @@
     </main>
 
     <script defer src="./vendor/lucide-prima.js"></script>
-    <script type="module" src="./src/app.js?v=home-visible-stop-v6-20260828"></script>
+    <script type="module" src="./src/app.js?v=testbed-controls-v7-20260828"></script>
   </body>
 </html>

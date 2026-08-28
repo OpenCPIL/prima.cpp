@@ -1725,21 +1725,6 @@ h3 {
   letter-spacing: -0.065em;
 }
 
-.sim-case-field {
-  display: grid;
-  grid-template-columns: auto minmax(150px, 190px);
-  align-items: center;
-  gap: 10px;
-  width: max-content;
-}
-
-.sim-case-field > span {
-  color: var(--muted);
-  font: 600 10px/1.2 "Geist Mono", monospace;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-}
-
 .screen--simulation {
   min-height: auto;
   align-content: start;
@@ -2241,20 +2226,22 @@ h3 {
   display: none;
 }
 
-.sim-model-field {
+.sim-model-field,
+.sim-testbed-field {
   position: relative;
   display: grid;
   gap: 9px;
 }
 
-.sim-model-field > span {
+.sim-model-field > span,
+.sim-testbed-field > span {
   color: var(--muted);
   font: 550 9px/1.2 "Geist Mono", monospace;
   letter-spacing: 0.06em;
   text-transform: uppercase;
 }
 
-.sim-case-field select,
+.sim-testbed-field select,
 .sim-model-field select,
 .sim-prompt-select {
   width: 100%;
@@ -2273,13 +2260,13 @@ h3 {
   transition: border-color 160ms ease, box-shadow 160ms ease;
 }
 
-.sim-case-field select:hover,
+.sim-testbed-field select:hover,
 .sim-model-field select:hover,
 .sim-prompt-select:hover {
   border-color: var(--ink);
 }
 
-.sim-case-field select:focus-visible,
+.sim-testbed-field select:focus-visible,
 .sim-model-field select:focus-visible,
 .sim-prompt-select:focus-visible {
   border-color: var(--orange);
@@ -2287,10 +2274,8 @@ h3 {
   box-shadow: 0 0 0 2px rgba(239, 91, 14, 0.16);
 }
 
-.sim-case-field select {
-  min-height: 38px;
-  padding-left: 13px;
-  background-position: calc(100% - 18px) 16px, calc(100% - 13px) 16px;
+.sim-testbed-field select {
+  padding-left: 17px;
   border-color: var(--ink);
   box-shadow: inset 4px 0 0 var(--orange);
 }
@@ -2301,35 +2286,49 @@ h3 {
 
 .sim-controls-panel {
   display: grid;
-  grid-template-columns: minmax(250px, 0.62fr) minmax(440px, 1.38fr);
-  gap: 12px 34px;
+  grid-template-columns: minmax(340px, 0.9fr) minmax(150px, 0.36fr) minmax(360px, 1.5fr) 86px;
+  align-items: end;
+  gap: 12px;
   padding-right: 0;
   border-right: 0;
   border-bottom: 1px solid var(--line);
 }
 
-.sim-controls-panel > .sim-model-field {
+.sim-model-cluster {
+  display: flex;
+  align-items: end;
+  gap: 12px;
+  min-width: 0;
+}
+
+.sim-model-cluster > .sim-model-field {
+  flex: 1 1 auto;
+  min-width: 0;
+}
+
+.sim-model-cluster > .sim-switch {
+  flex: 0 0 112px;
+}
+
+.sim-controls-panel > .sim-model-cluster {
   grid-column: 1;
   grid-row: 1;
 }
 
-.sim-controls-panel > .sim-switch {
-  grid-column: 1;
-  grid-row: 2 / span 2;
-  align-self: start;
-  margin-top: 0;
+.sim-controls-panel > .sim-testbed-field {
+  grid-column: 2;
+  grid-row: 1;
 }
 
 .sim-controls-panel > .sim-prompt-select {
-  grid-column: 2;
-  grid-row: 1 / span 2;
-  min-height: 90px;
+  grid-column: 3;
+  grid-row: 1;
   margin-top: 0;
 }
 
 .sim-controls-panel > .sim-actions {
-  grid-column: 2;
-  grid-row: 3;
+  grid-column: 4;
+  grid-row: 1;
   margin-top: 0;
 }
 
@@ -3787,8 +3786,8 @@ h3 {
     gap: 14px;
   }
 
-  .sim-controls-panel > .sim-model-field,
-  .sim-controls-panel > .sim-switch,
+  .sim-controls-panel > .sim-model-cluster,
+  .sim-controls-panel > .sim-testbed-field,
   .sim-controls-panel > .sim-prompt-select,
   .sim-controls-panel > .sim-actions {
     grid-column: 1;
@@ -3821,8 +3820,7 @@ h3 {
     font-size: 52px;
   }
 
-  .sim-case-field {
-    grid-template-columns: 52px minmax(0, 1fr);
+  .sim-testbed-field {
     width: 100%;
   }
 
@@ -3909,14 +3907,9 @@ h3 {
     gap: clamp(4px, 0.7vh, 7px);
   }
 
-  .sim-case-field select {
-    min-height: clamp(32px, 4vh, 38px);
-    background-position: calc(100% - 18px) 50%, calc(100% - 13px) 50%;
-  }
-
   .simulator-shell {
     display: grid;
-    grid-template-rows: minmax(205px, 29vh) minmax(0, 1fr) auto;
+    grid-template-rows: minmax(0, 1fr) auto;
     min-height: 0;
   }
 
@@ -4072,7 +4065,7 @@ h3 {
   }
 
   .sim-controls-panel {
-    grid-template-columns: minmax(230px, 0.72fr) minmax(112px, 0.3fr) minmax(360px, 1.48fr) 86px;
+    grid-template-columns: minmax(340px, 0.9fr) minmax(150px, 0.36fr) minmax(360px, 1.5fr) 86px;
     grid-template-rows: auto;
     align-items: end;
     gap: 12px;
@@ -4082,7 +4075,7 @@ h3 {
   .sim-console {
     display: grid;
     grid-template-columns: 1fr;
-    grid-template-rows: auto minmax(0, 1fr);
+    grid-template-rows: auto minmax(205px, 29vh) minmax(0, 1fr);
     min-height: 0;
   }
 
@@ -4093,27 +4086,27 @@ h3 {
 
   .sim-console > .sim-results {
     grid-column: 1;
+    grid-row: 3;
+  }
+
+  .sim-console > .sim-topology {
+    grid-column: 1;
     grid-row: 2;
   }
 
-  .sim-controls-panel > .sim-model-field,
-  .sim-controls-panel > .sim-switch,
+  .sim-controls-panel > .sim-model-cluster,
+  .sim-controls-panel > .sim-testbed-field,
   .sim-controls-panel > .sim-prompt-select,
   .sim-controls-panel > .sim-actions {
     grid-row: 1;
   }
 
-  .sim-controls-panel > .sim-model-field {
+  .sim-controls-panel > .sim-model-cluster {
     grid-column: 1;
   }
 
-  .sim-controls-panel > .sim-switch {
+  .sim-controls-panel > .sim-testbed-field {
     grid-column: 2;
-    align-self: end;
-    min-height: 46px;
-    margin: 0;
-    padding: 0;
-    border-bottom: 0;
   }
 
   .sim-controls-panel > .sim-prompt-select {
@@ -4137,11 +4130,13 @@ h3 {
     gap: 5px;
   }
 
-  .sim-model-field > span {
+  .sim-model-field > span,
+  .sim-testbed-field > span {
     font-size: 9px;
   }
 
-  .sim-model-field select {
+  .sim-model-field select,
+  .sim-testbed-field select {
     min-height: 46px;
     padding-left: 17px;
     background-color: transparent;
@@ -4149,6 +4144,14 @@ h3 {
     border-color: var(--ink);
     box-shadow: inset 4px 0 0 var(--orange);
     font-size: 13px;
+  }
+
+  .sim-model-cluster > .sim-switch {
+    align-self: end;
+    min-height: 46px;
+    margin: 0;
+    padding: 0;
+    border-bottom: 0;
   }
 
   .sim-switch > span:last-child strong {
