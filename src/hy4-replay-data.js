@@ -27,6 +27,7 @@ export const hy4ReplayData = {
           tokenCount: 96,
           ttftSeconds: 53.277147633,
           requestLevelAverageTpotSeconds: 1.31466909375,
+          replayTpotSeconds: 1.2011104150210525,
           observedMeanInterTokenSeconds: 1.3282019307263158,
           observedMedianInterTokenSeconds: 1.181633275,
           tail10MedianInterTokenSeconds: 1.2515662905,

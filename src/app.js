@@ -1,5 +1,5 @@
 import { presetConversations } from "./preset-conversations.js?v=appended-presets-v2-20260823";
-import { hy4ReplayData } from "./hy4-replay-data.js?v=zero-ttft-replay-v3-20260828";
+import { hy4ReplayData } from "./hy4-replay-data.js?v=replay-tpot-v4-20260828";
 import { renderMarkdownInto } from "./markdown-renderer.js";
 
 document.documentElement.classList.add("js");
@@ -351,10 +351,10 @@ function initMeasuredPlayback() {
     });
   }
 
-  function formatEventInterval(value) {
+  function formatReplayTpot(value) {
     return value.toLocaleString("en-US", {
-      minimumFractionDigits: 3,
-      maximumFractionDigits: 3,
+      minimumFractionDigits: 1,
+      maximumFractionDigits: 1,
     });
   }
 
@@ -405,7 +405,8 @@ function initMeasuredPlayback() {
             ...metadata,
           ];
         }) || null;
-        result.observedMeanInterEventSeconds = measurement?.requestLevelAverageTpotSeconds
+        result.observedMeanInterEventSeconds = measurement?.replayTpotSeconds
+          ?? measurement?.requestLevelAverageTpotSeconds
           ?? measurement?.observedMeanInterTokenSeconds
           ?? measurement?.observedMeanInterEventSeconds
           ?? null;
@@ -459,7 +460,7 @@ function initMeasuredPlayback() {
     elapsed.textContent = `${(elapsedMs / 1000).toFixed(1)} s`;
     tokenCount.textContent = playbackState === "idle" || playbackState === "unavailable" ? "0" : `${visibleTokens}`;
     rate.textContent = recordedReplay
-      ? `${formatEventInterval(getRecordedPrompt().results.prima.requestLevelAverageTpotSeconds)} s/token`
+      ? `${formatReplayTpot(getRecordedPrompt().results.prima.replayTpotSeconds)} s/tok`
       : available
         ? `${formatTokenRate(playbackRate)} tok/s`
         : "—";
@@ -471,12 +472,12 @@ function initMeasuredPlayback() {
       result.tokenCount.textContent = playbackState === "idle" || playbackState === "unavailable" ? "0" : `${result.visibleTokens}`;
       result.rateOutput.textContent = recordedReplay
         ? result.observedMeanInterEventSeconds
-          ? `${formatEventInterval(result.observedMeanInterEventSeconds)} s/token`
+          ? `${formatReplayTpot(result.observedMeanInterEventSeconds)} s/tok`
           : "—"
         : available
           ? `${formatTokenRate(result.playbackRate)} tok/s`
           : "—";
-      result.rateOutput.title = recordedReplay ? "Measured request-level average time per output token" : "Measured output rate";
+      result.rateOutput.title = recordedReplay ? "Average replay time per output token" : "Measured output rate";
       const waitingForFirstToken = playbackState === "streaming" && result.playbackRate > 0 && elapsedMs < result.ttftMs;
       result.panel.classList.toggle("is-awaiting-first-token", waitingForFirstToken);
       if (playbackState === "streaming") {
