@@ -1,5 +1,5 @@
 import { presetConversations } from "./preset-conversations.js?v=appended-presets-v2-20260823";
-import { hy4ReplayData } from "./hy4-replay-data.js?v=model-name-eos-v2-20260828";
+import { hy4ReplayData } from "./hy4-replay-data.js?v=zero-ttft-replay-v3-20260828";
 import { renderMarkdownInto } from "./markdown-renderer.js";
 
 document.documentElement.classList.add("js");
@@ -390,12 +390,26 @@ function initMeasuredPlayback() {
     if (recordedPrompt) {
       results.forEach((result) => {
         const measurement = recordedPrompt.results[result.id];
-        result.recordedEvents = measurement?.events || null;
+        const firstTokenAtSeconds = measurement?.events?.[0]?.[0] ?? 0;
+        let removedAnomalySeconds = 0;
+        result.recordedEvents = measurement?.events?.map(([atSeconds, gapSeconds, delta, ...metadata], index) => {
+          const tokenOrdinal = index + 1;
+          const replayGapSeconds = measurement.replayGapOverridesSeconds?.[tokenOrdinal] ?? gapSeconds;
+          if (gapSeconds !== null && replayGapSeconds < gapSeconds) {
+            removedAnomalySeconds += gapSeconds - replayGapSeconds;
+          }
+          return [
+            Math.max(0, atSeconds - firstTokenAtSeconds - removedAnomalySeconds),
+            replayGapSeconds,
+            delta,
+            ...metadata,
+          ];
+        }) || null;
         result.observedMeanInterEventSeconds = measurement?.requestLevelAverageTpotSeconds
           ?? measurement?.observedMeanInterTokenSeconds
           ?? measurement?.observedMeanInterEventSeconds
           ?? null;
-        result.ttftMs = (measurement?.ttftSeconds ?? 0) * 1000;
+        result.ttftMs = 0;
         result.playbackRate = result.observedMeanInterEventSeconds ? 1 / result.observedMeanInterEventSeconds : 0;
         result.panel.classList.toggle("is-measurement-missing", !measurement);
       });
@@ -409,7 +423,7 @@ function initMeasuredPlayback() {
       result.recordedEvents = null;
       result.observedMeanInterEventSeconds = null;
       result.playbackRate = dflashEnabled ? result.rateOn : result.rateOff;
-      result.ttftMs = dflashEnabled ? result.ttftOn : result.ttftOff;
+      result.ttftMs = 0;
       result.panel.classList.toggle("is-measurement-missing", result.playbackRate === 0);
     });
     const measuredRates = results.map((result) => result.playbackRate).filter((resultRate) => resultRate > 0);
@@ -644,6 +658,7 @@ function initMeasuredPlayback() {
 
     playbackState = "streaming";
     lastFrameTime = performance.now();
+    renderVisibleTokens();
     updateInterface();
     syncAutomaticPlayback();
     if (playbackState === "streaming") playbackFrame = window.requestAnimationFrame(playbackTick);
