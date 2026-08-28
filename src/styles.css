@@ -4244,6 +4244,156 @@ h3 {
   }
 }
 
+@media (max-width: 640px) {
+  .screen--simulation {
+    gap: 18px;
+    padding-top: 92px;
+    padding-bottom: 28px;
+  }
+
+  .simulation-intro--playground h2 {
+    font-size: clamp(44px, 12vw, 48px);
+  }
+
+  .sim-controls-panel {
+    grid-template-columns: minmax(0, 1fr) 124px;
+    gap: 10px;
+    padding: 12px 0 14px;
+  }
+
+  .sim-controls-panel > .sim-model-cluster {
+    grid-column: 1;
+    grid-row: 1;
+  }
+
+  .sim-controls-panel > .sim-testbed-field {
+    grid-column: 2;
+    grid-row: 1;
+  }
+
+  .sim-controls-panel > .sim-prompt-select {
+    grid-column: 1;
+    grid-row: 2;
+    min-width: 0;
+    min-height: 46px;
+    max-height: 46px;
+  }
+
+  .sim-controls-panel > .sim-actions {
+    grid-column: 2;
+    grid-row: 2;
+    min-width: 0;
+    margin: 0;
+  }
+
+  .sim-model-field,
+  .sim-testbed-field {
+    gap: 5px;
+    min-width: 0;
+  }
+
+  .sim-model-field select,
+  .sim-testbed-field select,
+  .sim-prompt-select {
+    min-width: 0;
+    min-height: 46px;
+    padding-right: 34px;
+    padding-left: 12px;
+    background-position: calc(100% - 17px) 20px, calc(100% - 12px) 20px;
+    font-size: 12px;
+  }
+
+  .sim-actions .button {
+    min-height: 46px;
+    padding-inline: 12px;
+  }
+
+  .sim-controls-panel:has(.sim-switch:not([hidden])) > .sim-model-cluster {
+    grid-column: 1 / -1;
+    grid-row: 1;
+  }
+
+  .sim-controls-panel:has(.sim-switch:not([hidden])) > .sim-testbed-field {
+    grid-column: 1;
+    grid-row: 2;
+  }
+
+  .sim-controls-panel:has(.sim-switch:not([hidden])) > .sim-actions {
+    grid-column: 2;
+    grid-row: 2;
+    align-self: end;
+  }
+
+  .sim-controls-panel:has(.sim-switch:not([hidden])) > .sim-prompt-select {
+    grid-column: 1 / -1;
+    grid-row: 3;
+  }
+
+  .sim-topology.sim-topology--devices {
+    gap: 14px;
+    padding: 18px 0 20px;
+  }
+
+  .sim-machine-card {
+    grid-template-rows: auto 142px auto;
+    padding: 14px;
+  }
+
+  .sim-machine-visual,
+  .sim-machine-visual img,
+  .sim-machine-visual--server img {
+    max-height: 142px;
+  }
+
+  .sim-link-map,
+  .sim-link-map--generated {
+    min-height: 142px;
+  }
+
+  .sim-results .sim-response-panel,
+  .sim-results .sim-response-panel:first-child,
+  .sim-results .sim-response-panel:last-child {
+    grid-template-rows: auto 112px auto;
+    min-height: 0;
+    padding: 16px 0;
+  }
+
+  .sim-response-head {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto auto;
+    align-items: baseline;
+    gap: 8px;
+  }
+
+  .sim-response-head > span:first-child {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .sim-response-head > span:last-child {
+    text-align: right;
+  }
+
+  .sim-results .sim-response {
+    min-height: 112px;
+    max-height: 112px;
+    padding: 12px 0;
+    font-size: 13px;
+    line-height: 1.5;
+  }
+
+  .sim-telemetry > div {
+    padding: 8px 7px;
+  }
+
+  .sim-disclaimer {
+    padding-top: 12px;
+    font-size: 8px;
+    line-height: 1.45;
+  }
+}
+
 @media (prefers-reduced-motion: reduce) {
   html {
     scroll-behavior: auto;
