@@ -228,13 +228,12 @@
                 <label class="sim-model-field" for="simulation-model">
                   <span>Model · quantization</span>
                   <select id="simulation-model" data-sim-model>
-                    <option value="qwen38-27b-q8" selected>Qwen3.8-27B · Q8</option>
-                    <option value="hy4-770b-iq1">HY4-770B · IQ1</option>
+                    <option value="hy4-770b-iq1" selected>HY4-770B · IQ1</option>
+                    <option value="qwen38-27b-q8">Qwen3.8-27B · Q8</option>
                   </select>
                 </label>
-                <span class="sr-only">Qwen3.8-27B · Q8_0</span>
 
-                <label class="sim-switch" data-sim-dflash-control>
+                <label class="sim-switch" data-sim-dflash-control hidden>
                   <input type="checkbox" role="switch" checked data-sim-dflash aria-describedby="dflash-help" />
                   <span class="sim-switch-track" aria-hidden="true"><b></b></span>
                   <span><strong>DFlash2</strong><small class="sr-only" data-sim-dflash-state>ON · measured playback available</small></span>
@@ -251,9 +250,7 @@
 
               <label class="sim-prompt-label sr-only" for="simulation-prompt">Preset question</label>
               <select class="sim-prompt-select" id="simulation-prompt" data-sim-prompt>
-                <option value="math" selected>Find every residue class n modulo 12 for which n² + 3n + 2 is divisible by 12.</option>
-                <option value="cs">Write a Python function that merges overlapping closed intervals.</option>
-                <option value="literature">Analyze how perspective and silence create emotion in “The lone sail fades…”</option>
+                <option value="model-name" selected>What is your model name and what can you do for me?</option>
               </select>
 
               <div class="sim-actions">
@@ -303,18 +300,18 @@
                 <span class="sim-network-badge"><i data-lucide="network" aria-hidden="true"></i>Ethernet</span>
               </header>
               <div class="sim-machine-visual sim-machine-visual--server">
-                <img src="./assets/gpu-server-a4000.webp" alt="GPU server tower with one small A4000-class GPU card beside it" width="900" height="755" data-sim-server-image />
+                <img src="./assets/gpu-server-a4000-x4.webp" alt="GPU server tower with four small A4000-class GPU cards beside it" width="900" height="755" data-sim-server-image />
               </div>
               <dl class="sim-machine-specs">
                 <div><dt>CPU</dt><dd>Intel Core i7-12700</dd></div>
                 <div><dt>System memory</dt><dd>32 GB</dd></div>
-                <div><dt>GPU</dt><dd data-sim-server-gpu>NVIDIA RTX A4000 x1</dd></div>
-                <div><dt>VRAM</dt><dd data-sim-server-vram>16 GB</dd></div>
+                <div><dt>GPU</dt><dd data-sim-server-gpu>NVIDIA RTX A4000 x4</dd></div>
+                <div><dt>VRAM</dt><dd data-sim-server-vram>16 GB x4</dd></div>
                 <div><dt>Uplink</dt><dd>1 Gbps</dd></div>
                 <div><dt>Downlink</dt><dd>1 Gbps</dd></div>
                 <div><dt>RTT</dt><dd>≈ 50 ms</dd></div>
               </dl>
-              <span class="sr-only" data-sim-server-summary>Remote LAN · subnet B. GPU server with an Intel Core i7-12700 CPU, one NVIDIA RTX A4000 GPU with 16 GB VRAM, 32 GB system memory, 1 gigabit per second uplink and downlink, and RTT approximately 50 milliseconds.</span>
+              <span class="sr-only" data-sim-server-summary>Remote LAN · subnet B. GPU server with an Intel Core i7-12700 CPU, four NVIDIA RTX A4000 GPUs with 16 GB VRAM each, 32 GB system memory, 1 gigabit per second uplink and downlink, and RTT approximately 50 milliseconds.</span>
             </article>
             <figcaption class="sr-only" id="sim-topology-caption">Two heterogeneous devices across different subnets. Network figures are observed from the laptop and apply to the DFlash 2-enabled trace.</figcaption>
             </figure>
@@ -323,7 +320,7 @@
               <article class="sim-response-panel" data-sim-result data-sim-result-id="home" data-sim-rate-off="3.6" data-sim-rate-on="6.8" data-sim-ttft-off="3029.83" data-sim-ttft-on="3506.99">
                 <div class="sim-response-head">
                   <span>Home Laptop · llama.cpp</span>
-                  <strong data-sim-result-rate-output>6.8 tok/s</strong>
+                  <strong data-sim-result-rate-output>5.9 s/tok</strong>
                   <span data-sim-result-status role="status" aria-live="polite">Ready</span>
                 </div>
                 <div class="sim-response" id="home-response" data-sim-result-output aria-busy="false">
@@ -338,7 +335,7 @@
               <article class="sim-response-panel" data-sim-result data-sim-result-id="server" data-sim-rate-off="1.357" data-sim-rate-on="0.786" data-sim-ttft-off="15867" data-sim-ttft-on="17969">
                 <div class="sim-response-head">
                   <span>GPU server · llama.cpp</span>
-                  <strong data-sim-result-rate-output>0.8 tok/s</strong>
+                  <strong data-sim-result-rate-output>2.7 s/tok</strong>
                   <span data-sim-result-status role="status" aria-live="polite">Ready</span>
                 </div>
                 <div class="sim-response" id="server-response" data-sim-result-output aria-busy="false">
@@ -353,7 +350,7 @@
               <article class="sim-response-panel sim-response-panel--prima" data-sim-result data-sim-result-id="prima" data-sim-rate-off="7.4" data-sim-rate-on="15.2" data-sim-ttft-off="1351.73" data-sim-ttft-on="1585.18">
                 <div class="sim-response-head">
                   <span>Home Laptop + GPU server · PRIMA</span>
-                  <strong data-sim-result-rate-output data-sim-rate>15.2 tok/s</strong>
+                  <strong data-sim-result-rate-output data-sim-rate>1.2 s/tok</strong>
                   <span data-sim-status data-sim-result-status role="status" aria-live="polite">Ready</span>
                 </div>
                 <div class="sim-response" id="simulation-response" data-sim-output data-sim-result-output aria-busy="false">
@@ -441,6 +438,6 @@
     </main>
 
     <script defer src="./vendor/lucide-prima.js"></script>
-    <script type="module" src="./src/app.js?v=testbed-controls-v7-20260828"></script>
+    <script type="module" src="./src/app.js?v=hy4-default-v8-20260828"></script>
   </body>
 </html>

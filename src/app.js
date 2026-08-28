@@ -267,12 +267,24 @@ function initMeasuredPlayback() {
   const defaultPrompt = presetConversations[0].id;
   const presetResponses = new Map(presetConversations.map((preset) => [preset.id, preset]));
   const promptOptions = new Map([
-    ["testbed-1", presetConversations.map((preset) => ({ value: preset.id, label: preset.prompt }))],
-    ["testbed-2", Object.entries(hy4ReplayData.prompts).map(([value, replay]) => ({ value, label: replay.prompt }))],
+    ["testbed-1", Object.entries(hy4ReplayData.prompts).map(([value, replay]) => ({ value, label: replay.prompt }))],
+    ["testbed-2", presetConversations.map((preset) => ({ value: preset.id, label: preset.prompt }))],
   ]);
   const testbedConfigurations = new Map([
     ["testbed-1", {
       label: "TESTBED 1",
+      model: "hy4-770b-iq1",
+      prompt: "model-name",
+      dflash: false,
+      serverImage: "./assets/gpu-server-a4000-x4.webp",
+      serverImageAlt: "GPU server tower with four small A4000-class GPU cards beside it",
+      serverGpu: "NVIDIA RTX A4000 x4",
+      serverGpuCount: "4",
+      serverVram: "16 GB x4",
+      serverSummary: "Remote LAN · subnet B. GPU server with an Intel Core i7-12700 CPU, four NVIDIA RTX A4000 GPUs with 16 GB VRAM each, 32 GB system memory, 1 gigabit per second uplink and downlink, and RTT approximately 50 milliseconds.",
+    }],
+    ["testbed-2", {
+      label: "TESTBED 2",
       model: "qwen38-27b-q8",
       prompt: defaultPrompt,
       dflash: true,
@@ -283,22 +295,10 @@ function initMeasuredPlayback() {
       serverVram: "16 GB",
       serverSummary: "Remote LAN · subnet B. GPU server with an Intel Core i7-12700 CPU, one NVIDIA RTX A4000 GPU with 16 GB VRAM, 32 GB system memory, 1 gigabit per second uplink and downlink, and RTT approximately 50 milliseconds.",
     }],
-    ["testbed-2", {
-      label: "TESTBED 2",
-      model: "hy4-770b-iq1",
-      prompt: "model-name",
-      dflash: true,
-      serverImage: "./assets/gpu-server-a4000-x4.webp",
-      serverImageAlt: "GPU server tower with four small A4000-class GPU cards beside it",
-      serverGpu: "NVIDIA RTX A4000 x4",
-      serverGpuCount: "4",
-      serverVram: "16 GB x4",
-      serverSummary: "Remote LAN · subnet B. GPU server with an Intel Core i7-12700 CPU, four NVIDIA RTX A4000 GPUs with 16 GB VRAM each, 32 GB system memory, 1 gigabit per second uplink and downlink, and RTT approximately 50 milliseconds.",
-    }],
   ]);
   const modelTestbeds = new Map([
-    ["qwen38-27b-q8", ["testbed-1"]],
-    ["hy4-770b-iq1", ["testbed-2"]],
+    ["hy4-770b-iq1", ["testbed-1"]],
+    ["qwen38-27b-q8", ["testbed-2"]],
   ]);
 
   function makePlaybackTokens(preset) {
@@ -351,11 +351,11 @@ function initMeasuredPlayback() {
   }
 
   function supportsDflash() {
-    return testbedSelect.value === "testbed-1" && model instanceof HTMLSelectElement && model.value === "qwen38-27b-q8";
+    return testbedSelect.value === "testbed-2" && model instanceof HTMLSelectElement && model.value === "qwen38-27b-q8";
   }
 
   function getRecordedPrompt() {
-    if (testbedSelect.value !== "testbed-2" || !(model instanceof HTMLSelectElement) || model.value !== "hy4-770b-iq1") return null;
+    if (testbedSelect.value !== "testbed-1" || !(model instanceof HTMLSelectElement) || model.value !== "hy4-770b-iq1") return null;
     return hy4ReplayData.prompts[prompt.value] || null;
   }
 
@@ -654,7 +654,7 @@ function initMeasuredPlayback() {
     serverVram.textContent = configuration.serverVram;
     serverSummary.textContent = configuration.serverSummary;
     setDflashEnabled(configuration.dflash);
-    if (resolvedTestbed === "testbed-1") {
+    if (resolvedTestbed === "testbed-2") {
       playbackTokens = makePlaybackTokens(presetResponses.get(configuration.prompt) || presetResponses.get(defaultPrompt));
     }
     syncConfiguration();
@@ -760,7 +760,7 @@ function initMeasuredPlayback() {
   });
 
   prompt.addEventListener("change", () => {
-    if (testbedSelect.value === "testbed-1") {
+    if (testbedSelect.value === "testbed-2") {
       playbackTokens = makePlaybackTokens(presetResponses.get(prompt.value) || presetResponses.get(defaultPrompt));
     }
     syncResultRates();
