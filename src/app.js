@@ -1,5 +1,5 @@
 import { presetConversations } from "./preset-conversations.js?v=appended-presets-v2-20260823";
-import { hy4ReplayData } from "./hy4-replay-data.js?v=home-visible-stop-v6-20260828";
+import { hy4ReplayData } from "./hy4-replay-data.js?v=hy4-prima-098-v11-20260828";
 import { renderMarkdownInto } from "./markdown-renderer.js";
 
 document.documentElement.classList.add("js");
@@ -371,9 +371,10 @@ function initMeasuredPlayback() {
   }
 
   function formatReplayTpot(value) {
+    const fractionDigits = value < 1 ? 2 : 1;
     return value.toLocaleString("en-US", {
-      minimumFractionDigits: 1,
-      maximumFractionDigits: 1,
+      minimumFractionDigits: fractionDigits,
+      maximumFractionDigits: fractionDigits,
     });
   }
 
@@ -413,15 +414,18 @@ function initMeasuredPlayback() {
           ? measurement.events.slice(0, -1)
           : measurement?.events;
         const firstTokenAtSeconds = sourceEvents?.[0]?.[0] ?? 0;
-        let removedAnomalySeconds = 0;
+        let removedReplaySeconds = 0;
         result.recordedEvents = sourceEvents?.map(([atSeconds, gapSeconds, delta, ...metadata], index) => {
           const tokenOrdinal = index + 1;
-          const replayGapSeconds = measurement.replayGapOverridesSeconds?.[tokenOrdinal] ?? gapSeconds;
+          const overriddenGapSeconds = measurement.replayGapOverridesSeconds?.[tokenOrdinal] ?? gapSeconds;
+          const replayGapSeconds = overriddenGapSeconds === null
+            ? null
+            : Math.max(0, overriddenGapSeconds + (measurement.replayGapAdjustmentSeconds ?? 0));
           if (gapSeconds !== null && replayGapSeconds < gapSeconds) {
-            removedAnomalySeconds += gapSeconds - replayGapSeconds;
+            removedReplaySeconds += gapSeconds - replayGapSeconds;
           }
           return [
-            Math.max(0, atSeconds - firstTokenAtSeconds - removedAnomalySeconds),
+            Math.max(0, atSeconds - firstTokenAtSeconds - removedReplaySeconds),
             replayGapSeconds,
             delta,
             ...metadata,
