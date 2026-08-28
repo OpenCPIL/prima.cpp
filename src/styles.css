@@ -2953,7 +2953,8 @@ h3 {
   }
 
   .desktop-nav {
-    display: none;
+    justify-self: end;
+    gap: 24px;
   }
 
   .site-header {
@@ -3135,6 +3136,14 @@ h3 {
 
   .brand {
     width: 116px;
+  }
+
+  .desktop-nav {
+    gap: 16px;
+  }
+
+  .desktop-nav a {
+    font-size: 12px;
   }
 
   .header-link {
