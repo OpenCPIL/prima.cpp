@@ -1,5 +1,5 @@
 import { presetConversations } from "./preset-conversations.js?v=appended-presets-v2-20260823";
-import { hy4ReplayData } from "./hy4-replay-data.js?v=first50-audited-v1-20260828";
+import { hy4ReplayData } from "./hy4-replay-data.js?v=model-name-eos-v2-20260828";
 import { renderMarkdownInto } from "./markdown-renderer.js";
 
 document.documentElement.classList.add("js");
@@ -266,6 +266,10 @@ function initMeasuredPlayback() {
   const defaultCase = "case-1";
   const defaultPrompt = presetConversations[0].id;
   const presetResponses = new Map(presetConversations.map((preset) => [preset.id, preset]));
+  const promptOptions = new Map([
+    ["case-1", presetConversations.map((preset) => ({ value: preset.id, label: preset.prompt }))],
+    ["case-2", Object.entries(hy4ReplayData.prompts).map(([value, replay]) => ({ value, label: replay.prompt }))],
+  ]);
   const caseConfigurations = new Map([
     ["case-1", {
       model: "qwen38-27b-q8",
@@ -280,7 +284,7 @@ function initMeasuredPlayback() {
     }],
     ["case-2", {
       model: "hy4-770b-iq1",
-      prompt: defaultPrompt,
+      prompt: "model-name",
       dflash: true,
       serverImage: "./assets/gpu-server-a4000-x4.webp",
       serverImageAlt: "GPU server tower with four small A4000-class GPU cards beside it",
@@ -297,6 +301,11 @@ function initMeasuredPlayback() {
       throw new Error(`Invalid playback token sequence for preset: ${preset.id}`);
     }
     return [...tokens];
+  }
+
+  function syncPromptOptions(caseId) {
+    const options = promptOptions.get(caseId) || promptOptions.get(defaultCase);
+    prompt.replaceChildren(...options.map(({ value, label }) => new Option(label, value)));
   }
 
   let playbackTokens = makePlaybackTokens(presetResponses.get(defaultPrompt));
@@ -382,12 +391,15 @@ function initMeasuredPlayback() {
       results.forEach((result) => {
         const measurement = recordedPrompt.results[result.id];
         result.recordedEvents = measurement?.events || null;
-        result.observedMeanInterEventSeconds = measurement?.observedMeanInterEventSeconds ?? null;
+        result.observedMeanInterEventSeconds = measurement?.requestLevelAverageTpotSeconds
+          ?? measurement?.observedMeanInterTokenSeconds
+          ?? measurement?.observedMeanInterEventSeconds
+          ?? null;
         result.ttftMs = (measurement?.ttftSeconds ?? 0) * 1000;
-        result.playbackRate = measurement ? 1 / measurement.observedMeanInterEventSeconds : 0;
+        result.playbackRate = result.observedMeanInterEventSeconds ? 1 / result.observedMeanInterEventSeconds : 0;
         result.panel.classList.toggle("is-measurement-missing", !measurement);
       });
-      playbackRate = recordedPrompt.results.prima ? 1 / recordedPrompt.results.prima.observedMeanInterEventSeconds : 0;
+      playbackRate = results.find((result) => result.id === "prima")?.playbackRate || 0;
       simulatedDurationMs = Math.max(...results.map(getResultDurationMs), 0);
       return;
     }
@@ -433,7 +445,7 @@ function initMeasuredPlayback() {
     elapsed.textContent = `${(elapsedMs / 1000).toFixed(1)} s`;
     tokenCount.textContent = playbackState === "idle" || playbackState === "unavailable" ? "0" : `${visibleTokens}`;
     rate.textContent = recordedReplay
-      ? `${formatEventInterval(getRecordedPrompt().results.prima.observedMeanInterEventSeconds)} s/evt`
+      ? `${formatEventInterval(getRecordedPrompt().results.prima.requestLevelAverageTpotSeconds)} s/token`
       : available
         ? `${formatTokenRate(playbackRate)} tok/s`
         : "—";
@@ -443,16 +455,18 @@ function initMeasuredPlayback() {
       const resultElapsedMs = Math.min(elapsedMs, resultDurationMs);
       result.elapsed.textContent = `${(resultElapsedMs / 1000).toFixed(1)} s`;
       result.tokenCount.textContent = playbackState === "idle" || playbackState === "unavailable" ? "0" : `${result.visibleTokens}`;
-      result.rateOutput.textContent = recordedReplay && result.observedMeanInterEventSeconds
-        ? `${formatEventInterval(result.observedMeanInterEventSeconds)} s/evt`
+      result.rateOutput.textContent = recordedReplay
+        ? result.observedMeanInterEventSeconds
+          ? `${formatEventInterval(result.observedMeanInterEventSeconds)} s/token`
+          : "—"
         : available
           ? `${formatTokenRate(result.playbackRate)} tok/s`
           : "—";
-      result.rateOutput.title = recordedReplay ? "Measured mean interval between the first 50 visible SSE output events" : "Measured output rate";
+      result.rateOutput.title = recordedReplay ? "Measured request-level average time per output token" : "Measured output rate";
       const waitingForFirstToken = playbackState === "streaming" && result.playbackRate > 0 && elapsedMs < result.ttftMs;
       result.panel.classList.toggle("is-awaiting-first-token", waitingForFirstToken);
       if (playbackState === "streaming") {
-        if (result.playbackRate === 0) result.status.textContent = "Pending";
+        if (result.playbackRate === 0) result.status.textContent = "Unavailable";
         else if (waitingForFirstToken) result.status.textContent = "Waiting";
         else if (result.visibleTokens >= getResultEventCount(result)) result.status.textContent = "Complete";
         else result.status.textContent = "Running";
@@ -515,7 +529,7 @@ function initMeasuredPlayback() {
     status.textContent = statusText[playbackState];
     results.forEach((result) => {
       const resultComplete = result.playbackRate > 0 && result.visibleTokens >= getResultEventCount(result);
-      if (result.playbackRate === 0) result.status.textContent = "Pending";
+      if (result.playbackRate === 0) result.status.textContent = "Unavailable";
       else if (playbackState === "streaming" && resultComplete) result.status.textContent = "Complete";
       else result.status.textContent = statusText[playbackState];
     });
@@ -577,7 +591,14 @@ function initMeasuredPlayback() {
     playbackState = hasPlaybackData() ? "idle" : "unavailable";
     results.forEach((result) => {
       result.visibleTokens = 0;
-      setOutputText(result, hasPlaybackData() ? "Press Run to begin." : "No measured playback for this model.");
+      setOutputText(
+        result,
+        result.playbackRate > 0
+          ? "Press Run to begin."
+          : hasPlaybackData()
+            ? "No measured playback for this configuration."
+            : "No measured playback for this model.",
+      );
     });
     updateInterface();
   }
@@ -586,6 +607,7 @@ function initMeasuredPlayback() {
     const configuration = caseConfigurations.get(caseId) || caseConfigurations.get(defaultCase);
     caseSelect.value = caseConfigurations.has(caseId) ? caseId : defaultCase;
     model.value = configuration.model;
+    syncPromptOptions(caseSelect.value);
     prompt.value = configuration.prompt;
     serverImage.src = configuration.serverImage;
     serverImage.alt = configuration.serverImageAlt;
@@ -594,7 +616,9 @@ function initMeasuredPlayback() {
     serverVram.textContent = configuration.serverVram;
     serverSummary.textContent = configuration.serverSummary;
     setDflashEnabled(configuration.dflash);
-    playbackTokens = makePlaybackTokens(presetResponses.get(configuration.prompt) || presetResponses.get(defaultPrompt));
+    if (caseSelect.value === "case-1") {
+      playbackTokens = makePlaybackTokens(presetResponses.get(configuration.prompt) || presetResponses.get(defaultPrompt));
+    }
     syncConfiguration();
     resetPlayback();
   }
@@ -697,7 +721,9 @@ function initMeasuredPlayback() {
   });
 
   prompt.addEventListener("change", () => {
-    playbackTokens = makePlaybackTokens(presetResponses.get(prompt.value) || presetResponses.get(defaultPrompt));
+    if (caseSelect.value === "case-1") {
+      playbackTokens = makePlaybackTokens(presetResponses.get(prompt.value) || presetResponses.get(defaultPrompt));
+    }
     syncResultRates();
     resetPlayback();
   });
