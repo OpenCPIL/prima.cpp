@@ -1,5 +1,5 @@
 import { presetConversations } from "./preset-conversations.js?v=appended-presets-v2-20260823";
-import { hy4ReplayData } from "./hy4-replay-data.js?v=replay-tpot-v4-20260828";
+import { hy4ReplayData } from "./hy4-replay-data.js?v=native-baselines-v5-20260828";
 import { renderMarkdownInto } from "./markdown-renderer.js";
 
 document.documentElement.classList.add("js");
