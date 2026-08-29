@@ -296,10 +296,10 @@ h3 {
 }
 
 h1 {
-  font-size: clamp(58px, 6vw, 92px);
-  font-weight: 570;
-  line-height: 0.94;
-  letter-spacing: -0.058em;
+  font-size: clamp(44px, 4.25vw, 66px);
+  font-weight: 560;
+  line-height: 0.98;
+  letter-spacing: -0.052em;
 }
 
 h2 {
