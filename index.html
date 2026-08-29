@@ -18,7 +18,7 @@
     <link rel="preload" as="font" href="./assets/fonts/Geist-Variable.woff2" type="font/woff2" crossorigin />
     <link rel="preload" as="image" href="./assets/hero-topology-v6.webp" />
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.18.1/dist/katex.min.css" crossorigin="anonymous" />
-    <link rel="stylesheet" href="./src/styles.css?v=home-visual-story-v23-20260829" />
+    <link rel="stylesheet" href="./src/styles.css?v=lifecycle-home-v25-20260829" />
     <title>Prima Lab — Local AI, beyond one device</title>
   </head>
   <body>
@@ -63,7 +63,7 @@
       <section class="screen screen--cost" id="home" data-slide="home" data-route-view="home" aria-labelledby="home-title">
         <div class="cost-copy reveal">
           <p class="section-kicker">Zero or lowest new hardware cost</p>
-          <h2 id="home-title">Enhance local AI<br />at the lowest cost.</h2>
+          <h2 id="home-title">Enhance local AI<br />at lowest cost.</h2>
           <p>No need to buy a higher-performance workstation. Pool the heterogeneous devices you already own—laptops, desktops, tablets, Mac Minis, and devices of different operating systems.</p>
         </div>
         <div class="cost-comparison reveal reveal--late" aria-label="Replacing an entire workstation compared with reusing existing devices through PRIMA">
@@ -90,24 +90,29 @@
           <h2 id="scalability-title">Scalability,<br />not just a speed miracle.</h2>
           <p>Bring more of your existing hardware together to expand what local AI can do—without pretending one device becomes something it is not.</p>
         </div>
-        <div class="scale-constellation reveal reveal--late" aria-label="PRIMA expands model capacity, generation speed, context length, and precision">
-          <article class="scale-capability scale-capability--model">
-            <span>01</span><small>Model capacity</small><strong>7B <i>→</i> 2.8T</strong>
-          </article>
-          <article class="scale-capability scale-capability--speed">
-            <span>02</span><small>Generation</small><strong>Slow <i>→</i> Faster</strong>
-          </article>
-          <div class="scale-core" aria-hidden="true">
-            <small>Expandable pool</small>
-            <strong>PRIMA</strong>
-            <span>More devices,<br />more capability</span>
+        <div class="scale-visual reveal reveal--late" aria-label="Four graphical comparisons showing PRIMA expanding model capacity, generation speed, context length, and precision">
+          <header class="scale-visual__header">
+            <div><small>PRIMA capability pool</small><strong>More devices, broader capability.</strong></div>
+            <span>Scale across four dimensions</span>
+          </header>
+          <div class="scale-upgrades">
+            <article class="upgrade-card">
+              <header><span>01</span><small>Model capacity</small><strong>7B <i>→</i> 2.8T</strong></header>
+              <div class="upgrade-graphic upgrade-graphic--model" aria-hidden="true"><i></i><i></i><i></i><i></i></div>
+            </article>
+            <article class="upgrade-card">
+              <header><span>02</span><small>Generation</small><strong>Slow <i>→</i> Faster</strong></header>
+              <div class="upgrade-graphic upgrade-graphic--speed" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div>
+            </article>
+            <article class="upgrade-card">
+              <header><span>03</span><small>Context</small><strong>Short <i>→</i> Longer</strong></header>
+              <div class="upgrade-graphic upgrade-graphic--context" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i></div>
+            </article>
+            <article class="upgrade-card">
+              <header><span>04</span><small>Precision</small><strong>Low-bit <i>→</i> Full</strong></header>
+              <div class="upgrade-graphic upgrade-graphic--precision" aria-hidden="true"><i></i><i></i><i></i><i></i></div>
+            </article>
           </div>
-          <article class="scale-capability scale-capability--context">
-            <span>03</span><small>Context</small><strong>Short <i>→</i> Longer</strong>
-          </article>
-          <article class="scale-capability scale-capability--precision">
-            <span>04</span><small>Precision</small><strong>Low-bit <i>→</i> Full</strong>
-          </article>
         </div>
       </section>
 
@@ -133,7 +138,7 @@
             <figure><img src="./assets/case-remote-lan-v1.webp" alt="Devices in different locations and on separate LANs contributing to the same local AI through PRIMA" loading="lazy" width="1200" height="900" /></figure>
             <span>03 · Remote LAN</span>
             <h3>Different LANs. One AI pool.</h3>
-            <p>Use PRIMA to pool devices across remote LANs and strengthen the local AI you use here.</p>
+            <p>Pool devices across remote LANs and strengthen the local AI you use here.</p>
           </article>
         </div>
       </section>
@@ -144,25 +149,33 @@
           <h2 id="deployment-title">Easy to deploy. Easy to keep running.</h2>
           <p>As devices and networks change, the inference pool adapts with them.</p>
         </header>
-        <div class="card-grid reveal reveal--late">
-          <article class="story-card feature-card">
-            <div class="feature-state" aria-hidden="true"><strong>ARRIVE</strong><span>Home Wi-Fi connected</span></div>
-            <span>01 · Join</span>
-            <h3>Come home. Join automatically.</h3>
-            <p>When your device connects to home Wi-Fi, PRIMA discovers it and adds it to the home cluster.</p>
-          </article>
-          <article class="story-card feature-card">
-            <div class="feature-state feature-state--leave" aria-hidden="true"><strong>LEAVE</strong><span>Device goes with you</span></div>
-            <span>02 · Heal</span>
-            <h3>Head out. The cluster heals.</h3>
-            <p>When you take a device away, the home cluster detects its departure and recovers across the devices left behind.</p>
-          </article>
-          <article class="story-card feature-card">
-            <div class="feature-state feature-state--connect" aria-hidden="true"><strong>CONNECT</strong><span>LAN · Wi-Fi · Cross-LAN</span></div>
-            <span>03 · Connect</span>
-            <h3>Use the network you have.</h3>
-            <p>Build the pool over wired LAN, wireless LAN, or secure cross-LAN connections.</p>
-          </article>
+        <div class="cluster-lifecycle reveal reveal--late">
+          <div class="lifecycle-flow" role="list" aria-label="A device joining and leaving the home cluster">
+            <article class="lifecycle-step lifecycle-step--arrive" role="listitem">
+              <span>01 · Home</span><strong>ARRIVE</strong>
+              <h3>Connect to home Wi-Fi.</h3>
+              <p>PRIMA discovers the returning device.</p>
+            </article>
+            <article class="lifecycle-step lifecycle-step--join" role="listitem">
+              <span>02 · Discover</span><strong>JOINED</strong>
+              <h3>Join automatically.</h3>
+              <p>The device enters the home cluster and contributes to inference.</p>
+            </article>
+            <article class="lifecycle-step lifecycle-step--leave" role="listitem">
+              <span>03 · Away</span><strong>LEAVE</strong>
+              <h3>Take the device with you.</h3>
+              <p>The cluster detects that the device has disconnected.</p>
+            </article>
+            <article class="lifecycle-step lifecycle-step--heal" role="listitem">
+              <span>04 · Recover</span><strong>HEALED</strong>
+              <h3>Keep inference running.</h3>
+              <p>The home cluster recovers across the devices left behind.</p>
+            </article>
+          </div>
+          <div class="network-range">
+            <span>One adaptable pool</span>
+            <ul aria-label="Supported network types"><li>Wired LAN</li><li>Wi-Fi</li><li>Secure cross-LAN</li></ul>
+          </div>
         </div>
       </section>
 
