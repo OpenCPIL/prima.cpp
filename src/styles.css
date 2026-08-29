@@ -476,7 +476,7 @@ h3 {
 }
 
 .screen--scenario--reverse {
-  grid-template-columns: minmax(600px, 1.38fr) minmax(280px, 0.62fr);
+  grid-template-columns: minmax(520px, 1.12fr) minmax(400px, 0.88fr);
 }
 
 .screen--scenario--reverse .scenario-copy {
@@ -3072,7 +3072,7 @@ h3 {
   }
 
   .screen--scenario--reverse {
-    grid-template-columns: minmax(480px, 1.32fr) minmax(270px, 0.68fr);
+    grid-template-columns: minmax(450px, 1.08fr) minmax(340px, 0.92fr);
   }
 
   .screen--scale {
