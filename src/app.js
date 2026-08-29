@@ -52,7 +52,7 @@ let scrollFrame = 0;
 function updateScrollUI() {
   scrollFrame = 0;
 
-  const mainScrolls = window.innerWidth > 900 && document.body.dataset.route === "home";
+  const mainScrolls = window.innerWidth > 900 && ["home", "blog"].includes(document.body.dataset.route);
   const scrollTop = mainScrolls ? main?.scrollTop || 0 : window.scrollY;
   const scrollHeight = mainScrolls ? main?.scrollHeight || 0 : document.documentElement.scrollHeight;
   const viewportHeight = mainScrolls ? main?.clientHeight || window.innerHeight : window.innerHeight;
@@ -80,7 +80,7 @@ updateScrollUI();
 
 const routeViews = [...document.querySelectorAll("[data-route-view]")];
 const routeLinks = [...document.querySelectorAll("[data-route-link]")];
-const routeNames = new Set(["home", "playground"]);
+const routeNames = new Set(["home", "playground", "blog"]);
 const routeStorageKey = "prima-route";
 
 function routeFromPathname() {
@@ -108,15 +108,32 @@ function currentRouteScrollTop() {
 
 function setRouteScrollTop(scrollTop) {
   const nextScrollTop = Math.max(0, Number(scrollTop) || 0);
+  const root = document.documentElement;
+  const previousScrollBehavior = root.style.scrollBehavior;
+  const previousScrollSnapType = root.style.scrollSnapType;
+  const previousOverflowAnchor = root.style.overflowAnchor;
+
+  root.style.scrollBehavior = "auto";
+  root.style.scrollSnapType = "none";
+  root.style.overflowAnchor = "none";
+
+  const positionRoute = () => {
+    if (window.innerWidth > 900) {
+      if (main) main.scrollTop = nextScrollTop;
+      window.scrollTo(0, 0);
+    } else {
+      window.scrollTo(0, nextScrollTop);
+      if (main) main.scrollTop = 0;
+    }
+  };
+
+  positionRoute();
   window.requestAnimationFrame(() => {
     window.requestAnimationFrame(() => {
-      if (window.innerWidth > 900) {
-        if (main) main.scrollTop = nextScrollTop;
-        window.scrollTo(0, 0);
-      } else {
-        window.scrollTo(0, nextScrollTop);
-        if (main) main.scrollTop = 0;
-      }
+      positionRoute();
+      root.style.scrollBehavior = previousScrollBehavior;
+      root.style.scrollSnapType = previousScrollSnapType;
+      root.style.overflowAnchor = previousOverflowAnchor;
       updateScrollUI();
     });
   });
@@ -124,6 +141,7 @@ function setRouteScrollTop(scrollTop) {
 
 function applyRoute(route, scrollTop = 0) {
   const nextRoute = routeNames.has(route) ? route : "home";
+  document.documentElement.dataset.route = nextRoute;
   document.body.dataset.route = nextRoute;
   routeViews.forEach((view) => {
     view.hidden = view.dataset.routeView !== nextRoute;
@@ -132,7 +150,12 @@ function applyRoute(route, scrollTop = 0) {
     if (link.dataset.routeLink === nextRoute) link.setAttribute("aria-current", "page");
     else link.removeAttribute("aria-current");
   });
-  document.title = nextRoute === "playground" ? "Prima Lab — Playground" : "Prima Lab — Local AI, beyond one device";
+  document.title =
+    nextRoute === "playground"
+      ? "Prima Lab — Playground"
+      : nextRoute === "blog"
+        ? "Prima Lab — Blog"
+        : "Prima Lab — Local AI, beyond one device";
   setRouteScrollTop(scrollTop);
 }
 

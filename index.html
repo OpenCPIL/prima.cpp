@@ -18,7 +18,7 @@
     <link rel="preload" as="font" href="./assets/fonts/Geist-Variable.woff2" type="font/woff2" crossorigin />
     <link rel="preload" as="image" href="./assets/hero-topology-v6.webp" />
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.18.1/dist/katex.min.css" crossorigin="anonymous" />
-    <link rel="stylesheet" href="./src/styles.css?v=lifecycle-home-v25-20260829" />
+    <link rel="stylesheet" href="./src/styles.css?v=blog-route-v27-20260829" />
     <title>Prima Lab — Local AI, beyond one device</title>
   </head>
   <body>
@@ -31,6 +31,7 @@
       <nav class="desktop-nav" aria-label="Site sections">
         <a href="./home" data-route-link="home">Home</a>
         <a href="./playground" data-route-link="playground">Playground</a>
+        <a href="./blog" data-route-link="blog">Blog</a>
       </nav>
       <span class="scroll-progress" aria-hidden="true"><b data-scroll-progress></b></span>
     </header>
@@ -102,7 +103,7 @@
             </article>
             <article class="upgrade-card">
               <header><span>02</span><small>Generation</small><strong>Slow <i>→</i> Faster</strong></header>
-              <div class="upgrade-graphic upgrade-graphic--speed" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div>
+              <div class="upgrade-graphic upgrade-graphic--speed" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div>
             </article>
             <article class="upgrade-card">
               <header><span>03</span><small>Context</small><strong>Short <i>→</i> Longer</strong></header>
@@ -149,33 +150,91 @@
           <h2 id="deployment-title">Easy to deploy. Easy to keep running.</h2>
           <p>As devices and networks change, the inference pool adapts with them.</p>
         </header>
-        <div class="cluster-lifecycle reveal reveal--late">
-          <div class="lifecycle-flow" role="list" aria-label="A device joining and leaving the home cluster">
-            <article class="lifecycle-step lifecycle-step--arrive" role="listitem">
-              <span>01 · Home</span><strong>ARRIVE</strong>
-              <h3>Connect to home Wi-Fi.</h3>
-              <p>PRIMA discovers the returning device.</p>
-            </article>
-            <article class="lifecycle-step lifecycle-step--join" role="listitem">
-              <span>02 · Discover</span><strong>JOINED</strong>
-              <h3>Join automatically.</h3>
-              <p>The device enters the home cluster and contributes to inference.</p>
-            </article>
-            <article class="lifecycle-step lifecycle-step--leave" role="listitem">
-              <span>03 · Away</span><strong>LEAVE</strong>
-              <h3>Take the device with you.</h3>
-              <p>The cluster detects that the device has disconnected.</p>
-            </article>
-            <article class="lifecycle-step lifecycle-step--heal" role="listitem">
-              <span>04 · Recover</span><strong>HEALED</strong>
-              <h3>Keep inference running.</h3>
-              <p>The home cluster recovers across the devices left behind.</p>
-            </article>
-          </div>
-          <div class="network-range">
-            <span>One adaptable pool</span>
+        <div class="feature-layout reveal reveal--late">
+          <article class="feature-panel feature-panel--join">
+            <header><span>01 · Join</span><strong>ARRIVE</strong></header>
+            <div>
+              <h3>Come home. Join automatically.</h3>
+              <p>When your device connects to home Wi-Fi, PRIMA discovers it and adds it to the home cluster.</p>
+            </div>
+          </article>
+          <article class="feature-panel feature-panel--heal">
+            <header><span>02 · Heal</span><strong>LEAVE</strong></header>
+            <div>
+              <h3>Head out. The cluster heals.</h3>
+              <p>When you take a device away, the home cluster detects its departure and recovers across the devices left behind.</p>
+            </div>
+          </article>
+          <article class="feature-panel feature-panel--connect">
+            <header><span>03 · Connect</span><strong>CONNECT</strong></header>
+            <div>
+              <h3>Use the network you have.</h3>
+              <p>Build the pool over wired LAN, wireless LAN, or secure cross-LAN connections.</p>
+            </div>
             <ul aria-label="Supported network types"><li>Wired LAN</li><li>Wi-Fi</li><li>Secure cross-LAN</li></ul>
-          </div>
+          </article>
+        </div>
+      </section>
+
+      <section class="blog-view" id="blog" data-route-view="blog" aria-labelledby="blog-title" hidden>
+        <div class="blog-shell">
+          <header class="blog-masthead">
+            <div>
+              <p class="section-kicker">Prima Lab · Blog</p>
+              <h1 id="blog-title">Notes on practical local AI.</h1>
+            </div>
+            <p>Design notes, experiments, and lessons from building distributed inference across the devices people already own.</p>
+          </header>
+
+          <article class="blog-article" aria-labelledby="sample-post-title">
+            <header class="blog-article__header">
+              <div class="blog-meta"><span>Sample article</span><time datetime="2026-08-29">August 29, 2026</time><span>6 min read</span></div>
+              <h2 id="sample-post-title">The workstation you need may already be in the room.</h2>
+              <p class="blog-lede">Local AI does not always need another monolithic machine. Sometimes the more practical path is to treat the hardware around you as one adaptable pool.</p>
+              <div class="blog-byline"><span>Prima Lab</span><span>Distributed local inference</span></div>
+            </header>
+
+            <div class="blog-layout">
+              <aside class="blog-summary" aria-label="Article summary">
+                <span>In this note</span>
+                <ol>
+                  <li>The single-box assumption</li>
+                  <li>Hardware as a pool</li>
+                  <li>What “useful” means</li>
+                </ol>
+              </aside>
+
+              <div class="blog-body">
+                <p class="blog-opening">Local AI often begins with a shopping list: more VRAM, a larger power supply, and a workstation built around the biggest model you hope to run. That approach can be fast, but it also leaves capable laptops, desktops, mini PCs, and tablets sitting outside the system.</p>
+
+                <h3>The single-box assumption</h3>
+                <p>A single workstation is easy to reason about because every resource sits behind one operating system. Its limits are equally clear. Once the model, context, or precision outgrows that box, the usual answer is to replace it with a more expensive one.</p>
+
+                <blockquote>
+                  <p>A useful local AI system does not have to be the fastest possible system.</p>
+                  <cite>Prima Lab design principle</cite>
+                </blockquote>
+
+                <h3>Treat hardware as a pool</h3>
+                <p>Distributed inference changes the unit of planning from one machine to a collection of machines. A laptop can contribute a GPU, a desktop can contribute memory and compute, and devices on another LAN can remain part of the same testbed.</p>
+                <p>The important question becomes less binary: not “Can this device run the model?” but “What useful capacity can this device add to the pool?”</p>
+
+                <div class="blog-callout">
+                  <span>Practical target</span>
+                  <strong>Reuse first.<br />Add devices only when needed.</strong>
+                </div>
+
+                <h3>Useful is a product decision</h3>
+                <p>A pooled system may not beat a purpose-built server on every latency metric. It can still unlock a larger model, longer context, better precision, or enough throughput for a private workflow—without discarding hardware that has already been purchased.</p>
+                <p>That tradeoff is the point: local AI should be able to grow incrementally, across the devices and networks people actually have.</p>
+
+                <footer class="blog-article__footer">
+                  <p>See the idea replayed on measured testbeds.</p>
+                  <a class="button button--primary" href="./playground" data-route-link="playground">Open Playground <span aria-hidden="true">→</span></a>
+                </footer>
+              </div>
+            </div>
+          </article>
         </div>
       </section>
 
@@ -535,6 +594,6 @@
     </main>
 
     <script defer src="./vendor/lucide-prima.js"></script>
-    <script type="module" src="./src/app.js?v=home-routes-v14-20260829"></script>
+    <script type="module" src="./src/app.js?v=blog-route-v16-20260829"></script>
   </body>
 </html>
