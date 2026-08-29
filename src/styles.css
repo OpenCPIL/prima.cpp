@@ -608,61 +608,89 @@ h3 {
 }
 
 .scale-axis strong {
-  font-size: clamp(17px, 1.5vw, 22px);
-  font-weight: 610;
   line-height: 1.08;
   letter-spacing: -0.035em;
+}
+
+.scale-axis > div:first-of-type {
+  opacity: 0.62;
+}
+
+.scale-axis > div:first-of-type strong {
+  font-size: clamp(15px, 1.2vw, 18px);
+  font-weight: 520;
+}
+
+.scale-axis > div:last-child small {
+  color: var(--orange);
+}
+
+.scale-axis > div:last-child strong {
+  font-size: clamp(21px, 1.9vw, 28px);
+  font-weight: 660;
 }
 
 .scale-axis > i {
   position: relative;
   display: block;
-  height: 22px;
+  height: 28px;
 }
 
 .scale-axis > i::before {
   position: absolute;
-  top: 10px;
-  right: 4px;
+  top: 13px;
+  right: 6px;
   left: 0;
   height: 2px;
-  background: var(--line);
+  background: linear-gradient(90deg, var(--line) 0 18%, rgba(239, 91, 14, 0.32) 42%, var(--orange) 100%);
   content: "";
 }
 
 .scale-axis > i::after {
   position: absolute;
-  top: 6px;
+  top: 8px;
   right: 0;
-  width: 9px;
-  height: 9px;
-  border-top: 2px solid var(--orange);
-  border-right: 2px solid var(--orange);
+  width: 11px;
+  height: 11px;
+  border-top: 3px solid var(--orange);
+  border-right: 3px solid var(--orange);
   content: "";
   transform: rotate(45deg);
 }
 
 .scale-axis > i b {
   position: absolute;
-  top: 7px;
+  top: 5px;
   left: 0;
   z-index: 1;
-  width: 66%;
-  height: 8px;
+  width: calc(100% - 14px);
+  height: 18px;
+  background: linear-gradient(90deg, rgba(209, 208, 208, 0.72) 0 16%, rgba(239, 91, 14, 0.36) 36%, var(--orange) 100%);
+  clip-path: polygon(0 44%, 100% 0, 100% 100%, 0 56%);
+}
+
+.scale-axis > i b::before,
+.scale-axis > i b::after {
+  position: absolute;
+  top: 50%;
+  border-radius: 50%;
+  content: "";
+  transform: translateY(-50%);
+}
+
+.scale-axis > i b::before {
+  left: 0;
+  width: 5px;
+  height: 5px;
+  background: var(--muted);
+}
+
+.scale-axis > i b::after {
+  right: 0;
+  width: 16px;
+  height: 16px;
   background: var(--orange);
-  box-shadow: 14px 0 0 rgba(239, 91, 14, 0.42), 28px 0 0 rgba(239, 91, 14, 0.18);
-}
-
-.scale-axis--speed > i b {
-  width: 58%;
-}
-
-.scale-axis--context > i b {
-  width: 75%;
-}
-
-.scale-axis--precision > i b {
-  width: 84%;
+  box-shadow: 0 0 0 5px rgba(239, 91, 14, 0.12);
 }
 
 .screen--product {
@@ -3444,8 +3472,12 @@ h3 {
     grid-row: 2;
   }
 
-  .scale-axis strong {
-    font-size: 18px;
+  .scale-axis > div:first-of-type strong {
+    font-size: 16px;
+  }
+
+  .scale-axis > div:last-child strong {
+    font-size: 21px;
   }
 
   .scale-axis small {
