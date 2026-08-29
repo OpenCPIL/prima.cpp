@@ -6,6 +6,7 @@ document.documentElement.classList.add("js");
 
 const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
 const header = document.querySelector(".site-header");
+const main = document.querySelector("main");
 const progressBar = document.querySelector("[data-scroll-progress]");
 const sections = [...document.querySelectorAll("[data-slide]")];
 const scenes = [...document.querySelectorAll("[data-animation-section]")];
@@ -51,10 +52,14 @@ let scrollFrame = 0;
 function updateScrollUI() {
   scrollFrame = 0;
 
-  const scrollable = Math.max(0, document.documentElement.scrollHeight - window.innerHeight);
-  const progress = scrollable > 0 ? Math.min(1, Math.max(0, window.scrollY / scrollable)) : 0;
+  const mainScrolls = window.innerWidth > 900 && document.body.dataset.route === "home";
+  const scrollTop = mainScrolls ? main?.scrollTop || 0 : window.scrollY;
+  const scrollHeight = mainScrolls ? main?.scrollHeight || 0 : document.documentElement.scrollHeight;
+  const viewportHeight = mainScrolls ? main?.clientHeight || window.innerHeight : window.innerHeight;
+  const scrollable = Math.max(0, scrollHeight - viewportHeight);
+  const progress = scrollable > 0 ? Math.min(1, Math.max(0, scrollTop / scrollable)) : 0;
 
-  header?.classList.toggle("is-scrolled", window.scrollY > 12);
+  header?.classList.toggle("is-scrolled", scrollTop > 12);
   header?.style.setProperty("--scroll-progress", String(progress));
   progressBar?.style.setProperty("--scroll-progress", String(progress));
 
@@ -69,8 +74,113 @@ function requestScrollUpdate() {
 }
 
 window.addEventListener("scroll", requestScrollUpdate, { passive: true });
+main?.addEventListener("scroll", requestScrollUpdate, { passive: true });
 window.addEventListener("resize", requestScrollUpdate, { passive: true });
 updateScrollUI();
+
+const routeViews = [...document.querySelectorAll("[data-route-view]")];
+const routeLinks = [...document.querySelectorAll("[data-route-link]")];
+const routeNames = new Set(["home", "playground"]);
+const routeStorageKey = "prima-route";
+
+function routeFromPathname() {
+  const segment = window.location.pathname.replace(/\/+$/, "").split("/").pop();
+  return routeNames.has(segment) ? segment : null;
+}
+
+function basePathFromLocation() {
+  let path = window.location.pathname.replace(/\/+$/, "");
+  path = path.replace(/\/index\.html$/, "");
+  const route = routeFromPathname();
+  if (route) path = path.slice(0, -(route.length + 1));
+  return path === "/" ? "" : path;
+}
+
+const routeBasePath = basePathFromLocation();
+
+function pathForRoute(route) {
+  return `${routeBasePath}/${route}` || `/${route}`;
+}
+
+function currentRouteScrollTop() {
+  return window.innerWidth > 900 ? main?.scrollTop || 0 : window.scrollY;
+}
+
+function setRouteScrollTop(scrollTop) {
+  const nextScrollTop = Math.max(0, Number(scrollTop) || 0);
+  window.requestAnimationFrame(() => {
+    window.requestAnimationFrame(() => {
+      if (window.innerWidth > 900) {
+        if (main) main.scrollTop = nextScrollTop;
+        window.scrollTo(0, 0);
+      } else {
+        window.scrollTo(0, nextScrollTop);
+        if (main) main.scrollTop = 0;
+      }
+      updateScrollUI();
+    });
+  });
+}
+
+function applyRoute(route, scrollTop = 0) {
+  const nextRoute = routeNames.has(route) ? route : "home";
+  document.body.dataset.route = nextRoute;
+  routeViews.forEach((view) => {
+    view.hidden = view.dataset.routeView !== nextRoute;
+  });
+  routeLinks.forEach((link) => {
+    if (link.dataset.routeLink === nextRoute) link.setAttribute("aria-current", "page");
+    else link.removeAttribute("aria-current");
+  });
+  document.title = nextRoute === "playground" ? "Prima Lab — Playground" : "Prima Lab — Local AI, beyond one device";
+  setRouteScrollTop(scrollTop);
+}
+
+function saveCurrentRouteScroll() {
+  const stateRoute = history.state?.route || routeFromPathname() || document.body.dataset.route || "home";
+  history.replaceState(
+    { ...history.state, route: stateRoute, scrollTop: currentRouteScrollTop() },
+    "",
+    pathForRoute(stateRoute),
+  );
+}
+
+function navigateToRoute(route) {
+  const currentRoute = document.body.dataset.route || "home";
+  if (route === currentRoute) {
+    setRouteScrollTop(0);
+    return;
+  }
+  saveCurrentRouteScroll();
+  history.pushState({ route, scrollTop: 0 }, "", pathForRoute(route));
+  applyRoute(route, 0);
+}
+
+routeLinks.forEach((link) => {
+  link.addEventListener("click", (event) => {
+    if (event.button !== 0 || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return;
+    event.preventDefault();
+    navigateToRoute(link.dataset.routeLink);
+  });
+});
+
+window.addEventListener("popstate", (event) => {
+  const route = event.state?.route || routeFromPathname() || "home";
+  applyRoute(route, event.state?.scrollTop || 0);
+});
+
+history.scrollRestoration = "manual";
+let storedRoute = null;
+try {
+  storedRoute = window.sessionStorage.getItem(routeStorageKey);
+  window.sessionStorage.removeItem(routeStorageKey);
+} catch {
+  storedRoute = null;
+}
+const hashRoute = window.location.hash === "#simulation" ? "playground" : window.location.hash === "#intro" ? "home" : null;
+const initialRoute = routeFromPathname() || (routeNames.has(storedRoute) ? storedRoute : null) || hashRoute || "home";
+history.replaceState({ route: initialRoute, scrollTop: 0 }, "", pathForRoute(initialRoute));
+applyRoute(initialRoute, 0);
 
 const sceneStates = new Map();
 

@@ -524,6 +524,132 @@ h3 {
   max-height: 53vh;
 }
 
+.screen--scale {
+  grid-template-columns: minmax(310px, 0.72fr) minmax(620px, 1.28fr);
+  align-items: center;
+  gap: clamp(54px, 8vw, 130px);
+}
+
+.scale-copy {
+  align-self: center;
+}
+
+.scale-kicker {
+  margin-bottom: 18px;
+  color: var(--orange);
+  font: 650 12px/1.2 "Geist Mono", monospace;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.scale-copy > p:last-child {
+  max-width: 460px;
+  margin-top: 28px;
+  color: var(--muted);
+  font-size: clamp(16px, 1.35vw, 19px);
+  line-height: 1.5;
+  letter-spacing: -0.018em;
+}
+
+.scale-map {
+  align-self: center;
+  padding: clamp(8px, 1vw, 14px) 0;
+  border-top: 1px solid var(--ink);
+  border-bottom: 1px solid var(--ink);
+}
+
+.scale-axis {
+  display: grid;
+  grid-template-columns: 34px minmax(132px, 0.72fr) minmax(170px, 1fr) minmax(132px, 0.72fr);
+  align-items: center;
+  gap: clamp(12px, 1.4vw, 24px);
+  min-height: clamp(92px, 11vh, 124px);
+  border-bottom: 1px solid var(--line);
+}
+
+.scale-axis:last-child {
+  border-bottom: 0;
+}
+
+.scale-axis__number,
+.scale-axis small {
+  color: var(--muted);
+  font: 550 10px/1.2 "Geist Mono", monospace;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+}
+
+.scale-axis__number {
+  color: var(--orange);
+}
+
+.scale-axis > div {
+  display: grid;
+  gap: 7px;
+}
+
+.scale-axis > div:last-child {
+  text-align: right;
+}
+
+.scale-axis strong {
+  font-size: clamp(17px, 1.5vw, 22px);
+  font-weight: 610;
+  line-height: 1.08;
+  letter-spacing: -0.035em;
+}
+
+.scale-axis > i {
+  position: relative;
+  display: block;
+  height: 22px;
+}
+
+.scale-axis > i::before {
+  position: absolute;
+  top: 10px;
+  right: 4px;
+  left: 0;
+  height: 2px;
+  background: var(--line);
+  content: "";
+}
+
+.scale-axis > i::after {
+  position: absolute;
+  top: 6px;
+  right: 0;
+  width: 9px;
+  height: 9px;
+  border-top: 2px solid var(--orange);
+  border-right: 2px solid var(--orange);
+  content: "";
+  transform: rotate(45deg);
+}
+
+.scale-axis > i b {
+  position: absolute;
+  top: 7px;
+  left: 0;
+  z-index: 1;
+  width: 66%;
+  height: 8px;
+  background: var(--orange);
+  box-shadow: 14px 0 0 rgba(239, 91, 14, 0.42), 28px 0 0 rgba(239, 91, 14, 0.18);
+}
+
+.scale-axis--speed > i b {
+  width: 58%;
+}
+
+.scale-axis--context > i b {
+  width: 75%;
+}
+
+.scale-axis--precision > i b {
+  width: 84%;
+}
+
 .screen--product {
   grid-template-columns: minmax(290px, 0.56fr) minmax(620px, 1.44fr);
   align-items: center;
@@ -2887,6 +3013,7 @@ h3 {
 @media (max-width: 1180px) {
   .screen--hero,
   .screen--scenario,
+  .screen--scale,
   .screen--product,
   .screen--lan,
   .screen--advantages {
@@ -2899,6 +3026,10 @@ h3 {
 
   .screen--scenario {
     grid-template-columns: minmax(270px, 0.68fr) minmax(480px, 1.32fr);
+  }
+
+  .screen--scale {
+    grid-template-columns: minmax(280px, 0.7fr) minmax(500px, 1.3fr);
   }
 
   .screen--product,
@@ -2971,6 +3102,7 @@ h3 {
 
   .screen--hero,
   .screen--scenario,
+  .screen--scale,
   .screen--product,
   .screen--lan,
   .screen--simulation,
@@ -2983,6 +3115,7 @@ h3 {
 
   .hero-copy,
   .scenario-copy,
+  .scale-copy,
   .product-copy,
   .lan-copy,
   .advantages-copy,
@@ -2994,6 +3127,14 @@ h3 {
   .scenario-art {
     justify-self: center;
     max-width: 760px;
+  }
+
+  .screen--scale {
+    align-content: center;
+  }
+
+  .scale-map {
+    width: 100%;
   }
 
   .hero-art img {
@@ -3237,6 +3378,53 @@ h3 {
   .screen--scenario {
     align-content: start;
     gap: 22px;
+  }
+
+  .screen--scale {
+    align-content: start;
+    gap: 30px;
+    min-height: max(100svh, 820px);
+  }
+
+  .scale-kicker {
+    margin-bottom: 12px;
+    font-size: 10px;
+  }
+
+  .scale-copy > p:last-child {
+    margin-top: 20px;
+    font-size: 16px;
+  }
+
+  .scale-map {
+    padding-block: 3px;
+  }
+
+  .scale-axis {
+    grid-template-columns: 22px minmax(0, 1fr) minmax(0, 1fr);
+    grid-template-rows: auto 18px;
+    gap: 5px 12px;
+    min-height: 116px;
+    padding: 15px 0 10px;
+  }
+
+  .scale-axis__number {
+    grid-row: 1 / span 2;
+    align-self: start;
+    padding-top: 3px;
+  }
+
+  .scale-axis > i {
+    grid-column: 2 / 4;
+    grid-row: 2;
+  }
+
+  .scale-axis strong {
+    font-size: 18px;
+  }
+
+  .scale-axis small {
+    font-size: 8px;
   }
 
   .scenario-note {
@@ -3893,9 +4081,23 @@ h3 {
 
 @media (min-width: 901px) {
   html,
-  body,
+  body {
+    height: 100%;
+    overflow: hidden;
+  }
+
   main {
     height: 100%;
+  }
+
+  body[data-route="home"] main {
+    overflow-x: hidden;
+    overflow-y: auto;
+    overscroll-behavior-y: contain;
+    scroll-snap-type: y mandatory;
+  }
+
+  body[data-route="playground"] main {
     overflow: hidden;
   }
 
