@@ -535,6 +535,10 @@ h3 {
   object-fit: contain;
 }
 
+.screen--scenario--reverse .scenario-art img {
+  mix-blend-mode: darken;
+}
+
 .scenario-art--edge img {
   max-height: 53vh;
 }
