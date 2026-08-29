@@ -1045,12 +1045,12 @@ h3 {
 
 .feature-panel--connect {
   color: var(--ink);
-  background: rgba(239, 91, 14, 0.035);
+  background: #fbf7f3;
 }
 
 .feature-panel--connect header {
   color: var(--ink);
-  background: transparent;
+  background: #f5e9df;
   border-bottom-color: var(--line);
 }
 
@@ -1059,7 +1059,7 @@ h3 {
 }
 
 .feature-panel--connect > div {
-  border-bottom: 1px solid var(--line);
+  border-bottom: 0;
 }
 
 .feature-panel--connect p {
@@ -1072,24 +1072,6 @@ h3 {
     letter-spacing: -0.045em;
     white-space: nowrap;
   }
-}
-
-.feature-panel--connect ul {
-  display: flex;
-  flex-flow: row wrap;
-  gap: 8px;
-  padding: 0 clamp(20px, 2.1vw, 30px) clamp(20px, 2.1vw, 30px);
-}
-
-.feature-panel--connect li {
-  flex: 1 1 96px;
-  padding: 8px 10px;
-  color: var(--muted);
-  border: 1px solid var(--line);
-  font: 600 8px/1.2 "Geist Mono", monospace;
-  letter-spacing: 0.055em;
-  text-align: center;
-  text-transform: uppercase;
 }
 
 .blog-view {
@@ -4216,15 +4198,6 @@ h3 {
 
   .feature-panel--connect header {
     border-bottom-color: var(--line);
-  }
-
-  .feature-panel--connect > div {
-    border-bottom: 1px solid var(--line);
-  }
-
-  .feature-panel--connect ul {
-    gap: 8px;
-    padding: 18px 20px;
   }
 
   .story-card h3 {
