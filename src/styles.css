@@ -1090,8 +1090,7 @@ h3 {
 
 .blog-index__header {
   max-width: 880px;
-  padding-bottom: clamp(20px, 3vh, 28px);
-  border-bottom: 1px solid var(--ink);
+  padding-bottom: 0;
 }
 
 .blog-grid {
@@ -5265,7 +5264,7 @@ h3 {
   }
 
   .blog-index__header {
-    padding-bottom: 20px;
+    padding-bottom: 0;
   }
 
   .blog-grid {
