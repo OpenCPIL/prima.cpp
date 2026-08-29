@@ -1090,21 +1090,8 @@ h3 {
 
 .blog-index__header {
   max-width: 880px;
-  padding-bottom: clamp(42px, 6vh, 62px);
+  padding-bottom: clamp(20px, 3vh, 28px);
   border-bottom: 1px solid var(--ink);
-}
-
-.blog-index__header h1 {
-  margin-top: 14px;
-}
-
-.blog-index__header > p:last-child {
-  max-width: 650px;
-  margin-top: 24px;
-  color: var(--muted);
-  font-size: clamp(17px, 1.3vw, 20px);
-  line-height: 1.5;
-  letter-spacing: -0.018em;
 }
 
 .blog-grid {
@@ -5278,16 +5265,7 @@ h3 {
   }
 
   .blog-index__header {
-    padding-bottom: 34px;
-  }
-
-  .blog-index__header h1 {
-    font-size: clamp(42px, 12vw, 50px);
-  }
-
-  .blog-index__header > p:last-child {
-    margin-top: 20px;
-    font-size: 16px;
+    padding-bottom: 20px;
   }
 
   .blog-grid {
