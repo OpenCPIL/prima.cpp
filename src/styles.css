@@ -453,6 +453,7 @@ h3 {
   width: 100%;
   max-height: 68vh;
   object-fit: contain;
+  mix-blend-mode: darken;
 }
 
 .hero-art figcaption,
@@ -472,6 +473,20 @@ h3 {
   grid-template-columns: minmax(280px, 0.62fr) minmax(600px, 1.38fr);
   align-items: center;
   gap: clamp(54px, 8vw, 130px);
+}
+
+.screen--scenario--reverse {
+  grid-template-columns: minmax(600px, 1.38fr) minmax(280px, 0.62fr);
+}
+
+.screen--scenario--reverse .scenario-copy {
+  grid-column: 2;
+  grid-row: 1;
+}
+
+.screen--scenario--reverse .scenario-art {
+  grid-column: 1;
+  grid-row: 1;
 }
 
 .scenario-copy {
@@ -3028,6 +3043,10 @@ h3 {
     grid-template-columns: minmax(270px, 0.68fr) minmax(480px, 1.32fr);
   }
 
+  .screen--scenario--reverse {
+    grid-template-columns: minmax(480px, 1.32fr) minmax(270px, 0.68fr);
+  }
+
   .screen--scale {
     grid-template-columns: minmax(280px, 0.7fr) minmax(500px, 1.3fr);
   }
@@ -3131,6 +3150,12 @@ h3 {
 
   .screen--scale {
     align-content: center;
+  }
+
+  .screen--scenario--reverse .scenario-copy,
+  .screen--scenario--reverse .scenario-art {
+    grid-column: auto;
+    grid-row: auto;
   }
 
   .scale-map {
