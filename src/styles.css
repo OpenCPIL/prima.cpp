@@ -924,6 +924,13 @@ h3 {
   letter-spacing: -0.016em;
 }
 
+@media (min-width: 901px) {
+  .screen--features .cards-heading > p:last-child {
+    max-width: none;
+    white-space: nowrap;
+  }
+}
+
 .card-grid {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
@@ -956,7 +963,7 @@ h3 {
   display: block;
   margin-bottom: 10px;
   color: var(--orange);
-  font: 600 9px/1.2 "Geist Mono", monospace;
+  font: 620 clamp(11px, 0.82vw, 13px)/1.2 "Geist Mono", monospace;
   letter-spacing: 0.06em;
   text-transform: uppercase;
 }
@@ -976,7 +983,7 @@ h3 {
 
 .feature-layout {
   display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
+  grid-template-columns: minmax(0, 0.92fr) minmax(0, 0.92fr) minmax(0, 1.16fr);
   gap: 1px;
   min-width: 0;
   overflow: hidden;
@@ -1012,7 +1019,7 @@ h3 {
 }
 
 .feature-panel header span {
-  font: 620 9px/1.2 "Geist Mono", monospace;
+  font: 620 clamp(11px, 0.82vw, 13px)/1.2 "Geist Mono", monospace;
   letter-spacing: 0.065em;
   text-transform: uppercase;
 }
@@ -1037,14 +1044,14 @@ h3 {
 }
 
 .feature-panel--connect {
-  color: white;
-  background: var(--ink);
+  color: var(--ink);
+  background: rgba(239, 91, 14, 0.035);
 }
 
 .feature-panel--connect header {
-  color: white;
+  color: var(--ink);
   background: transparent;
-  border-bottom-color: rgba(255, 255, 255, 0.16);
+  border-bottom-color: var(--line);
 }
 
 .feature-panel--connect header span {
@@ -1052,11 +1059,19 @@ h3 {
 }
 
 .feature-panel--connect > div {
-  border-bottom: 1px solid rgba(255, 255, 255, 0.16);
+  border-bottom: 1px solid var(--line);
 }
 
 .feature-panel--connect p {
-  color: rgba(255, 255, 255, 0.62);
+  color: var(--muted);
+}
+
+@media (min-width: 1100px) {
+  .feature-panel--connect h3 {
+    font-size: clamp(20px, 1.6vw, 24px);
+    letter-spacing: -0.045em;
+    white-space: nowrap;
+  }
 }
 
 .feature-panel--connect ul {
@@ -1069,8 +1084,8 @@ h3 {
 .feature-panel--connect li {
   flex: 1 1 96px;
   padding: 8px 10px;
-  color: rgba(255, 255, 255, 0.76);
-  border: 1px solid rgba(255, 255, 255, 0.18);
+  color: var(--muted);
+  border: 1px solid var(--line);
   font: 600 8px/1.2 "Geist Mono", monospace;
   letter-spacing: 0.055em;
   text-align: center;
@@ -4180,7 +4195,7 @@ h3 {
   }
 
   .feature-panel header span {
-    font-size: 8px;
+    font-size: 10px;
   }
 
   .feature-panel > div {
@@ -4200,11 +4215,11 @@ h3 {
   }
 
   .feature-panel--connect header {
-    border-bottom-color: rgba(255, 255, 255, 0.16);
+    border-bottom-color: var(--line);
   }
 
   .feature-panel--connect > div {
-    border-bottom: 1px solid rgba(255, 255, 255, 0.16);
+    border-bottom: 1px solid var(--line);
   }
 
   .feature-panel--connect ul {
@@ -4218,6 +4233,10 @@ h3 {
 
   .story-card > p {
     font-size: 15px;
+  }
+
+  .story-card > span {
+    font-size: 10px;
   }
 
   .screen--scale {
