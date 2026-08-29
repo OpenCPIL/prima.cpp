@@ -543,6 +543,108 @@ h3 {
   max-height: 53vh;
 }
 
+.section-kicker {
+  margin-bottom: 18px;
+  color: var(--orange);
+  font: 650 12px/1.2 "Geist Mono", monospace;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.screen--cost {
+  grid-template-columns: minmax(620px, 1.28fr) minmax(360px, 0.72fr);
+  align-items: center;
+  gap: clamp(52px, 6vw, 104px);
+}
+
+.cost-copy {
+  grid-column: 2;
+  grid-row: 1;
+  align-self: center;
+}
+
+.cost-copy > p:last-child {
+  max-width: 480px;
+  margin-top: 28px;
+  color: var(--muted);
+  font-size: clamp(16px, 1.35vw, 19px);
+  line-height: 1.5;
+  letter-spacing: -0.018em;
+}
+
+.cost-comparison {
+  grid-column: 1;
+  grid-row: 1;
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  align-items: end;
+  gap: clamp(20px, 2.4vw, 38px);
+  min-width: 0;
+}
+
+.cost-option {
+  min-width: 0;
+}
+
+.cost-option img {
+  display: block;
+  width: 100%;
+  aspect-ratio: 4 / 3;
+  object-fit: contain;
+  mix-blend-mode: darken;
+}
+
+.cost-option > div {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 7px 12px;
+  margin-top: 8px;
+  padding-top: 15px;
+  border-top: 1px solid var(--line);
+}
+
+.cost-option small {
+  align-self: end;
+  color: var(--muted);
+  font: 550 9px/1.25 "Geist Mono", monospace;
+  letter-spacing: 0.045em;
+  text-transform: uppercase;
+}
+
+.cost-option strong {
+  grid-column: 2;
+  grid-row: 1 / span 2;
+  align-self: center;
+  font-size: clamp(25px, 2.35vw, 36px);
+  font-weight: 650;
+  line-height: 1;
+  letter-spacing: -0.05em;
+}
+
+.cost-option span {
+  color: var(--muted);
+  font-size: 14px;
+  line-height: 1.3;
+}
+
+.cost-option--server strong,
+.cost-option--server span {
+  color: #777572;
+}
+
+.cost-option--prima {
+  transform: translateY(-12px);
+}
+
+.cost-option--prima > div {
+  border-top-color: var(--orange);
+}
+
+.cost-option--prima small,
+.cost-option--prima strong {
+  color: var(--orange);
+}
+
 .screen--scale {
   grid-template-columns: minmax(310px, 0.72fr) minmax(620px, 1.28fr);
   align-items: center;
@@ -694,6 +796,90 @@ h3 {
   --scale-bar-short: 30%;
   --scale-bar-medium: 68%;
   --scale-bar-long: 96%;
+}
+
+.screen--cards {
+  grid-template-columns: 1fr;
+  grid-template-rows: auto auto;
+  align-content: center;
+  gap: clamp(30px, 4vh, 46px);
+  padding-top: clamp(104px, 11vh, 132px);
+  padding-bottom: clamp(38px, 5vh, 62px);
+}
+
+.cards-heading {
+  max-width: 940px;
+}
+
+.cards-heading h2 {
+  font-size: clamp(42px, 3.65vw, 58px);
+}
+
+.cards-heading > p:last-child {
+  max-width: 680px;
+  margin-top: 17px;
+  color: var(--muted);
+  font-size: clamp(15px, 1.15vw, 18px);
+  line-height: 1.45;
+  letter-spacing: -0.016em;
+}
+
+.card-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: clamp(24px, 3vw, 48px);
+  min-width: 0;
+}
+
+.story-card {
+  min-width: 0;
+  padding-top: 17px;
+  border-top: 1px solid var(--ink);
+}
+
+.story-card figure {
+  display: grid;
+  place-items: center;
+  height: clamp(215px, 29vh, 285px);
+  margin-bottom: 18px;
+  overflow: hidden;
+}
+
+.story-card img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  mix-blend-mode: darken;
+}
+
+.story-card > span {
+  display: block;
+  margin-bottom: 10px;
+  color: var(--orange);
+  font: 600 9px/1.2 "Geist Mono", monospace;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.story-card h3 {
+  font-size: clamp(22px, 1.75vw, 28px);
+}
+
+.story-card > p {
+  max-width: 390px;
+  margin-top: 10px;
+  color: var(--muted);
+  font-size: clamp(14px, 1vw, 16px);
+  line-height: 1.45;
+  letter-spacing: -0.012em;
+}
+
+.screen--features .story-card {
+  border-top-color: var(--orange);
+}
+
+.screen--features .story-card figure {
+  height: clamp(200px, 27vh, 264px);
 }
 
 .screen--product {
@@ -3059,7 +3245,9 @@ h3 {
 @media (max-width: 1180px) {
   .screen--hero,
   .screen--scenario,
+  .screen--cost,
   .screen--scale,
+  .screen--cards,
   .screen--product,
   .screen--lan,
   .screen--advantages {
@@ -3076,6 +3264,14 @@ h3 {
 
   .screen--scenario--reverse {
     grid-template-columns: minmax(450px, 1.08fr) minmax(340px, 0.92fr);
+  }
+
+  .screen--cost {
+    grid-template-columns: minmax(500px, 1.2fr) minmax(330px, 0.8fr);
+  }
+
+  .card-grid {
+    gap: 24px;
   }
 
   .screen--scale {
@@ -3152,7 +3348,9 @@ h3 {
 
   .screen--hero,
   .screen--scenario,
+  .screen--cost,
   .screen--scale,
+  .screen--cards,
   .screen--product,
   .screen--lan,
   .screen--simulation,
@@ -3165,6 +3363,7 @@ h3 {
 
   .hero-copy,
   .scenario-copy,
+  .cost-copy,
   .scale-copy,
   .product-copy,
   .lan-copy,
@@ -3181,6 +3380,28 @@ h3 {
 
   .screen--scale {
     align-content: center;
+  }
+
+  .screen--cost {
+    min-height: 1040px;
+    align-content: start;
+  }
+
+  .cost-copy,
+  .cost-comparison {
+    grid-column: auto;
+    grid-row: auto;
+  }
+
+  .cost-comparison {
+    width: 100%;
+    max-width: 760px;
+    justify-self: center;
+  }
+
+  .screen--cards {
+    min-height: 980px;
+    align-content: start;
   }
 
   .screen--scenario--reverse .scenario-copy,
@@ -3434,6 +3655,85 @@ h3 {
   .screen--scenario {
     align-content: start;
     gap: 22px;
+  }
+
+  .screen--cost {
+    min-height: 930px;
+    gap: 28px;
+  }
+
+  .section-kicker {
+    margin-bottom: 12px;
+    font-size: 10px;
+  }
+
+  .cost-copy > p:last-child {
+    margin-top: 20px;
+    font-size: 16px;
+  }
+
+  .cost-comparison {
+    gap: 12px;
+  }
+
+  .cost-option--prima {
+    transform: translateY(-7px);
+  }
+
+  .cost-option > div {
+    grid-template-columns: 1fr;
+    gap: 5px;
+    padding-top: 10px;
+  }
+
+  .cost-option strong {
+    grid-column: 1;
+    grid-row: auto;
+    font-size: 25px;
+  }
+
+  .cost-option small {
+    min-height: 22px;
+    font-size: 7px;
+  }
+
+  .cost-option span {
+    font-size: 12px;
+  }
+
+  .screen--cards {
+    min-height: auto;
+    gap: 28px;
+    padding-top: 104px;
+    padding-bottom: 64px;
+  }
+
+  .cards-heading h2 {
+    font-size: clamp(37px, 10.8vw, 45px);
+  }
+
+  .cards-heading > p:last-child {
+    margin-top: 15px;
+    font-size: 16px;
+  }
+
+  .card-grid {
+    grid-template-columns: 1fr;
+    gap: 30px;
+  }
+
+  .story-card figure,
+  .screen--features .story-card figure {
+    height: min(62vw, 270px);
+    margin-bottom: 14px;
+  }
+
+  .story-card h3 {
+    font-size: 24px;
+  }
+
+  .story-card > p {
+    font-size: 15px;
   }
 
   .screen--scale {

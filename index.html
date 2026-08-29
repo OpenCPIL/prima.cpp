@@ -18,7 +18,7 @@
     <link rel="preload" as="font" href="./assets/fonts/Geist-Variable.woff2" type="font/woff2" crossorigin />
     <link rel="preload" as="image" href="./assets/hero-topology-v6.webp" />
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.18.1/dist/katex.min.css" crossorigin="anonymous" />
-    <link rel="stylesheet" href="./src/styles.css?v=stacked-scale-bars-v19-20260829" />
+    <link rel="stylesheet" href="./src/styles.css?v=five-screen-home-v20-20260829" />
     <title>Prima Lab — Local AI, beyond one device</title>
   </head>
   <body>
@@ -60,14 +60,22 @@
         </figure>
       </section>
 
-      <section class="screen screen--scenario screen--scenario--reverse" id="home" data-slide="home" data-route-view="home" aria-labelledby="home-title">
-        <div class="scenario-copy reveal">
-          <h2 id="home-title">Enhance your local AI<br />at the lowest cost.</h2>
-          <p>No need to buy a higher-performance workstation. Pool the heterogeneous devices you already own—laptops, desktops, tablets, Mac Minis, and devices of different operating systems.</p>
+      <section class="screen screen--cost" id="home" data-slide="home" data-route-view="home" aria-labelledby="home-title">
+        <div class="cost-copy reveal">
+          <p class="section-kicker">Zero new hardware cost</p>
+          <h2 id="home-title">Useful local AI,<br />without a $100K server.</h2>
+          <p>The fastest and most powerful option can cost six figures. PRIMA will not turn existing devices into that server—but pooling hardware you already own can make local AI useful without another workstation purchase.</p>
         </div>
-        <figure class="scenario-art reveal reveal--late">
-          <img src="./assets/office-ai-collaboration-v4.webp" alt="Three spacious workstations where a central Mac Mini coordinates heterogeneous devices to strengthen shared AI for employees while colleagues chat over coffee" loading="lazy" width="1536" height="1024" />
-        </figure>
+        <div class="cost-comparison reveal reveal--late" aria-label="A costly new AI server compared with a PRIMA pool made from existing devices">
+          <article class="cost-option cost-option--server">
+            <img src="./assets/cost-server-v1.webp" alt="A dense enterprise GPU server representing an expensive new hardware purchase" loading="lazy" width="1200" height="900" />
+            <div><small>New AI server</small><strong>~$100,000</strong><span>Too expensive.</span></div>
+          </article>
+          <article class="cost-option cost-option--prima">
+            <img src="./assets/cost-prima-pool-v1.webp" alt="A laptop, desktop, tablet and mini PC pooling their existing compute into useful local AI" loading="lazy" width="1200" height="900" />
+            <div><small>PRIMA · devices you own</small><strong>$0</strong><span>Useful is enough.</span></div>
+          </article>
+        </div>
       </section>
 
       <section class="screen screen--scale" id="scalability" data-slide="scalability" data-route-view="home" aria-labelledby="scalability-title">
@@ -100,6 +108,62 @@
             <div><small>Precision</small><strong>Low-bit</strong></div>
             <i aria-hidden="true"><b></b></i>
             <div><small>Quality</small><strong>Full precision</strong></div>
+          </article>
+        </div>
+      </section>
+
+      <section class="screen screen--cards screen--cases" id="cases" data-slide="cases" data-route-view="home" aria-labelledby="cases-title">
+        <header class="cards-heading reveal">
+          <p class="section-kicker">Application cases</p>
+          <h2 id="cases-title">Local AI, wherever work happens.</h2>
+          <p>Keep inference close to your data, even when the devices are not all in the same room.</p>
+        </header>
+        <div class="card-grid reveal reveal--late">
+          <article class="story-card">
+            <figure><img src="./assets/case-home-v1.webp" alt="A person using private local AI at home with a laptop, desktop, tablet and mini PC working together" loading="lazy" width="1200" height="900" /></figure>
+            <span>01 · Home</span>
+            <h3>Your devices. Your private AI.</h3>
+            <p>Pool the hardware around your home into one private inference service.</p>
+          </article>
+          <article class="story-card">
+            <figure><img src="./assets/office-ai-collaboration-v4.webp" alt="Employees using a shared office AI service strengthened by heterogeneous workplace devices" loading="lazy" width="1536" height="1024" /></figure>
+            <span>02 · Office</span>
+            <h3>Shared capacity for the team.</h3>
+            <p>Turn existing office devices into a useful local AI pool for everyday work.</p>
+          </article>
+          <article class="story-card">
+            <figure><img src="./assets/case-remote-lan-v1.webp" alt="A person working from home while a secure wide-area connection reaches a workstation on a remote LAN" loading="lazy" width="1200" height="900" /></figure>
+            <span>03 · Remote LAN</span>
+            <h3>Work here. Compute there.</h3>
+            <p>Use a workstation on another LAN while you work comfortably from home.</p>
+          </article>
+        </div>
+      </section>
+
+      <section class="screen screen--cards screen--features" id="deployment" data-slide="deployment" data-route-view="home" aria-labelledby="deployment-title">
+        <header class="cards-heading reveal">
+          <p class="section-kicker">Simple by design</p>
+          <h2 id="deployment-title">Easy to deploy. Easy to keep running.</h2>
+          <p>As devices and networks change, the inference pool adapts with them.</p>
+        </header>
+        <div class="card-grid reveal reveal--late">
+          <article class="story-card feature-card">
+            <figure><img src="./assets/feature-discovery-v1.webp" alt="A newly discovered tablet automatically joining an existing local AI device pool" loading="lazy" width="1200" height="960" /></figure>
+            <span>01 · Discover</span>
+            <h3>Automatic device discovery.</h3>
+            <p>New devices are found and can join the inference pool automatically.</p>
+          </article>
+          <article class="story-card feature-card">
+            <figure><img src="./assets/feature-recovery-v1.webp" alt="A device leaving while the remaining devices preserve and recover the local AI inference pool" loading="lazy" width="1200" height="900" /></figure>
+            <span>02 · Recover</span>
+            <h3>Resilient membership.</h3>
+            <p>Detect a device leaving and recover inference across the remaining pool.</p>
+          </article>
+          <article class="story-card feature-card">
+            <figure><img src="./assets/feature-networks-v1.webp" alt="A laptop and workstation connected through Wi-Fi, Ethernet and a secure cross-LAN tunnel" loading="lazy" width="1200" height="900" /></figure>
+            <span>03 · Connect</span>
+            <h3>Any practical network.</h3>
+            <p>Use wired LAN, wireless LAN, or secure cross-LAN connections.</p>
           </article>
         </div>
       </section>
