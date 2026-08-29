@@ -4245,6 +4245,17 @@ h3 {
 }
 
 @media (max-width: 640px) {
+  .screen--hero .actions {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 6px;
+  }
+
+  .screen--hero .actions .button {
+    gap: 6px;
+    padding-inline: 5px;
+    white-space: nowrap;
+  }
+
   .screen--simulation {
     gap: 18px;
     padding-top: 92px;
