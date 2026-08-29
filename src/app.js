@@ -82,17 +82,29 @@ const routeViews = [...document.querySelectorAll("[data-route-view]")];
 const routeLinks = [...document.querySelectorAll("[data-route-link]")];
 const routeNames = new Set(["home", "playground", "blog"]);
 const routeStorageKey = "prima-route";
+const blogPostStorageKey = "prima-blog-post";
+const blogPostNames = new Set(["workstation-already-in-room"]);
+const blogIndexView = document.querySelector("[data-blog-index]");
+const blogPostViews = [...document.querySelectorAll("[data-blog-post]")];
 
 function routeFromPathname() {
-  const segment = window.location.pathname.replace(/\/+$/, "").split("/").pop();
-  return routeNames.has(segment) ? segment : null;
+  const segments = window.location.pathname.replace(/\/+$/, "").split("/").filter(Boolean);
+  const segment = segments.at(-1);
+  if (routeNames.has(segment)) return segment;
+  return segments.includes("blog") ? "blog" : null;
+}
+
+function blogPostFromPathname() {
+  const segments = window.location.pathname.replace(/\/+$/, "").split("/").filter(Boolean);
+  const blogIndex = segments.lastIndexOf("blog");
+  const post = blogIndex >= 0 ? segments[blogIndex + 1] : null;
+  return blogPostNames.has(post) ? post : null;
 }
 
 function basePathFromLocation() {
   let path = window.location.pathname.replace(/\/+$/, "");
   path = path.replace(/\/index\.html$/, "");
-  const route = routeFromPathname();
-  if (route) path = path.slice(0, -(route.length + 1));
+  path = path.replace(/\/(?:home|playground|blog)(?:\/.*)?$/, "");
   return path === "/" ? "" : path;
 }
 
@@ -100,6 +112,10 @@ const routeBasePath = basePathFromLocation();
 
 function pathForRoute(route) {
   return `${routeBasePath}/${route}` || `/${route}`;
+}
+
+function pathForBlogPost(post) {
+  return `${pathForRoute("blog")}/${post}`;
 }
 
 function currentRouteScrollTop() {
@@ -139,12 +155,19 @@ function setRouteScrollTop(scrollTop) {
   });
 }
 
-function applyRoute(route, scrollTop = 0) {
+function applyRoute(route, scrollTop = 0, blogPost = null) {
   const nextRoute = routeNames.has(route) ? route : "home";
+  const nextBlogPost = nextRoute === "blog" && blogPostNames.has(blogPost) ? blogPost : null;
   document.documentElement.dataset.route = nextRoute;
   document.body.dataset.route = nextRoute;
+  if (nextBlogPost) document.body.dataset.blogPost = nextBlogPost;
+  else delete document.body.dataset.blogPost;
   routeViews.forEach((view) => {
     view.hidden = view.dataset.routeView !== nextRoute;
+  });
+  if (blogIndexView) blogIndexView.hidden = nextRoute !== "blog" || Boolean(nextBlogPost);
+  blogPostViews.forEach((post) => {
+    post.hidden = nextRoute !== "blog" || post.dataset.blogPost !== nextBlogPost;
   });
   routeLinks.forEach((link) => {
     if (link.dataset.routeLink === nextRoute) link.setAttribute("aria-current", "page");
@@ -153,30 +176,39 @@ function applyRoute(route, scrollTop = 0) {
   document.title =
     nextRoute === "playground"
       ? "Prima Lab — Playground"
-      : nextRoute === "blog"
-        ? "Prima Lab — Blog"
+      : nextBlogPost
+        ? "The workstation you need may already be in the room — Prima Lab"
+        : nextRoute === "blog"
+          ? "Prima Lab — Blog"
         : "Prima Lab — Local AI, beyond one device";
   setRouteScrollTop(scrollTop);
 }
 
 function saveCurrentRouteScroll() {
   const stateRoute = history.state?.route || routeFromPathname() || document.body.dataset.route || "home";
+  const stateBlogPost = stateRoute === "blog" ? history.state?.blogPost || blogPostFromPathname() : null;
   history.replaceState(
-    { ...history.state, route: stateRoute, scrollTop: currentRouteScrollTop() },
+    { ...history.state, route: stateRoute, blogPost: stateBlogPost, scrollTop: currentRouteScrollTop() },
     "",
-    pathForRoute(stateRoute),
+    stateBlogPost ? pathForBlogPost(stateBlogPost) : pathForRoute(stateRoute),
   );
 }
 
 function navigateToRoute(route) {
   const currentRoute = document.body.dataset.route || "home";
   if (route === currentRoute) {
+    if (route === "blog" && document.body.dataset.blogPost) {
+      saveCurrentRouteScroll();
+      history.pushState({ route: "blog", blogPost: null, scrollTop: 0 }, "", pathForRoute("blog"));
+      applyRoute("blog", 0, null);
+      return;
+    }
     setRouteScrollTop(0);
     return;
   }
   saveCurrentRouteScroll();
-  history.pushState({ route, scrollTop: 0 }, "", pathForRoute(route));
-  applyRoute(route, 0);
+  history.pushState({ route, blogPost: null, scrollTop: 0 }, "", pathForRoute(route));
+  applyRoute(route, 0, null);
 }
 
 routeLinks.forEach((link) => {
@@ -187,23 +219,58 @@ routeLinks.forEach((link) => {
   });
 });
 
+document.querySelectorAll("[data-blog-post-link]").forEach((link) => {
+  link.addEventListener("click", (event) => {
+    if (event.button !== 0 || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return;
+    const blogPost = link.dataset.blogPostLink;
+    if (!blogPostNames.has(blogPost)) return;
+    event.preventDefault();
+    saveCurrentRouteScroll();
+    history.pushState({ route: "blog", blogPost, scrollTop: 0 }, "", pathForBlogPost(blogPost));
+    applyRoute("blog", 0, blogPost);
+  });
+});
+
+document.querySelectorAll("[data-blog-index-link]").forEach((link) => {
+  link.addEventListener("click", (event) => {
+    if (event.button !== 0 || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return;
+    event.preventDefault();
+    navigateToRoute("blog");
+  });
+});
+
 window.addEventListener("popstate", (event) => {
   const route = event.state?.route || routeFromPathname() || "home";
-  applyRoute(route, event.state?.scrollTop || 0);
+  const blogPost = route === "blog" ? event.state?.blogPost || blogPostFromPathname() : null;
+  applyRoute(route, event.state?.scrollTop || 0, blogPost);
 });
 
 history.scrollRestoration = "manual";
 let storedRoute = null;
+let storedBlogPost = null;
 try {
   storedRoute = window.sessionStorage.getItem(routeStorageKey);
+  storedBlogPost = window.sessionStorage.getItem(blogPostStorageKey);
   window.sessionStorage.removeItem(routeStorageKey);
+  window.sessionStorage.removeItem(blogPostStorageKey);
 } catch {
   storedRoute = null;
+  storedBlogPost = null;
 }
 const hashRoute = window.location.hash === "#simulation" ? "playground" : window.location.hash === "#intro" ? "home" : null;
 const initialRoute = routeFromPathname() || (routeNames.has(storedRoute) ? storedRoute : null) || hashRoute || "home";
-history.replaceState({ route: initialRoute, scrollTop: 0 }, "", pathForRoute(initialRoute));
-applyRoute(initialRoute, 0);
+const initialBlogPost =
+  initialRoute === "blog" && blogPostNames.has(storedBlogPost)
+    ? storedBlogPost
+    : initialRoute === "blog"
+      ? blogPostFromPathname()
+      : null;
+history.replaceState(
+  { route: initialRoute, blogPost: initialBlogPost, scrollTop: 0 },
+  "",
+  initialBlogPost ? pathForBlogPost(initialBlogPost) : pathForRoute(initialRoute),
+);
+applyRoute(initialRoute, 0, initialBlogPost);
 
 const sceneStates = new Map();
 
