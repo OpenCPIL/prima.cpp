@@ -1378,6 +1378,16 @@ h3 {
   height: auto;
 }
 
+.blog-figure--seamless {
+  overflow: visible;
+  background: transparent;
+  border: 0;
+}
+
+.blog-figure--seamless img {
+  mix-blend-mode: darken;
+}
+
 .screen--product {
   grid-template-columns: minmax(290px, 0.56fr) minmax(620px, 1.44fr);
   align-items: center;

@@ -18,7 +18,7 @@
     <link rel="preload" as="font" href="./assets/fonts/Geist-Variable.woff2" type="font/woff2" crossorigin />
     <link rel="preload" as="image" href="./assets/hero-topology-v6.webp" />
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.18.1/dist/katex.min.css" crossorigin="anonymous" />
-    <link rel="stylesheet" href="./src/styles.css?v=prima-blog-table-head-v48-20260830" />
+    <link rel="stylesheet" href="./src/styles.css?v=prima-blog-cluster-figure-v49-20260830" />
     <title>Prima Lab — Local AI, beyond one device</title>
   </head>
   <body>
@@ -246,7 +246,7 @@
 
               <p>另一些方案通过低比特量化、让上百 B 的 MoE 模型在消费级工作站上达到可交互的吞吐。</p>
 
-              <p>这些方案都很有价值，但它们隐含着不同的 “智能-速度-成本” 的取舍：</p>
+              <p>这些方案都很有价值，但它们隐含着不同的“智能-速度-成本”的取舍：</p>
 
               <ul>
                 <li>更大的模型、越接近满血，背后是速度的显著下降；</li>
@@ -439,15 +439,19 @@
 
               <p>上下文继续变长，或希望从 IQ1 提高到更高量化精度，我们用 4090、四卡 A4000 Server 为 AI 推理机扩充系统主存和 GPU 显存。不需要丢弃原推理机，为更强推理机重新支付高昂费用。</p>
 
+              <figure class="blog-figure blog-figure--seamless">
+                <img data-blog-image="prima-cluster-origin-v1.webp" alt="A powerful local AI workstation serves as the origin of a scalable cluster, with an existing laptop, a four-GPU server and a mini computer contributing capacity beneath expanding orange AI capability layers" loading="lazy" width="1536" height="1024" />
+              </figure>
+
               <p>如果未来出现了更小、更强的模型，PRIMA 集群可以随时缩容，解放我们的笔记本和台式机，毕竟这些设备也不是为了本地 AI 而购买的。</p>
 
               <p>当我们需要 1M 甚至更长上下文、更高并发时，又可以再次唤醒这些设备。</p>
 
               <h2>从“这台设备能不能跑”到“这台设备能贡献什么”</h2>
 
-              <blockquote><strong>PRIMA 正在让 “未来最值得买哪一台 AI 电脑？” 变得没那么重要。</strong></blockquote>
+              <blockquote><strong>PRIMA 正在让“未来最值得买哪一台 AI 电脑？”变得没那么重要。</strong></blockquote>
 
-              <p>过去，我们评估本地 AI 硬件时，经常问： <strong>“这台设备还能不能跑这个模型？”</strong> 如果不能，这台已经支付了高沉没成本的机器将被尘封。</p>
+              <p>过去，我们评估本地 AI 硬件时，经常问：<strong>“这台设备还能不能跑这个模型？”</strong> 如果不能，这台已经支付了高沉没成本的机器将被尘封。</p>
 
               <p>PRIMA 旨在把这个问题换成：<strong>这台设备还能为我的 AI 提供什么？</strong> 也许它无法独立运行 Hy4， 但它有一张 GPU；也许 GPU 不强，但它有 16GB 显存和 32GB 内存； 也许 CPU 很旧，但它有一块高速 NVMe SSD。也许它什么都不是旗舰，但几台这样的设备放在一起，就可能支撑一件任何单台设备都做不到的事情。</p>
 
