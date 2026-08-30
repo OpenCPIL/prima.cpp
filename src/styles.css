@@ -1180,8 +1180,7 @@ h3 {
   text-transform: uppercase;
 }
 
-.blog-back:hover,
-.blog-post__footer a:hover {
+.blog-back:hover {
   color: var(--orange);
 }
 
@@ -1230,26 +1229,12 @@ h3 {
   padding: 4px 0 4px 24px;
   color: var(--ink);
   border-left: 2px solid var(--orange);
-  font-size: clamp(24px, 2.5vw, 34px);
+  font-size: clamp(20px, 1.8vw, 26px);
   font-weight: 520;
   line-height: 1.2;
   letter-spacing: -0.035em;
 }
 
-.blog-post__footer {
-  display: flex;
-  justify-content: space-between;
-  gap: 24px;
-  margin-top: clamp(58px, 9vh, 88px);
-  padding-top: 21px;
-  border-top: 1px solid var(--ink);
-}
-
-.blog-post__footer a {
-  font: 620 10px/1.2 "Geist Mono", monospace;
-  letter-spacing: 0.045em;
-  text-transform: uppercase;
-}
 .screen--product {
   grid-template-columns: minmax(290px, 0.56fr) minmax(620px, 1.44fr);
   align-items: center;
@@ -5324,14 +5309,7 @@ h3 {
   .blog-post__body blockquote {
     margin-block: 42px;
     padding-left: 18px;
-    font-size: 27px;
-  }
-
-  .blog-post__footer {
-    align-items: flex-start;
-    flex-direction: column;
-    gap: 18px;
-    margin-top: 56px;
+    font-size: 22px;
   }
 
   .screen--hero .actions {
