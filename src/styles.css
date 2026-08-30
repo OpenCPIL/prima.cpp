@@ -1179,6 +1179,56 @@ h3 {
   width: min(100%, 900px);
 }
 
+.blog-post__toolbar {
+  display: flex;
+  gap: 24px;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: clamp(42px, 6vh, 64px);
+}
+
+.blog-post__toolbar .blog-back {
+  margin-bottom: 0;
+}
+
+.blog-language-toggle {
+  display: inline-flex;
+  flex: 0 0 auto;
+  gap: 3px;
+  padding: 3px;
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  background: rgba(252, 252, 251, 0.72);
+}
+
+.blog-language-toggle button {
+  min-width: 48px;
+  height: 34px;
+  padding: 0 13px;
+  border: 0;
+  border-radius: 999px;
+  background: transparent;
+  color: var(--muted);
+  cursor: pointer;
+  font: 650 11px/1 "Geist Mono", monospace;
+  letter-spacing: 0.035em;
+  transition: color 180ms ease, background-color 180ms ease;
+}
+
+.blog-language-toggle button:hover {
+  color: var(--ink);
+}
+
+.blog-language-toggle button[aria-pressed="true"] {
+  background: var(--ink);
+  color: var(--paper);
+}
+
+.blog-language-toggle button:focus-visible {
+  outline: 2px solid var(--orange);
+  outline-offset: 2px;
+}
+
 .blog-back {
   display: inline-flex;
   gap: 9px;
@@ -5436,6 +5486,21 @@ h3 {
 
   .blog-back {
     margin-bottom: 38px;
+  }
+
+  .blog-post__toolbar {
+    gap: 16px;
+    margin-bottom: 38px;
+  }
+
+  .blog-post__toolbar .blog-back {
+    margin-bottom: 0;
+  }
+
+  .blog-language-toggle button {
+    min-width: 52px;
+    height: 38px;
+    padding-inline: 12px;
   }
 
   .blog-post__header {

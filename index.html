@@ -18,7 +18,7 @@
     <link rel="preload" as="font" href="./assets/fonts/Geist-Variable.woff2" type="font/woff2" crossorigin />
     <link rel="preload" as="image" href="./assets/hero-topology-v6.webp" />
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.18.1/dist/katex.min.css" crossorigin="anonymous" />
-    <link rel="stylesheet" href="./src/styles.css?v=prima-blog-cluster-figure-v51-20260830" />
+    <link rel="stylesheet" href="./src/styles.css?v=prima-blog-language-v52-20260830" />
     <title>Prima Lab — Local AI, beyond one device</title>
   </head>
   <body>
@@ -182,8 +182,8 @@
               <a class="blog-card" href="./blog/hunyuan4-770b-local-devices" data-blog-post-link="hunyuan4-770b-local-devices">
                 <div class="blog-card__content">
                   <div class="blog-meta"><time datetime="2026-08-30">August 30, 2026</time></div>
-                  <h2 lang="zh-CN">不可忽视的可扩展性：PRIMA 的 Hy4 770B 压测揭示本地 AI 新方向</h2>
-                  <p lang="zh-CN">PRIMA 不追求单机奇迹，而是让已有设备一起，把本地 AI 的边界推得更远。</p>
+                  <h2>Scalability Matters More Than a Bigger Machine</h2>
+                  <p>What PRIMA’s Hy4 770B experiment reveals about the future of scalable local AI.</p>
                   <span class="blog-card__link">Read note <b aria-hidden="true">→</b></span>
                 </div>
               </a>
@@ -226,8 +226,260 @@
             </div>
           </article>
 
-          <article class="blog-post blog-post--longform" lang="zh-CN" data-blog-post="hunyuan4-770b-local-devices" aria-labelledby="hunyuan4-post-title" hidden>
-            <a class="blog-back" href="./blog" data-blog-index-link><span aria-hidden="true">←</span> All blogs</a>
+          <article class="blog-post blog-post--longform" lang="en" data-blog-post="hunyuan4-770b-local-devices" data-blog-language-root aria-labelledby="hunyuan4-post-title-en" hidden>
+            <div class="blog-post__toolbar">
+              <a class="blog-back" href="./blog" data-blog-index-link><span aria-hidden="true">←</span> All blogs</a>
+              <div class="blog-language-toggle" role="group" aria-label="Article language">
+                <button type="button" data-blog-language="en" aria-pressed="true">EN</button>
+                <button type="button" data-blog-language="zh" aria-pressed="false" lang="zh-CN">中文</button>
+              </div>
+            </div>
+
+            <div data-blog-language-panel="en">
+              <header class="blog-post__header">
+                <div class="blog-meta"><time datetime="2026-08-30">August 30, 2026</time></div>
+                <h1 id="hunyuan4-post-title-en">Scalability Matters More Than a Bigger Machine: What PRIMA’s Hy4 770B Experiment Reveals About Local AI</h1>
+              </header>
+
+              <div class="blog-post__body">
+                <blockquote><strong>PRIMA is not trying to make one ordinary machine perform a miracle. It lets the devices we already own work together and push the boundaries of local AI further.</strong></blockquote>
+
+                <h2>Every local AI performance number hides a trade-off</h2>
+
+                <p>Life is full of trade-offs. Local AI is no different.</p>
+
+                <p>We have already seen remarkable local AI throughput. With a highly customized hardware setup, for example, two RTX 2080 Ti cards modified to 22GB of VRAM and connected over NVLink can deliver more than 100 TPS for single-request generation with Qwen 3.8 27B.</p>
+
+                <p>FreeToken, as another example, has accelerated GLM-5.2 753B to 15 TPS on an RTX PRO 6000 96GB, but that setup requires 512GB of host memory.</p>
+
+                <p>Other approaches use low-bit quantization to bring interactive throughput for hundred-billion-parameter MoE models to consumer workstations.</p>
+
+                <p>All of these approaches are valuable, but each encodes a different trade-off among intelligence, speed, and cost:</p>
+
+                <ul>
+                  <li>Larger models, and models closer to full precision, come with a sharp loss in speed;</li>
+                  <li>Lowering quantization precision can reduce model capability;</li>
+                  <li>Custom or more powerful CPUs and GPUs, more system memory, and greater memory bandwidth raise hardware cost;</li>
+                  <li>Laptops we already own often have limited RAM and VRAM, forcing us toward smaller models or lower precision.</li>
+                </ul>
+
+                <p>These are impressive systems. But:</p>
+
+                <blockquote><strong>Choosing a fixed hardware configuration also means choosing its ceiling. If frontier models grow, the machine quickly becomes insufficient. If frontier models shrink, we may have bought more than we need. Either way, an expensive fixed configuration can easily become a sunk or unnecessary cost.</strong></blockquote>
+
+                <p>This does not mean we should never buy stronger hardware. The problem is that local AI requirements change quickly, while hardware remains fixed.</p>
+
+                <p>A high-memory workstation purchased today for a 100B model may be insufficient tomorrow when the model grows to 700B. We then look for another, stronger machine: new GPUs, more and larger memory modules, a faster CPU and SSD, perhaps even a new motherboard, power supply, cooling system, and chassis. Meanwhile, the hardware we already paid for becomes a sleeping asset.</p>
+
+                <p>The reverse can also happen. If MoE, sparsity, or a more efficient architecture produces a stronger model with fewer parameters, the expensive hardware purchased specifically for a “large model” may be wasted.</p>
+
+                <p>That led us to a different question:</p>
+
+                <blockquote><strong>Instead of repeatedly searching for a new machine that only meets today’s requirements, can the machines we already own keep scaling as those requirements change?</strong></blockquote>
+
+                <h2>PRIMA pursues scalability, not a “speed miracle”</h2>
+
+                <p>PRIMA is not designed to set a local AI throughput record on one carefully selected hardware configuration. It focuses on a different and more common real-world situation.</p>
+
+                <p>We may already have a laptop, an older workstation, a Mac Mini, a GPU server at the office, or even devices at a neighbor’s or friend’s home on another LAN. None is powerful enough on its own. But what if we combine them?</p>
+
+                <p>PRIMA aims to organize these otherwise independent devices into a local AI cluster that can expand on demand. It wakes sleeping assets and lets every machine contribute whatever remains useful. As new devices join, the capacity of the cluster can continue to grow.</p>
+
+                <p>PRIMA does not optimize only for “fastest.” It expands four boundaries of local AI as needed: larger models, faster generation, longer context, and higher model precision. In other words:</p>
+
+                <blockquote><strong>Do not buy an entirely new machine every time requirements grow. Add devices to the local AI cluster when demand rises, and release them when demand falls. Those devices are ones we already own.</strong></blockquote>
+
+                <p>This is what PRIMA means by scalable local AI.</p>
+
+                <h2>Hy4 770B gave us an extreme experiment</h2>
+
+                <p>When Tencent released Hy4 Preview, we saw a model that was unusually well suited to testing this idea.</p>
+
+                <p>Hy4 is a 770B-parameter MoE model. Its MoE layers contain 256 routed experts and one shared expert. For every generated token, eight routed experts plus the shared expert are activated, for roughly 49B active parameters per token.</p>
+
+                <p>The MoE architecture does not activate all 770B parameters for every token, but the complete expert weights still place enormous pressure on RAM and VRAM. Even after aggressive 1-bit quantization, storing the Hy4 770B parameters requires more than 200GB. That pushed our question to an extreme:</p>
+
+                <blockquote><strong>Without buying any new hardware for Hy4, how far could I run this 770B model using only the devices already available to me?</strong></blockquote>
+
+                <h3>The first device: an ordinary 4090 Laptop</h3>
+
+                <p>My first device was the laptop I use every day:</p>
+
+                <div class="blog-table-wrap" role="region" aria-label="4090 Laptop hardware configuration" tabindex="0">
+                  <table>
+                    <thead><tr><th scope="col"><strong>Hardware</strong></th><th scope="col"><strong>Configuration</strong></th></tr></thead>
+                    <tbody>
+                      <tr><th scope="row">CPU</th><td>Intel Core Ultra 9 185H</td></tr>
+                      <tr><th scope="row">System memory</th><td>32GB</td></tr>
+                      <tr><th scope="row">GPU</th><td>NVIDIA RTX 4090 Laptop</td></tr>
+                      <tr><th scope="row">VRAM</th><td>16GB</td></tr>
+                    </tbody>
+                  </table>
+                </div>
+
+                <p>I initially wanted to try FreeToken, but the laptop had only 32GB of system memory—enough for just a fraction of Hy4 IQ1. Continuing down the full-memory-residency path would require at least 256GB of RAM. On a laptop, that is not as simple as adding a few memory modules; the motherboard would have to change as well. At that point, I might as well call the result a high-memory workstation.</p>
+
+                <p>I did not want to build or buy an expensive high-memory workstation for one model. Apart from electricity, my hardware budget was zero.</p>
+
+                <p>Instead, I used llama.cpp with mmap and disk streaming to run Hy4 770B IQ1 directly on the laptop.</p>
+
+                <p>The model ran. But its per-token latency reached <strong>5.9 s/token, or approximately 0.17 TPS.</strong></p>
+
+                <p>From the narrow perspective of whether the model could start, this was a success. In practice, it was painfully slow. About 0.17 TPS was the laptop’s single-device limit under this model and quantization, before introducing accelerators such as MTP, DFlash2, or DSpark.</p>
+
+                <h3>The second device: a modest four-A4000 server</h3>
+
+                <p>At my workplace, I also had access to a GPU server:</p>
+
+                <div class="blog-table-wrap" role="region" aria-label="A4000 server hardware configuration" tabindex="0">
+                  <table>
+                    <thead><tr><th scope="col"><strong>Hardware</strong></th><th scope="col"><strong>Configuration</strong></th></tr></thead>
+                    <tbody>
+                      <tr><th scope="row">CPU</th><td>Intel Core i7-12700</td></tr>
+                      <tr><th scope="row">System memory</th><td>32GB</td></tr>
+                      <tr><th scope="row">GPU</th><td>NVIDIA RTX A4000 × 4</td></tr>
+                      <tr><th scope="row">VRAM per GPU</th><td>16GB</td></tr>
+                    </tbody>
+                  </table>
+                </div>
+
+                <p>The RTX A4000 dates to 2021. Each card has only 16GB of VRAM, and both its compute performance and price are less than half those of the 4090 Laptop. Its lower cost was precisely why the server had been configured with four cards to expand VRAM.</p>
+
+                <p>Even with four GPUs, the server had only 96GB of system memory and VRAM combined—less than half of the model’s 200GB-plus parameter footprint. FreeToken could not rescue this configuration either.</p>
+
+                <p>We therefore used llama.cpp again. It ran at approximately <strong>2.7 s/token, or 0.37 TPS.</strong></p>
+
+                <p>It was faster than the laptop, but still painfully slow.</p>
+
+                <h2>Using PRIMA to combine two insufficient machines</h2>
+
+                <p>If we simply add the system memory and VRAM of the two devices, we get:</p>
+
+                <ul>
+                  <li>Laptop: 32GB RAM + 16GB VRAM;</li>
+                  <li>GPU server: 32GB RAM + 64GB VRAM;</li>
+                  <li>Total: <strong>144GB of combined RAM and VRAM</strong>.</li>
+                </ul>
+
+                <p>That is still smaller than the model file itself, and those resources are scattered across two machines, five GPUs, multiple PCIe links, and different storage devices.</p>
+
+                <p>The machines are not even on the same LAN. The laptop reaches the GPU server on a remote LAN over Wi-Fi and a VPN. Network RTT is approximately 50ms; the laptop’s downlink is only 145 Mbps, and its uplink is lower still at 27 Mbps.</p>
+
+                <figure class="blog-figure">
+                  <img data-blog-image="prima-hy4-testbed.png" alt="A home RTX 4090 laptop connects over Wi-Fi and an encrypted cross-LAN VPN to a university server with four NVIDIA A4000 GPUs; measured HY4 770B throughput rises from 0.17 and 0.37 to 1.02 tokens per second with PRIMA" width="1536" height="1024" />
+                </figure>
+
+                <p>From an HPC perspective, this is almost exactly the kind of hardware and network setup one would be told not to use for distributed large-model inference. Yet it reflects the real world of local AI: <strong>heterogeneous devices, limited memory, and wireless networking.</strong></p>
+
+                <p>PRIMA did not try to squeeze more than 200GB of model weights into 144GB of aggregate memory. Instead, it used a layered, distributed execution strategy:</p>
+
+                <ul>
+                  <li>Run some MoE layers on the 4090 Laptop;</li>
+                  <li>Assign most MoE layers to the four-A4000 server;</li>
+                  <li>Keep frequently used hot experts on the GPUs;</li>
+                  <li>Leave temporarily inactive cold experts in host memory or on SSD;</li>
+                  <li>Learn dynamically which experts are worth caching from the routing observed in the current request;</li>
+                  <li>Prefetch experts that the next stage is likely to use from SSD;</li>
+                  <li>Overlap disk reads, GPU computation, and network communication wherever possible;</li>
+                  <li>Execute experts in parallel within each node, distributing expert work across multiple GPUs;</li>
+                  <li>Reduce unnecessary data copies and repeated loading;</li>
+                  <li>Transmit only intermediate activations and control messages between devices, not enormous expert weights.</li>
+                </ul>
+
+                <p>Think of the system as an enormous tool warehouse. Hy4 has hundreds of tools, but a specific problem needs only a few of them at a time. The GPU is a fast workbench close to the worker, but it has little space. The SSD is a vast warehouse, but retrieving a tool takes time. PRIMA tries to predict which tools will be needed next, move them close to the workbench in advance, and keep multiple workers and warehouses busy at the same time.</p>
+
+                <h2>From six seconds to 1 TPS</h2>
+
+                <p>With PRIMA coordinating the two devices, we measured:</p>
+
+                <div class="blog-table-wrap" role="region" aria-label="HY4 770B inference throughput comparison" tabindex="0">
+                  <table>
+                    <thead><tr><th scope="col"><strong>Configuration</strong></th><th scope="col"><strong>Throughput</strong></th></tr></thead>
+                    <tbody>
+                      <tr><th scope="row">4090 Laptop + llama.cpp</th><td>0.17 TPS</td></tr>
+                      <tr><th scope="row">4× A4000 Server + llama.cpp</th><td>0.37 TPS</td></tr>
+                      <tr><th scope="row">4090 Laptop + 4× A4000 + PRIMA</th><td><strong>1.02 TPS</strong></td></tr>
+                    </tbody>
+                  </table>
+                </div>
+
+                <p>With the two devices working together, throughput increased by <strong>6×</strong> over the laptop alone and by <strong>2.8×</strong> over the four-A4000 server alone.</p>
+
+                <p>One TPS is not a speed worth boasting about. What matters is this:</p>
+
+                <blockquote><strong>Without spending anything on new hardware, we accelerated a 770B model by 6×.</strong></blockquote>
+
+                <h2>One TPS is nowhere near PRIMA’s performance ceiling</h2>
+
+                <p>More importantly, the primary bottleneck in this two-machine system is still not CPU or GPU compute. It is <strong>streaming model data from SSD</strong>. The complete Hy4 IQ1 weights remain larger than the RAM and VRAM that can stay resident across both devices. Every generated token still requires substantial cold-expert data to be read from SSD. Prefetching, the page cache, expert caching, and computation overlap hide as much disk latency as possible, but SSD bandwidth remains the clearest bottleneck.</p>
+
+                <p>Therefore:</p>
+
+                <blockquote><strong>One TPS is the limit of these two devices, not the performance limit of PRIMA.</strong></blockquote>
+
+                <p>Replacing the SSDs with higher-throughput storage in the future would leave significant room for improvement.</p>
+
+                <p>Adding another device—a neighbor’s desktop or a colleague’s Mac Mini—could also create meaningful headroom.</p>
+
+                <p>A new device contributes more than CPU or GPU compute. It also adds system memory, GPU memory, and parallel SSD bandwidth.</p>
+
+                <p>The model can be distributed further, each machine can read fewer weights from disk, and multiple SSDs can operate simultaneously. Eventually, the bottleneck will move from storage to compute or networking.</p>
+
+                <p>Only as requirements continue to grow do we need to introduce more advanced compute, high-speed wired interconnects, optical wireless links, or other advanced technologies into the local cluster.</p>
+
+                <p>This is the point of a scalable system:</p>
+
+                <blockquote><strong>Do not begin by paying for maximum performance. Begin with the requirements of the application, identify the current bottleneck, and expand only the resource that limits it.</strong></blockquote>
+
+                <h2>PRIMA complements high-performance single-machine techniques</h2>
+
+                <p>PRIMA’s emphasis on scalability is what most clearly distinguishes it from many high-performance local AI approaches.</p>
+
+                <p>PRIMA does not reject better GPUs, more powerful AI chips such as Xring, larger memory, faster SSDs, or better quantization. Nor does it compete with FreeToken, llama.cpp, or future single-machine optimizations.</p>
+
+                <p>On the contrary:</p>
+
+                <blockquote><strong>The stronger each machine becomes, the stronger the foundation of a PRIMA cluster becomes.</strong></blockquote>
+
+                <p>If an exceptionally powerful local AI inference machine appears in the future, PRIMA can make it the origin of the cluster. The 4090 Laptop, A4000 Server, and other devices we already own can remain expansion nodes.</p>
+
+                <p>If models keep growing, we add more devices around that AI machine.</p>
+
+                <p>If context keeps growing, or if we want to move from IQ1 to a higher-precision quantization, the 4090 and four-A4000 server can expand the system RAM and GPU memory available to the AI machine. We do not need to discard it and pay the full cost of an even stronger replacement.</p>
+
+                <figure class="blog-figure blog-figure--seamless">
+                  <img data-blog-image="prima-cluster-origin-v5.webp" alt="A powerful local AI workstation serves as the origin of a scalable cluster, beneath three left-to-right model circles that grow from small and gray to large and vividly colored" loading="lazy" width="1536" height="1024" />
+                </figure>
+
+                <p>If smaller, more capable models arrive, the PRIMA cluster can scale down at any time and release our laptops and desktops. After all, local AI was not the only reason we bought them.</p>
+
+                <p>When we need a 1M-token context, even longer context, or greater concurrency, we can wake those devices again.</p>
+
+                <h2>From “Can this device run it?” to “What can this device contribute?”</h2>
+
+                <blockquote><strong>PRIMA is making the question “Which AI computer should I buy next?” less important.</strong></blockquote>
+
+                <p>When evaluating local AI hardware, we have traditionally asked: <strong>“Can this device still run the model?”</strong> If the answer is no, a machine with a high sunk cost is put aside.</p>
+
+                <p>PRIMA reframes the question: <strong>What can this device still contribute to my AI?</strong> It may not run Hy4 alone, but it has a GPU. The GPU may not be fast, but it has 16GB of VRAM and the machine has 32GB of RAM. The CPU may be old, but the device has a fast NVMe SSD. None of it may be flagship hardware, yet several such devices together can support something no single one of them can do.</p>
+
+                <p>For personal and home AI, this matters more than chasing the highest TPS in a single benchmark. Because:</p>
+
+                <blockquote><strong>Real-world user-side computing resources are heterogeneous, and they already surround us. What local AI lacks is the ability to unify those heterogeneous resources.</strong></blockquote>
+
+                <p>The system may be slow, but slow systems still have useful applications, and we can add capacity to make them faster.</p>
+
+                <p>The model may be less capable, but most real-world tasks do not require the most capable model. We can add capacity until it becomes capable enough.</p>
+
+                <p>PRIMA + Hy4 770B was a successful stress test. It did not create a local AI throughput miracle. It showed that 0.37 TPS on one device was not the limit of what I could deploy without new hardware, and that 1 TPS across two devices is not the end of the performance curve.</p>
+
+                <blockquote>Where will that boundary move when the next device joins?</blockquote>
+
+                <p>That is the question PRIMA intends to keep answering.</p>
+              </div>
+            </div>
+
+            <div lang="zh-CN" data-blog-language-panel="zh" hidden>
             <header class="blog-post__header">
               <div class="blog-meta"><time datetime="2026-08-30">August 30, 2026</time></div>
               <h1 id="hunyuan4-post-title">不可忽视的可扩展性：PRIMA 的 Hy4 770B 压测揭示本地 AI 新方向</h1>
@@ -468,6 +720,7 @@
               <blockquote>那么，下一台设备加入之后，这个边界会在哪里？</blockquote>
 
               <p>这正是 PRIMA 接下来想继续回答的问题。</p>
+            </div>
             </div>
           </article>
         </div>
@@ -829,6 +1082,6 @@
     </main>
 
     <script defer src="./vendor/lucide-prima.js"></script>
-    <script type="module" src="./src/app.js?v=prima-blog-title-route-v21-20260830"></script>
+    <script type="module" src="./src/app.js?v=prima-blog-language-v22-20260830"></script>
   </body>
 </html>
