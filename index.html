@@ -18,7 +18,7 @@
     <link rel="preload" as="font" href="./assets/fonts/Geist-Variable.woff2" type="font/woff2" crossorigin />
     <link rel="preload" as="image" href="./assets/hero-topology-v6.webp" />
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.18.1/dist/katex.min.css" crossorigin="anonymous" />
-    <link rel="stylesheet" href="./src/styles.css?v=prima-blog-language-v52-20260830" />
+    <link rel="stylesheet" href="./src/styles.css?v=prima-blog-nav-v53-20260830" />
     <title>Prima Lab — Local AI, beyond one device</title>
   </head>
   <body>
@@ -32,6 +32,7 @@
         <a href="./home" data-route-link="home">Home</a>
         <a href="./playground" data-route-link="playground">Playground</a>
         <a href="./blog" data-route-link="blog">Blog</a>
+        <a href="https://github.com/OpenCPIL/prima.cpp" target="_blank" rel="noreferrer">GitHub</a>
       </nav>
       <span class="scroll-progress" aria-hidden="true"><b data-scroll-progress></b></span>
     </header>
@@ -388,7 +389,7 @@
 
                 <p>Think of the system as an enormous tool warehouse. Hy4 has hundreds of tools, but a specific problem needs only a few of them at a time. The GPU is a fast workbench close to the worker, but it has little space. The SSD is a vast warehouse, but retrieving a tool takes time. PRIMA tries to predict which tools will be needed next, move them close to the workbench in advance, and keep multiple workers and warehouses busy at the same time.</p>
 
-                <h2>From six seconds to 1 TPS</h2>
+                <h2>From 6 seconds to 1 TPS</h2>
 
                 <p>With PRIMA coordinating the two devices, we measured:</p>
 
@@ -409,7 +410,7 @@
 
                 <blockquote><strong>Without spending anything on new hardware, we accelerated a 770B model by 6×.</strong></blockquote>
 
-                <h2>One TPS is nowhere near PRIMA’s performance ceiling</h2>
+                <h2 data-single-line-heading>1 TPS is nowhere near PRIMA’s performance ceiling</h2>
 
                 <p>More importantly, the primary bottleneck in this two-machine system is still not CPU or GPU compute. It is <strong>streaming model data from SSD</strong>. The complete Hy4 IQ1 weights remain larger than the RAM and VRAM that can stay resident across both devices. Every generated token still requires substantial cold-expert data to be read from SSD. Prefetching, the page cache, expert caching, and computation overlap hide as much disk latency as possible, but SSD bandwidth remains the clearest bottleneck.</p>
 
@@ -431,7 +432,7 @@
 
                 <blockquote><strong>Do not begin by paying for maximum performance. Begin with the requirements of the application, identify the current bottleneck, and expand only the resource that limits it.</strong></blockquote>
 
-                <h2>PRIMA complements high-performance single-machine techniques</h2>
+                <h2 data-single-line-heading>PRIMA complements single-device techniques</h2>
 
                 <p>PRIMA’s emphasis on scalability is what most clearly distinguishes it from many high-performance local AI approaches.</p>
 
@@ -455,7 +456,7 @@
 
                 <p>When we need a 1M-token context, even longer context, or greater concurrency, we can wake those devices again.</p>
 
-                <h2>From “Can this device run it?” to “What can this device contribute?”</h2>
+                <h2 data-single-line-heading>From “Can this device run it?” to “What can it contribute?”</h2>
 
                 <blockquote><strong>PRIMA is making the question “Which AI computer should I buy next?” less important.</strong></blockquote>
 

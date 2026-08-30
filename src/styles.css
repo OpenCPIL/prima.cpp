@@ -1291,6 +1291,14 @@ h3 {
   line-height: 1.08;
 }
 
+@media (min-width: 901px) {
+  .blog-post__body h2[data-single-line-heading] {
+    white-space: nowrap;
+    font-size: clamp(28px, 2.6vw, 38px);
+    letter-spacing: -0.035em;
+  }
+}
+
 .blog-post__body blockquote {
   margin: clamp(44px, 7vh, 66px) 0;
   padding: 4px 0 4px 24px;
