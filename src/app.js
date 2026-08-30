@@ -83,9 +83,76 @@ const routeLinks = [...document.querySelectorAll("[data-route-link]")];
 const routeNames = new Set(["home", "playground", "blog"]);
 const routeStorageKey = "prima-route";
 const blogPostStorageKey = "prima-blog-post";
-const blogPostNames = new Set(["workstation-already-in-room"]);
+const blogPostTitles = new Map([
+  ["workstation-already-in-room", "The workstation you need may already be in the room"],
+  ["hunyuan4-770b-local-devices", "Scalability Matters More Than a Bigger Machine: What PRIMA’s Hy4 770B Experiment Reveals About Local AI"],
+]);
+const blogPostNames = new Set(blogPostTitles.keys());
 const blogIndexView = document.querySelector("[data-blog-index]");
 const blogPostViews = [...document.querySelectorAll("[data-blog-post]")];
+const blogLanguageStorageKey = "prima-blog-language";
+const blogLanguageRoot = document.querySelector("[data-blog-language-root]");
+const blogLanguagePanels = [...document.querySelectorAll("[data-blog-language-panel]")];
+const blogLanguageButtons = [...document.querySelectorAll("[data-blog-language]")];
+const hy4ChineseTitle = "不可忽视的可扩展性：PRIMA 的 Hy4 770B 压测揭示本地 AI 新方向";
+let activeBlogLanguage = "en";
+
+try {
+  if (window.sessionStorage.getItem(blogLanguageStorageKey) === "zh") activeBlogLanguage = "zh";
+} catch {
+  activeBlogLanguage = "en";
+}
+
+function blogPostTitle(post) {
+  if (post === "hunyuan4-770b-local-devices" && activeBlogLanguage === "zh") return hy4ChineseTitle;
+  return blogPostTitles.get(post);
+}
+
+function setBlogLanguage(language, { persist = true } = {}) {
+  const mainScrollTop = main?.scrollTop || 0;
+  const windowScrollTop = window.scrollY;
+  activeBlogLanguage = language === "zh" ? "zh" : "en";
+
+  blogLanguagePanels.forEach((panel) => {
+    panel.hidden = panel.dataset.blogLanguagePanel !== activeBlogLanguage;
+  });
+  blogLanguageButtons.forEach((button) => {
+    button.setAttribute("aria-pressed", String(button.dataset.blogLanguage === activeBlogLanguage));
+  });
+
+  if (blogLanguageRoot) {
+    blogLanguageRoot.lang = activeBlogLanguage === "zh" ? "zh-CN" : "en";
+    blogLanguageRoot.setAttribute(
+      "aria-labelledby",
+      activeBlogLanguage === "zh" ? "hunyuan4-post-title" : "hunyuan4-post-title-en",
+    );
+  }
+
+  if (persist) {
+    try {
+      window.sessionStorage.setItem(blogLanguageStorageKey, activeBlogLanguage);
+    } catch {
+      // The selected language still applies to the current page when storage is unavailable.
+    }
+  }
+
+  if (document.body.dataset.blogPost === "hunyuan4-770b-local-devices") {
+    document.title = `${blogPostTitle("hunyuan4-770b-local-devices")} — Prima Lab`;
+  }
+
+  // Swapping two long documents can trigger browser scroll anchoring. Keep the
+  // reader at the same position, especially when switching languages near the top.
+  void blogLanguageRoot?.offsetHeight;
+  if (main) main.scrollTop = mainScrollTop;
+  window.scrollTo(0, windowScrollTop);
+  requestScrollUpdate();
+}
+
+blogLanguageButtons.forEach((button) => {
+  button.addEventListener("click", () => setBlogLanguage(button.dataset.blogLanguage));
+});
+
+setBlogLanguage(activeBlogLanguage, { persist: false });
 
 function routeFromPathname() {
   const segments = window.location.pathname.replace(/\/+$/, "").split("/").filter(Boolean);
@@ -169,6 +236,14 @@ function applyRoute(route, scrollTop = 0, blogPost = null) {
   blogPostViews.forEach((post) => {
     post.hidden = nextRoute !== "blog" || post.dataset.blogPost !== nextBlogPost;
   });
+  if (nextBlogPost) {
+    const activePost = blogPostViews.find((post) => post.dataset.blogPost === nextBlogPost);
+    activePost?.querySelectorAll("[data-blog-image]").forEach((image) => {
+      if (!image.getAttribute("src")) {
+        image.src = `${routeBasePath}/assets/${encodeURIComponent(image.dataset.blogImage)}`;
+      }
+    });
+  }
   routeLinks.forEach((link) => {
     if (link.dataset.routeLink === nextRoute) link.setAttribute("aria-current", "page");
     else link.removeAttribute("aria-current");
@@ -177,7 +252,7 @@ function applyRoute(route, scrollTop = 0, blogPost = null) {
     nextRoute === "playground"
       ? "Prima Lab — Playground"
       : nextBlogPost
-        ? "The workstation you need may already be in the room — Prima Lab"
+        ? `${blogPostTitle(nextBlogPost)} — Prima Lab`
         : nextRoute === "blog"
           ? "Prima Lab — Blog"
         : "Prima Lab — Local AI, beyond one device";
