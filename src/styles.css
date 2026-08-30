@@ -1220,13 +1220,6 @@ h3 {
   line-height: 1.5;
 }
 
-.blog-post__header > .blog-post__title-en {
-  max-width: 780px;
-  font-size: clamp(16px, 1.25vw, 19px);
-  line-height: 1.45;
-  letter-spacing: -0.015em;
-}
-
 .blog-post__body {
   padding-top: clamp(42px, 7vh, 64px);
 }
@@ -1301,6 +1294,7 @@ h3 {
   color: #353433;
   font-size: clamp(17px, 1.25vw, 20px);
   line-height: 1.65;
+  list-style: disc;
 }
 
 .blog-post__body > ul li::marker {
@@ -5445,11 +5439,6 @@ h3 {
   .blog-post__header > p {
     margin-top: 22px;
     font-size: 19px;
-  }
-
-  .blog-post__header > .blog-post__title-en {
-    font-size: 16px;
-    line-height: 1.45;
   }
 
   .blog-post__body {
