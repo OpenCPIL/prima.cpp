@@ -2646,9 +2646,24 @@ h3 {
   gap: 8px;
 }
 
-.simulation-intro--playground h2 {
-  font-size: clamp(56px, 6vw, 92px);
-  letter-spacing: -0.065em;
+.simulation-purpose {
+  display: grid;
+  gap: 3px;
+  max-width: 1120px;
+}
+
+.simulation-purpose p {
+  color: var(--muted);
+  font-size: clamp(14px, 1vw, 16px);
+  line-height: 1.4;
+}
+
+.simulation-purpose .simulation-purpose__lead {
+  color: var(--ink);
+  font-size: clamp(18px, 1.4vw, 21px);
+  font-weight: 650;
+  line-height: 1.25;
+  letter-spacing: -0.025em;
 }
 
 .screen--simulation {
@@ -5018,10 +5033,6 @@ h3 {
 }
 
 @media (max-width: 640px) {
-  .simulation-intro--playground h2 {
-    font-size: 52px;
-  }
-
   .sim-testbed-field {
     width: 100%;
   }
@@ -5119,11 +5130,6 @@ h3 {
     min-height: 0;
     padding-top: calc(var(--header-h) + clamp(10px, 1.8vh, 18px));
     padding-bottom: clamp(8px, 1.4vh, 14px);
-  }
-
-  .simulation-intro--playground h2 {
-    font-size: clamp(38px, 4.1vh, 48px);
-    line-height: 0.94;
   }
 
   .simulation-intro--playground {
@@ -5597,10 +5603,6 @@ h3 {
     gap: 18px;
     padding-top: 92px;
     padding-bottom: 28px;
-  }
-
-  .simulation-intro--playground h2 {
-    font-size: clamp(44px, 12vw, 48px);
   }
 
   .sim-controls-panel {

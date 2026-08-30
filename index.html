@@ -18,7 +18,7 @@
     <link rel="preload" as="font" href="./assets/fonts/Geist-Variable.woff2" type="font/woff2" crossorigin />
     <link rel="preload" as="image" href="./assets/hero-topology-v6.webp" />
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.18.1/dist/katex.min.css" crossorigin="anonymous" />
-    <link rel="stylesheet" href="./src/styles.css?v=prima-blog-nav-v53-20260830" />
+    <link rel="stylesheet" href="./src/styles.css?v=prima-playground-purpose-v54-20260830" />
     <title>Prima Lab — Local AI, beyond one device</title>
   </head>
   <body>
@@ -861,9 +861,12 @@
         </div>
       </section>
 
-      <section class="screen screen--simulation" id="simulation" data-slide="simulation" data-route-view="playground" aria-labelledby="simulation-title">
+      <section class="screen screen--simulation" id="simulation" data-slide="simulation" data-route-view="playground" aria-labelledby="simulation-title" aria-describedby="simulation-purpose-detail">
         <div class="simulation-intro simulation-intro--playground reveal">
-          <h2 id="simulation-title">Playground</h2>
+          <div class="simulation-purpose" id="simulation-purpose">
+            <h2 class="simulation-purpose__lead" id="simulation-title">Compare local AI throughput across devices.</h2>
+            <p id="simulation-purpose-detail">Choose a model, testbed, and prompt, then replay real measurements side by side: laptop only, GPU server only, and both devices with PRIMA.</p>
+          </div>
         </div>
 
         <div class="simulator-shell reveal reveal--late" data-simulator>
