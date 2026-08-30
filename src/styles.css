@@ -1346,7 +1346,10 @@ h3 {
 .blog-table-wrap thead th {
   background: #eeece9;
   color: var(--ink);
-  font: 650 10px/1.25 "Geist Mono", monospace;
+  font-family: "Geist Mono", monospace;
+  font-size: inherit;
+  font-weight: 650;
+  line-height: 1.35;
   letter-spacing: 0.035em;
   text-transform: uppercase;
 }
