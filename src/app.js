@@ -83,7 +83,11 @@ const routeLinks = [...document.querySelectorAll("[data-route-link]")];
 const routeNames = new Set(["home", "playground", "blog"]);
 const routeStorageKey = "prima-route";
 const blogPostStorageKey = "prima-blog-post";
-const blogPostNames = new Set(["workstation-already-in-room"]);
+const blogPostTitles = new Map([
+  ["workstation-already-in-room", "The workstation you need may already be in the room"],
+  ["hunyuan4-770b-local-devices", "通过 PRIMA，探索 Hunyuan4 770B 在我的 local devices 上的性能边界"],
+]);
+const blogPostNames = new Set(blogPostTitles.keys());
 const blogIndexView = document.querySelector("[data-blog-index]");
 const blogPostViews = [...document.querySelectorAll("[data-blog-post]")];
 
@@ -177,7 +181,7 @@ function applyRoute(route, scrollTop = 0, blogPost = null) {
     nextRoute === "playground"
       ? "Prima Lab — Playground"
       : nextBlogPost
-        ? "The workstation you need may already be in the room — Prima Lab"
+        ? `${blogPostTitles.get(nextBlogPost)} — Prima Lab`
         : nextRoute === "blog"
           ? "Prima Lab — Blog"
         : "Prima Lab — Local AI, beyond one device";

@@ -18,7 +18,7 @@
     <link rel="preload" as="font" href="./assets/fonts/Geist-Variable.woff2" type="font/woff2" crossorigin />
     <link rel="preload" as="image" href="./assets/hero-topology-v6.webp" />
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.18.1/dist/katex.min.css" crossorigin="anonymous" />
-    <link rel="stylesheet" href="./src/styles.css?v=blog-detail-cleanup-v42-20260830" />
+    <link rel="stylesheet" href="./src/styles.css?v=hunyuan4-longform-v44-20260830" />
     <title>Prima Lab — Local AI, beyond one device</title>
   </head>
   <body>
@@ -179,6 +179,15 @@
             </header>
 
             <div class="blog-grid" aria-label="Blog articles">
+              <a class="blog-card" href="./blog/hunyuan4-770b-local-devices" data-blog-post-link="hunyuan4-770b-local-devices">
+                <div class="blog-card__content">
+                  <div class="blog-meta"><time datetime="2026-08-30">August 30, 2026</time></div>
+                  <h2 lang="zh-CN">通过 PRIMA，探索 Hunyuan4 770B 在我的 local devices 上的性能边界</h2>
+                  <p lang="zh-CN">用一台 4090 Laptop 和一台四卡 A4000 server，探索超大 MoE 模型的本地分布式推理边界。</p>
+                  <span class="blog-card__link">Read note <b aria-hidden="true">→</b></span>
+                </div>
+              </a>
+
               <a class="blog-card" href="./blog/workstation-already-in-room" data-blog-post-link="workstation-already-in-room">
                 <div class="blog-card__content">
                   <div class="blog-meta"><time datetime="2026-08-29">August 29, 2026</time></div>
@@ -214,6 +223,254 @@
               <p>A pooled system may not beat a purpose-built server on every latency metric. It can still unlock a larger model, longer context, better precision, or enough throughput for a private workflow—without discarding hardware that has already been purchased.</p>
               <p>That tradeoff is the point: local AI should be able to grow incrementally, across the devices and networks people actually have.</p>
 
+            </div>
+          </article>
+
+          <article class="blog-post blog-post--longform" lang="zh-CN" data-blog-post="hunyuan4-770b-local-devices" aria-labelledby="hunyuan4-post-title" hidden>
+            <a class="blog-back" href="./blog" data-blog-index-link><span aria-hidden="true">←</span> All blogs</a>
+            <header class="blog-post__header">
+              <div class="blog-meta"><time datetime="2026-08-30">August 30, 2026</time></div>
+              <h1 id="hunyuan4-post-title">通过 PRIMA，探索 Hunyuan4 770B 在我的 local devices 上的性能边界</h1>
+            </header>
+
+            <div class="blog-post__body">
+              <blockquote><strong>PRIMA 的目标，不是让一台普通电脑突然创造推理速度的奇迹，而是让我们已经拥有的设备协同起来，像一台可以持续扩展的计算机一样工作。</strong></blockquote>
+              <p>想先了解模型本身的能力，可以前往腾讯官方的 <a href="https://aistudio.tencent.com/" target="_blank" rel="noreferrer">HY4 Playground</a> 体验。</p>
+
+              <hr />
+
+              <h2>本地 AI 的每一个性能数字背后，都有取舍</h2>
+              <p>人生中处处是取舍，本地 AI 也是如此。</p>
+              <p>今天，我们已经看到许多令人惊叹的本地推理结果。在高度定制的硬件和软件组合下，两张改装到 22GB 显存、通过 NVLink 互联的 RTX 2080 Ti，已经可以让特定 27B 模型达到超过 100 tokens/s 的单请求生成速度。（<a href="https://github.com/weicj/vLLM-2080Ti-Definitive" target="_blank" rel="noreferrer">GitHub</a>）</p>
+              <p>另一些方案通过低比特量化、CPU–GPU 协同和专家缓存，让上百 B 的 MoE 模型在消费级工作站上达到可交互的吞吐。还有一些纯 CPU 或 SSD 流式推理方案，可以在没有大显存 GPU 的情况下运行非常大的模型。</p>
+              <p>这些方案都很有价值，但它们通常对应着不同的前提：</p>
+              <ul>
+                <li>更低的量化精度，可能带来一定的模型能力损失；</li>
+                <li>更大的系统内存，用来容纳完整或大部分模型权重；</li>
+                <li>更高的内存带宽、更强的 CPU，或者特定的指令集；</li>
+                <li>更快、更大容量的 SSD；</li>
+                <li>改装显存、多卡互联或专门优化过的硬件组合；</li>
+                <li>针对某一种模型结构或量化格式定制的推理引擎。</li>
+              </ul>
+              <p>以 FreeToken 为例，它是一条面向高吞吐 MoE 推理的优秀路线。但其维护者在当前公开 FAQ 中明确说明：MoE 专家权重主要驻留在系统内存中，因此空闲内存通常需要大致覆盖专家权重的大小。换句话说，这条路线非常适合大内存消费级工作站，但小内存笔记本并不是它最理想的硬件形态。（<a href="https://github.com/FlashML-org/FreeToken" target="_blank" rel="noreferrer">GitHub</a>）</p>
+              <p>问题并不在于这些方案不够好，而在于：</p>
+              <blockquote><strong>当我们选择了一条高度依赖特定硬件的路线，我们也同时选择了它的硬件边界。</strong></blockquote>
+              <p>模型继续变大，模型结构发生变化，上下文需求从 32K 增长到 128K、1M，或者我们不再满足于极低比特量化，希望使用更高精度格式时，原来的机器可能很快又不够用了。</p>
+              <p>传统的解决方法通常是更换一台更强的整机。</p>
+              <p>新的 GPU、更大的内存、更强的 CPU、更快的 SSD，甚至新的主板、电源和散热系统。与此同时，之前已经购买的设备会逐渐退出主要推理任务，变成已经付出成本、却很少再被使用的沉睡资产。</p>
+              <p>这种升级方式可以获得很高的单机性能，但它并不总是经济，也不是真正意义上的可扩展。</p>
+
+              <h2>PRIMA 追求的不是“速度奇迹”，而是可扩展性</h2>
+              <p>PRIMA，也就是 <code>prima.cpp</code>，选择了另一条路线。</p>
+              <p>它并不假设某一台普通设备可以突然变成一台价值数万美元的数据中心服务器。它要解决的问题是：</p>
+              <blockquote><strong>当一台设备已经达到极限时，能不能通过加入其他现有设备，继续扩展本地 AI 的能力？</strong></blockquote>
+              <p>这里的“能力”不只是生成速度，还包括四个方向：</p>
+              <p><strong>运行更大的模型、获得更高的吞吐、支持更长的上下文，以及使用更高精度的量化格式。</strong></p>
+              <p>PRIMA 是一个面向异构设备的分布式推理运行时。它可以把笔记本、台式机、GPU 服务器、Mac Mini，甚至不同操作系统、不同网络中的设备组织成一个推理集群，再根据每台设备的计算能力、内存、显存、磁盘和网络条件分配工作。</p>
+              <p>PRIMA 的 ICLR 2026 论文提出了流水线环形并行和异构感知调度：让计算、通信和磁盘读取尽可能重叠，同时避免把相同任务简单、平均地分给能力完全不同的设备。论文已经在消费级异构设备上验证了这种思路，但当时的公开评估主要覆盖 30B–70B 模型。</p>
+              <p>Hunyuan4 770B 给了我们一个机会，把这个问题推到更极端的规模：</p>
+              <blockquote><strong>当模型远远超过任何一台现有设备的内存和显存时，PRIMA 还能把我们手上的设备扩展到什么程度？</strong></blockquote>
+
+              <h2>为什么选择 Hunyuan4 770B</h2>
+              <p>腾讯于 2026 年 8 月 28 日发布并开源了 <strong>Hy4 preview</strong>。本文为了阅读方便，也将它称为 Hunyuan4。</p>
+              <p>这是一个总参数量达到 <strong>770B</strong> 的 MoE 模型。它拥有 78 层主干网络，其中 77 层采用 MoE 结构；每个 MoE 层包含 256 个路由专家和 1 个共享专家，每生成一个 token，会激活其中 8 个路由专家和共享专家。模型每个 token 的激活参数约为 49B，并原生支持 1M 上下文。（<a href="https://github.com/Tencent-Hunyuan/Hy4-preview" target="_blank" rel="noreferrer">GitHub</a>）</p>
+              <p>可以把 MoE 想象成一家拥有大量专业部门的医院。</p>
+              <p>面对一个具体问题，模型不需要同时调用所有专家，而是选择最相关的几个专家参与计算。这降低了每一步的计算量，但没有让其他专家消失：</p>
+              <blockquote><strong>49B 激活参数降低的是单步计算量，而完整的 770B 专家权重仍然需要被保存，并在需要时能够被访问。</strong></blockquote>
+              <p>我们在测试中使用的 Hunyuan4 770B IQ1_M GGUF，即使已经采用约 1-bit 的低比特量化，完整模型文件依然超过 200GB。</p>
+              <p>这显然不是一台普通笔记本能够完整放入内存或显存的模型。</p>
+
+              <h2>我的第一台设备：一台 4090 Laptop</h2>
+              <p>我没有 H200、B200，也没有一台拥有数百 GB 统一内存的高端工作站。</p>
+              <p>我手里的第一台设备，是一台日常使用的笔记本电脑：</p>
+              <div class="blog-table-wrap" role="region" aria-label="4090 Laptop hardware configuration" tabindex="0">
+                <table>
+                  <thead><tr><th scope="col">硬件</th><th scope="col">配置</th></tr></thead>
+                  <tbody>
+                    <tr><th scope="row">CPU</th><td>Intel Core Ultra 9 185H</td></tr>
+                    <tr><th scope="row">系统内存</th><td>32GB</td></tr>
+                    <tr><th scope="row">GPU</th><td>NVIDIA RTX 4090 Laptop</td></tr>
+                    <tr><th scope="row">显存</th><td>16GB</td></tr>
+                    <tr><th scope="row">内存与显存合计</th><td>48GB</td></tr>
+                  </tbody>
+                </table>
+              </div>
+              <p>这里需要强调：48GB 并不是一块真正统一、可以任意使用的内存池，但即便暂时把它们简单相加，也远远小于超过 200GB 的模型文件。</p>
+              <p>FreeToken 当前的 MoE 路线需要让专家权重主要驻留在系统内存中。这台笔记本只有 32GB RAM，因此不可能容纳 Hunyuan4 IQ1_M 的完整专家库。</p>
+              <p>要沿着全内存驻留路线继续，我们至少需要把系统内存扩展到数百 GB。但笔记本主板通常无法支持如此大的内存容量。即使可以升级，也可能意味着更换内存、主板乃至整台机器。</p>
+              <p>这显然不符合这次实验的目标。</p>
+              <p>我们不希望为了一个模型，重新购买一台专用推理机。我们想知道的是：</p>
+              <blockquote><strong>只使用已经拥有、已经付出采购成本的设备，这台笔记本的本地 AI 能力还能不能继续扩展？</strong></blockquote>
+              <p>因此，我们首先使用 <code>llama.cpp</code>，通过 <code>mmap</code> 和磁盘流式读取，在这台笔记本上单独运行 Hunyuan4 770B IQ1_M。</p>
+              <p>模型确实跑起来了。</p>
+              <p>但它的稳态单 token 延迟达到：</p>
+              <blockquote><strong>5.9 秒/token，约等于 0.17 token/s。</strong></blockquote>
+              <p>这意味着生成一个 100-token 的短回答，仅解码阶段就需要接近十分钟。</p>
+              <p>从“模型能否启动”的角度看，这是成功的；但从正常交互的角度看，这个速度显然很难使用。5.9 秒/token，基本就是这台笔记本在当前模型、量化和存储条件下的单机性能边界。（<a href="https://opencpil.github.io/prima.cpp/" target="_blank" rel="noreferrer">OpenCPIL</a>）</p>
+
+              <h2>不购买新硬件，而是引入另一台现有设备</h2>
+              <p>在我的工位上，还有一台可以使用的 GPU 服务器：</p>
+              <div class="blog-table-wrap" role="region" aria-label="A4000 server hardware configuration" tabindex="0">
+                <table>
+                  <thead><tr><th scope="col">硬件</th><th scope="col">配置</th></tr></thead>
+                  <tbody>
+                    <tr><th scope="row">CPU</th><td>Intel Core i7-12700</td></tr>
+                    <tr><th scope="row">系统内存</th><td>32GB</td></tr>
+                    <tr><th scope="row">GPU</th><td>NVIDIA RTX A4000 × 4</td></tr>
+                    <tr><th scope="row">单卡显存</th><td>16GB</td></tr>
+                    <tr><th scope="row">总显存</th><td>64GB</td></tr>
+                    <tr><th scope="row">内存与显存合计</th><td>96GB</td></tr>
+                  </tbody>
+                </table>
+              </div>
+              <p>RTX A4000 并不是新一代高端推理卡，每张卡也只有 16GB 显存。这台服务器的系统内存同样只有 32GB。</p>
+              <p>它单独使用 <code>llama.cpp</code> 运行同一个模型时，可以达到：</p>
+              <blockquote><strong>2.7 秒/token，约等于 0.37 token/s。</strong></blockquote>
+              <p>它比笔记本快，但依然很难称为可用。（<a href="https://opencpil.github.io/prima.cpp/" target="_blank" rel="noreferrer">OpenCPIL</a>）</p>
+              <p>把两台设备的系统内存和显存简单相加，我们获得了：</p>
+              <ul>
+                <li>笔记本：32GB RAM + 16GB VRAM；</li>
+                <li>GPU 服务器：32GB RAM + 64GB VRAM；</li>
+                <li>合计：<strong>144GB RAM + VRAM 容量</strong>。</li>
+              </ul>
+              <p>这仍然小于模型文件本身，而且这些资源分散在两套操作系统、五张 GPU 和多个独立的内存空间中，并不是一块天然统一的 144GB 内存。</p>
+              <p>更具挑战性的是，两台设备甚至不在同一个局域网中。笔记本通过 Wi-Fi 和 VPN 访问远端局域网中的 GPU 服务器，网络 RTT 约为 50ms，也没有 NVLink、InfiniBand 或其他数据中心级互联。（<a href="https://opencpil.github.io/prima.cpp/" target="_blank" rel="noreferrer">OpenCPIL</a>）</p>
+              <p>这正是 PRIMA 要面对的场景：<strong>异构设备、小内存、模型大于聚合内存、普通网络，以及持续存在的磁盘流式读取。</strong></p>
+
+              <h2>PRIMA 如何让两台设备共同运行 Hunyuan4</h2>
+              <p>PRIMA 没有尝试把超过 200GB 的模型权重全部塞入 144GB 的聚合内存。</p>
+              <p>它采取的是一种分层、分布式的执行方式：</p>
+              <ul>
+                <li>将一部分 MoE 层放在 4090 Laptop 上运行；</li>
+                <li>将大部分 MoE 层分配给四卡 A4000 服务器；</li>
+                <li>每个节点从自己的本地存储读取由自己负责的权重；</li>
+                <li>高频使用的“热专家”尽可能保留在 GPU 的持久化缓存槽中；</li>
+                <li>暂时没有进入 GPU 的“冷专家”留在节点本地内存或 SSD 中；</li>
+                <li>两台设备之间主要传输中间激活和控制信息，而不是反复跨网络传输巨大的专家权重。</li>
+              </ul>
+              <p>可以把整个系统想象成两个相互协作的仓库。</p>
+              <p>每个仓库都保存自己负责的工具。GPU 是仓库旁边面积有限、但工作速度很快的操作台。常用工具被提前放到操作台上，不常用的工具继续留在仓库中。当一个仓库完成自己的工作后，它传给下一个仓库的是较小的中间结果，而不是把整套工具搬过去。</p>
+              <p>为了让这套机制真正工作，PRIMA 针对 Hunyuan4 的 MoE 推理加入了多层优化。</p>
+
+              <h3>1. 分布式 MoE 层放置</h3>
+              <p>PRIMA 根据两台设备的可用资源，将模型层分配到不同节点，而不是要求任何一台设备独自容纳整个模型。</p>
+              <p>这是整个 6 倍加速的基础条件，但它本身没有一个可以单独拆分出来的加速倍数。没有这一步，后面的并行读取、专家缓存和多 GPU 执行都无法成立。</p>
+
+              <h3>2. 冷专家与热专家分层</h3>
+              <p>PRIMA 不要求完整专家库全部常驻显存。</p>
+              <p>被频繁调用的专家进入持久化 GPU hot slots；暂时不活跃的专家留在本地存储和系统内存。系统会根据当前请求中的路由情况，逐步判断哪些专家更值得留在快速存储层。</p>
+              <p>这可以减少重复的 SSD 读取和 CPU–GPU 数据搬运，但最终效果取决于请求中专家调用是否具有重复性。</p>
+
+              <h3>3. 请求感知的专家热度学习</h3>
+              <p>不同问题会调用不同专家。一个编程任务和一个金融分析任务，可能产生完全不同的专家访问模式。</p>
+              <p>PRIMA 会从当前请求的 prefill 和早期 decode 阶段收集专家访问情况，再为这个请求建立局部 hot cache，而不是长期使用一份固定、对所有问题都相同的专家列表。</p>
+              <p>这样做的意义是：<strong>缓存空间有限时，优先留下当前问题真正需要的专家。</strong></p>
+
+              <h3>4. Route Page Cache 与重叠预取</h3>
+              <p>当某个冷专家即将被调用时，PRIMA 会提前从 SSD 将相应文件页读入操作系统 page cache，并尽量让这次读取与另一台设备的计算、网络通信或 GPU 执行同时发生。</p>
+              <p>在一个较早阶段的 Hunyuan4 双机 E2E 测试中，修复 route-pagecache 路径后，冷启动样本从 5.2388 秒/token 降低到 3.0757 秒/token，改善约 <strong>41.3%</strong>。在同一进程的冷到热连续请求测试中，TPOT 又从 2.6794 秒/token 降到 2.3490 秒/token，改善约 <strong>12.33%</strong>。</p>
+              <p>这两组数字来自不同阶段、不同对照条件，不能简单相加，也不能直接认为它们分别贡献了最终结果中的固定比例。</p>
+
+              <h3>5. 更宽的 SSD 并行读取通道</h3>
+              <p>最终分支进一步扩大了冷页读取的并行度，将多个被选中的专家范围拆分后并行读取，并让首轮 page-cache population 尽可能与前台推理重叠。</p>
+              <p>这不会提高 SSD 本身的理论带宽，但可以减少串行等待和 I/O 空洞，更充分地利用多块存储和操作系统已有的缓存能力。</p>
+
+              <h3>6. 并行专家执行</h3>
+              <p>Hunyuan4 每个 token 会同时选择多个路由专家。它们在数学上具有一定的并行执行空间。</p>
+              <p>PRIMA 将原本容易串行等待的专家任务拆分给多个本地执行器和 GPU，使四张 A4000 能够更充分地同时参与计算，而不是让某一张 GPU 完成所有专家后，其他 GPU 才继续工作。</p>
+
+              <h3>7. Request-aware 冷专家调度</h3>
+              <p>简单的 round-robin 会把任务平均分发给多个执行器，但专家的大小、缓存状态和当前请求中的使用频率并不相同。</p>
+              <p>PRIMA 的当前 Hunyuan4 分支加入了并行专家执行和 request-aware cold-page scheduling：根据本次请求实际需要的专家、读取字节数和已有缓存状态来安排冷专家工作，减少某个执行器过载、其他执行器空闲的情况。</p>
+
+              <h3>8. 删除不必要的数据复制与观测开销</h3>
+              <p>当冷专家已经在 CPU 上完成计算时，PRIMA 会直接复用对应输出，避免再做一次没有必要的 host staging。</p>
+              <p>在请求的专家访问规律已经稳定后，系统也会停止每个 token 都进行的完整路由观测，只保留后续运行真正需要的轻量信息，从而减少稳态 decode 阶段的额外开销。</p>
+
+              <h2>这些优化分别贡献了多少性能？</h2>
+              <p>严格来说，我们目前不能把最终加速精确拆分成：</p>
+              <ul>
+                <li>分布式层放置贡献多少；</li>
+                <li>SSD 预取贡献多少；</li>
+                <li>热专家缓存贡献多少；</li>
+                <li>四卡并行贡献多少；</li>
+                <li>request-aware scheduling 又贡献多少。</li>
+              </ul>
+              <p>要得到这样的数字，需要在完全相同的模型、提示词、缓存状态、硬件、网络和代码版本下，逐个关闭功能并进行完整消融测试。</p>
+              <p>目前能够独立引用的，是 page-cache 和跨请求 hot-cache 阶段的测试数据。而最终的 <strong>0.98 秒/token</strong>，是层分配、分布式执行、专家分层、缓存、SSD 预取、多 GPU 并行和请求感知调度共同作用后的端到端结果。</p>
+              <p>因此，更严谨的表述是：</p>
+              <blockquote><strong>PRIMA 的最终 2.8–6.0 倍提升来自整套分布式 MoE 执行路径，而不是某一个单独的“魔法优化”。</strong></blockquote>
+
+              <h2>最终结果：从 5.9 秒/token 到 0.98 秒/token</h2>
+              <p>在相同模型下，我们得到以下结果：</p>
+              <div class="blog-table-wrap" role="region" aria-label="Hunyuan4 performance comparison" tabindex="0">
+                <table class="blog-table--wide">
+                  <thead>
+                    <tr><th scope="col">运行配置</th><th scope="col">推理系统</th><th scope="col">单 token 延迟</th><th scope="col">生成吞吐</th><th scope="col">对比 PRIMA</th></tr>
+                  </thead>
+                  <tbody>
+                    <tr><th scope="row">4090 Laptop 单机</th><td>llama.cpp</td><td>5.9 s/token</td><td>约 0.17 token/s</td><td>PRIMA 快约 <strong>6.0×</strong></td></tr>
+                    <tr><th scope="row">四卡 A4000 服务器单机</th><td>llama.cpp</td><td>2.7 s/token</td><td>约 0.37 token/s</td><td>PRIMA 快约 <strong>2.8×</strong></td></tr>
+                    <tr><th scope="row">4090 Laptop + 四卡 A4000</th><td>PRIMA</td><td><strong>0.98 s/token</strong></td><td><strong>约 1.02 token/s</strong></td><td>—</td></tr>
+                  </tbody>
+                </table>
+              </div>
+              <p>这些数据来自对应配置的真实测量。PRIMA 官网中的 Playground 页面使用固定输入、固定输出和实测时间进行回放，页面本身不会实时启动模型或连接设备。（<a href="https://opencpil.github.io/prima.cpp/" target="_blank" rel="noreferrer">OpenCPIL</a>）</p>
+              <p>从笔记本单机的 5.9 秒/token，提升到两设备协同后的 0.98 秒/token，意味着吞吐提高了约 <strong>6 倍</strong>。</p>
+              <p>与四卡 A4000 服务器单机相比，吞吐也提高了约 <strong>2.8 倍</strong>。</p>
+              <p>约 1 token/s 依然不能算高速。对于实时语音助手或需要快速生成长代码的工作流，它还没有达到理想的交互速度。</p>
+              <p>但这个结果证明了一件更重要的事：</p>
+              <blockquote><strong>在没有为 Hunyuan4 额外购买一台新服务器的前提下，我们利用已经能够获得的现有设备，把一个 770B 模型的推理速度提高了约 6 倍。</strong></blockquote>
+              <p>这里的“零成本”更准确地说，是<strong>零新增硬件采购成本</strong>。设备仍然需要电力、存储、网络和部署时间，但我们没有为了这次测试重新购买一台专用推理机。</p>
+
+              <h2>1 token/s 不是这套系统的性能极限</h2>
+              <p>在当前两设备协同配置下，系统的主要性能瓶颈仍然是<strong>磁盘流式读取</strong>。</p>
+              <p>模型大于两台设备的聚合内存和显存，因此每生成一个 token，仍有一部分冷专家权重需要从 SSD 进入 page cache，再参与 CPU 或 GPU 计算。即使计算和读取已经进行重叠，SSD 吞吐仍然决定了系统能够多快地把下一批专家准备好。</p>
+              <p>因此：</p>
+              <blockquote><strong>更高吞吐的 SSD、更多可并行参与的设备，或两者结合，都有望进一步提高推理吞吐。约 1 token/s 只是这组现有硬件下取得的结果，并不是 PRIMA 分布式集群的性能上限。</strong></blockquote>
+              <p>增加设备不仅意味着增加 GPU 算力和内存容量，也意味着增加独立的 SSD 带宽。</p>
+              <p>当更多设备分别负责更少的模型层时，每台设备需要读取的专家数据会减少；多个节点还可以同时读取各自本地的模型文件。只要新的设备带来的收益大于额外网络和协调开销，整体吞吐就有继续提高的空间。</p>
+              <p>最终，瓶颈可能从磁盘转移到 GPU、CPU 或网络。但这正是可扩展系统的意义：我们不必一次性解决所有问题，而可以找到当前瓶颈，再只扩展对应的资源。</p>
+
+              <h2>PRIMA 与高性能单机技术并不矛盾</h2>
+              <p>PRIMA 并不是 FreeToken、vLLM、llama.cpp、低比特量化、高速 SSD 或新一代 GPU 的替代品。</p>
+              <p>它们解决的是不同层面的问题。</p>
+              <p>单机推理技术越强，PRIMA 集群中的每一个节点也会越强：</p>
+              <ul>
+                <li>更好的量化格式，可以让每台设备保存更多模型权重；</li>
+                <li>更高效的专家缓存，可以减少节点的 SSD 读取；</li>
+                <li>更强的 GPU，可以提高热专家计算速度；</li>
+                <li>更大的内存，可以容纳更多模型页和更长的 KV Cache；</li>
+                <li>更快的 SSD，可以提高冷专家加载速度；</li>
+                <li>更强的推理机加入集群，可以同时提高吞吐、上下文和精度上限。</li>
+              </ul>
+              <p>换句话说，单机技术与分布式推理是正交、兼容并且相互增强的。</p>
+              <p>未来即使出现一台非常强大的本地 AI 推理机，PRIMA 也不会因此失去价值。这台推理机可以成为集群中最强的节点，而我们原有的笔记本、工作站和 GPU 服务器仍然可以继续提供容量、存储带宽或计算能力。</p>
+              <p>当需求再次增长时，我们可以新增或替换一台设备，而不是再次丢弃整个系统。</p>
+
+              <h2>从“这台设备能不能跑”到“这台设备能贡献什么”</h2>
+              <p>传统本地推理常常提出一个二元问题：</p>
+              <blockquote>这台机器能不能运行这个模型？</blockquote>
+              <p>如果答案是否定的，我们就开始寻找下一台更贵的机器。</p>
+              <p>PRIMA 希望把问题改成：</p>
+              <blockquote><strong>这台设备能为我的本地 AI 集群贡献什么？</strong></blockquote>
+              <p>一台旧笔记本可能贡献一张 GPU。</p>
+              <p>一台工作站可能贡献内存和 SSD 带宽。</p>
+              <p>一台远端服务器可能贡献多张性能一般、但容量可累积的显卡。</p>
+              <p>一台新推理机则可以成为集群中新的核心节点。</p>
+              <p>设备不再因为无法单独运行最新模型而立刻失去价值。它们可以作为一个更大系统的一部分，继续贡献自己仍然有用的能力。</p>
+              <p>Hunyuan4 770B 的这次实验，没有创造单机推理速度的奇迹。</p>
+              <p>它证明的是另一件事：</p>
+              <blockquote><strong>通过可扩展的分布式推理，我们可以用已经拥有的设备，以零新增或极低的硬件采购成本，继续扩展本地 AI 的模型容量、生成速度、上下文长度和运行精度。</strong></blockquote>
+              <p>约 1 token/s 不是终点。</p>
+              <p>它只是我们用两台现有设备，在 Hunyuan4 770B 上找到的第一个性能边界。</p>
+              <p>而分布式系统的意义，就是让这个边界可以继续向外移动。</p>
+
+              <h2>测试边界说明</h2>
+              <p>本文结果仅适用于此次测试使用的 Hunyuan4 770B IQ1_M 模型、硬件配置、模型放置方式、SSD、网络和软件版本，不应被理解为适用于所有 PRIMA 集群的通用性能承诺。</p>
+              <p>当前版本的官方名称是 <strong>Hy4 preview</strong>，仍属于预览版本。PRIMA 对 HY4 和超大 MoE 分层执行的支持目前也处于开发阶段，运行接口和性能路径仍在持续优化。</p>
+              <p>本文的 s/token 指稳态输出 token 延迟，即 TPOT，不包含模型首次加载时间，也不等同于首 token 延迟。更长上下文、更高量化精度、不同提示词和不同专家路由分布，都可能改变最终结果。</p>
+              <p>想先体验 Hunyuan4 的模型能力，可以进入腾讯官方的 <a href="https://aistudio.tencent.com/" target="_blank" rel="noreferrer">HY4 Playground</a>。</p>
             </div>
           </article>
         </div>
@@ -575,6 +832,6 @@
     </main>
 
     <script defer src="./vendor/lucide-prima.js"></script>
-    <script type="module" src="./src/app.js?v=blog-post-route-v17-20260829"></script>
+    <script type="module" src="./src/app.js?v=hunyuan4-blog-route-v18-20260830"></script>
   </body>
 </html>
