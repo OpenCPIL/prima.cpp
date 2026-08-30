@@ -216,6 +216,17 @@ svg {
   transform-origin: left;
 }
 
+.desktop-nav a[aria-current="page"] {
+  color: var(--paper);
+  background: var(--ink);
+  border-radius: 1px;
+  box-shadow: 0 0 0 7px var(--ink);
+}
+
+.desktop-nav a[aria-current="page"]::after {
+  display: none;
+}
+
 .header-link {
   justify-self: end;
   display: inline-flex;
@@ -2656,14 +2667,6 @@ h3 {
   color: var(--muted);
   font-size: clamp(14px, 1vw, 16px);
   line-height: 1.4;
-}
-
-.simulation-purpose .simulation-purpose__lead {
-  color: var(--ink);
-  font-size: clamp(18px, 1.4vw, 21px);
-  font-weight: 650;
-  line-height: 1.25;
-  letter-spacing: -0.025em;
 }
 
 .screen--simulation {
