@@ -1379,6 +1379,8 @@ h3 {
 }
 
 .blog-figure--seamless {
+  width: 50%;
+  margin-inline: auto;
   overflow: visible;
   background: transparent;
   border: 0;
@@ -1386,6 +1388,7 @@ h3 {
 
 .blog-figure--seamless img {
   mix-blend-mode: darken;
+  filter: brightness(1.02);
 }
 
 .screen--product {
