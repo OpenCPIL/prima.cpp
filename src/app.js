@@ -85,7 +85,7 @@ const routeStorageKey = "prima-route";
 const blogPostStorageKey = "prima-blog-post";
 const blogPostTitles = new Map([
   ["workstation-already-in-room", "The workstation you need may already be in the room"],
-  ["hunyuan4-770b-local-devices", "通过 PRIMA，探索 Hunyuan4 770B 在我的 local devices 上的性能边界"],
+  ["hunyuan4-770b-local-devices", "PRIMA 探索 HY4 770B 在已有设备上的性能边界"],
 ]);
 const blogPostNames = new Set(blogPostTitles.keys());
 const blogIndexView = document.querySelector("[data-blog-index]");
@@ -173,6 +173,14 @@ function applyRoute(route, scrollTop = 0, blogPost = null) {
   blogPostViews.forEach((post) => {
     post.hidden = nextRoute !== "blog" || post.dataset.blogPost !== nextBlogPost;
   });
+  if (nextBlogPost) {
+    const activePost = blogPostViews.find((post) => post.dataset.blogPost === nextBlogPost);
+    activePost?.querySelectorAll("[data-blog-image]").forEach((image) => {
+      if (!image.getAttribute("src")) {
+        image.src = `${routeBasePath}/assets/${encodeURIComponent(image.dataset.blogImage)}`;
+      }
+    });
+  }
   routeLinks.forEach((link) => {
     if (link.dataset.routeLink === nextRoute) link.setAttribute("aria-current", "page");
     else link.removeAttribute("aria-current");

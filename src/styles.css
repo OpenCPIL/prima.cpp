@@ -1360,6 +1360,20 @@ h3 {
   border-bottom: 0;
 }
 
+.blog-figure {
+  width: 100%;
+  margin: clamp(38px, 6vh, 56px) 0;
+  overflow: hidden;
+  background: #fff;
+  border: 1px solid var(--line);
+}
+
+.blog-figure img {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+
 .screen--product {
   grid-template-columns: minmax(290px, 0.56fr) minmax(620px, 1.44fr);
   align-items: center;
@@ -5466,6 +5480,10 @@ h3 {
   .blog-table-wrap th,
   .blog-table-wrap td {
     padding: 11px 12px;
+  }
+
+  .blog-figure {
+    margin-block: 34px;
   }
 
   .blog-post__body blockquote {
