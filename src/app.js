@@ -85,7 +85,7 @@ const routeStorageKey = "prima-route";
 const blogPostStorageKey = "prima-blog-post";
 const blogPostTitles = new Map([
   ["workstation-already-in-room", "The workstation you need may already be in the room"],
-  ["hunyuan4-770b-local-devices", "PRIMA 探索 HY4 770B 在已有设备上的性能边界"],
+  ["hunyuan4-770b-local-devices", "Scalability Matters More Than a Bigger Machine: What PRIMA’s Hy4 770B Experiment Reveals About Local AI"],
 ]);
 const blogPostNames = new Set(blogPostTitles.keys());
 const blogIndexView = document.querySelector("[data-blog-index]");
