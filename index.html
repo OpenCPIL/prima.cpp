@@ -8,17 +8,17 @@
     <meta property="og:title" content="Prima Lab — Scale your local AI beyond one device" />
     <meta property="og:description" content="Open-source distributed inference for mixed, local hardware." />
     <meta property="og:type" content="website" />
-    <meta property="og:image" content="https://opencpil.github.io/prima.cpp/assets/hero-topology-v6.webp" />
+    <meta property="og:image" content="https://zonghang-li.github.io/cpil-lab.github.io/assets/hero-topology-v6.webp" />
     <meta name="twitter:card" content="summary_large_image" />
     <meta name="twitter:title" content="Prima Lab — Scale your local AI beyond one device" />
     <meta name="twitter:description" content="Open-source distributed inference for mixed, local hardware." />
-    <meta name="twitter:image" content="https://opencpil.github.io/prima.cpp/assets/hero-topology-v6.webp" />
-    <link rel="canonical" href="https://opencpil.github.io/prima.cpp/home" />
+    <meta name="twitter:image" content="https://zonghang-li.github.io/cpil-lab.github.io/assets/hero-topology-v6.webp" />
+    <link rel="canonical" href="https://zonghang-li.github.io/cpil-lab.github.io/home" />
     <link rel="icon" href="./assets/favicon.ico" sizes="any" />
     <link rel="preload" as="font" href="./assets/fonts/Geist-Variable.woff2" type="font/woff2" crossorigin />
     <link rel="preload" as="image" href="./assets/hero-topology-v6.webp" />
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.18.1/dist/katex.min.css" crossorigin="anonymous" />
-    <link rel="stylesheet" href="./src/styles.css?v=prima-hy4-runbook-v58-20260901" />
+    <link rel="stylesheet" href="./src/styles.css?v=prima-hy4-runbook-v59-20260901" />
     <title>Prima Lab — Local AI, beyond one device</title>
   </head>
   <body>
@@ -51,7 +51,7 @@
               View on GitHub
               <svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 22v-4a4.8 4.8 0 0 0-1-3.5c3.28-.36 6.72-1.61 6.72-7A5.4 5.4 0 0 0 19.3 4.77 5 5 0 0 0 19.16 2S18.05 1.65 15 3.48a13.4 13.4 0 0 0-7 0C4.95 1.65 3.84 2 3.84 2A5 5 0 0 0 3.7 4.77a5.4 5.4 0 0 0-1.42 2.78c0 5.42 3.44 6.67 6.72 7A4.8 4.8 0 0 0 8 18v4" /><path d="M8 19c-3 .9-3-1.5-4-2" /></svg>
             </a>
-            <a class="button button--outline" href="https://openreview.net/pdf?id=h0LjpOG1jq" target="_blank" rel="noreferrer">
+            <a class="button button--outline" href="https://proceedings.iclr.cc/paper_files/paper/2026/file/e991e5587c1daa49bbf9a818b3f02f9a-Paper-Conference.pdf" target="_blank" rel="noreferrer">
               Paper
               <svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5z" /><path d="M14 2v6h6" /><path d="M16 13H8" /><path d="M16 17H8" /><path d="M10 9H8" /></svg>
             </a>
@@ -212,12 +212,14 @@
             <div data-blog-language-panel="en">
               <header class="blog-post__header">
                 <div class="blog-meta"><time datetime="2026-08-31">August 31, 2026</time></div>
-                <h1 id="hy4-runbook-title-en">Inside the PRIMA Hy4 preview 770B Experiment: How We Ran It Across Two Machines</h1>
+                <h1 id="hy4-runbook-title-en">Inside the PRIMA Hy4 Preview 770B Experiment: How We Ran It Across Two Machines</h1>
                 <p>Two machines in different locations, across separate networks and connected wirelessly, combined 80 GB of VRAM and 64 GB of RAM to run Hy4 preview 770B at 1 TPS.</p>
               </header>
 
               <div class="blog-post__body">
               <p>The <a href="./blog/hunyuan4-770b-local-devices" data-blog-post-link="hunyuan4-770b-local-devices">Hy4 preview 770B case study</a> explains why we combined existing devices and what the experiment revealed about scalable local AI. The procedure below records the two-rank path used on this testbed.</p>
+
+              <p><strong>Remark:</strong> We recommend using an AI tool to help deploy this preview. We will simplify deployment in future releases and provide one-click deployment and installation tools.</p>
 
               <h2>The deployment in one view</h2>
 
@@ -249,86 +251,244 @@
                 </table>
               </div>
 
-              <p>The packages contain compiled ELF executables, shared libraries, and symlinks. They do not contain model files, source code, setup scripts, the NVIDIA driver, CUDA, or cuBLAS.</p>
+              <p>The current functional-preview binaries have this exact compatibility matrix:</p>
 
-              <pre class="blog-code-block" aria-label="Verify downloaded runtime packages"><code>sha256sum &#45;c SHA256SUMS &#45;&#45;ignore-missing
-RANK=a4000-rank0 # or 4090-rank1
-tar &#45;xzf "prima-preview-${RANK}-linux-x86_64-cuda-runtime.tar.gz"
-ldd ./bin/prima-server | sed &#45;n '/not found/p'</code></pre>
+              <div class="blog-table-wrap" role="region" aria-label="Hy4 preview runtime compatibility matrix" tabindex="0">
+                <table class="blog-table--wide">
+                  <thead><tr><th scope="col">Rank</th><th scope="col">CPU architecture</th><th scope="col">Validated GPU</th><th scope="col">Compute capability</th><th scope="col">Operating system</th><th scope="col">CUDA ABI</th></tr></thead>
+                  <tbody>
+                    <tr><th scope="row">Rank 0</th><td>x86-64</td><td>NVIDIA RTX A4000 × 4</td><td>SM86</td><td>Ubuntu 24.04</td><td>CUDA 12 ABI</td></tr>
+                    <tr><th scope="row">Rank 1</th><td>x86-64</td><td>NVIDIA RTX 4090 Laptop × 1</td><td>SM89</td><td>Ubuntu 22.04</td><td>CUDA 13 ABI</td></tr>
+                  </tbody>
+                </table>
+              </div>
 
-              <p>The last command should print nothing. Each package’s <code>bin/</code> and <code>lib/</code> directories must remain together so <code>prima-server</code> can find its packaged libraries.</p>
+              <p>The packages contain compiled ELF executables, shared libraries, and symlinks. They do not contain model files, source code, setup scripts, the NVIDIA driver, CUDA, or cuBLAS. <a href="https://huggingface.co/AngelSlim/Hy4-preview-GGUF/tree/main/prima-runtime" target="_blank" rel="noreferrer">The public Hugging Face <code>prima-runtime</code> directory</a> provides the runtime packages and their matching <code>SHA256SUMS</code>.</p>
+
+              <pre class="blog-code-block" aria-label="Download one Hy4 preview runtime package"><code>set &#45;euo pipefail
+mkdir &#45;p hy4-runtime
+cd hy4-runtime
+for tool in bash tar file ldd sha256sum curl realpath stat install sed ssh jq nvidia&#45;smi ss df free find tee sleep awk grep; do
+  command &#45;v "$tool" &gt;/dev/null
+done
+
+ROLE=a4000-rank0   # use 4090-rank1 on the Laptop
+HF_BASE=https://huggingface.co/AngelSlim/Hy4-preview-GGUF/resolve/main/prima-runtime
+ARCHIVE="prima-preview-${ROLE}-linux-x86_64-cuda-runtime.tar.gz"
+
+curl &#45;fL &#45;&#45;retry 20 &#45;o SHA256SUMS "$HF_BASE/SHA256SUMS?download=true"
+curl &#45;fL &#45;C &#45; &#45;&#45;retry 20 &#45;o "$ARCHIVE" \
+  "$HF_BASE/$ARCHIVE?download=true"</code></pre>
+
+              <p>Download the archive and <code>SHA256SUMS</code> from that same public directory. Keep the exact archive filename shown above; do not rename it or substitute a checksum manifest from another source.</p>
+
+              <pre class="blog-code-block" aria-label="Verify downloaded runtime packages"><code>set &#45;euo pipefail
+DOWNLOAD_DIR=/absolute/path/to/hy4-runtime
+# Match the exact archive and SHA256SUMS downloaded from Hugging Face above.
+ARCHIVE=prima&#45;preview&#45;a4000&#45;rank0&#45;linux&#45;x86_64&#45;cuda&#45;runtime.tar.gz
+# On the Laptop use the 4090-rank1 archive name.
+cd "$DOWNLOAD_DIR"
+
+sha256sum &#45;c SHA256SUMS &#45;&#45;ignore-missing
+first_entry=$(tar &#45;tzf "$ARCHIVE" | sed &#45;n '1p')
+PACKAGE=${first_entry%%/*}
+[[ "$PACKAGE" =~ ^[A-Za-z0-9._-]+$ ]]
+[[ ! &#45;e "$PACKAGE" &amp;&amp; ! &#45;L "$PACKAGE" ]]
+tar &#45;xzf "$ARCHIVE"
+cd "$PACKAGE"
+
+elf_count=0
+while IFS= read &#45;r &#45;d '' artifact; do
+  file_type=$(file &#45;b &#45;&#45; "$artifact")
+  [[ "$file_type" == ELF* ]] || continue
+  elf_count=$((elf_count + 1))
+  echo "==> $artifact"
+  ldd_output=$(env &#45;i PATH=/usr/bin:/bin LANG=C LC_ALL=C ldd "$artifact")
+  printf '%s\n' "$ldd_output"
+  if [[ "$ldd_output" == *"not found"* ]]; then
+    echo "Missing dependency in $artifact" >&2
+    exit 1
+  fi
+done &lt; &lt;(find . &#45;type f &#45;print0)
+(( elf_count > 0 ))</code></pre>
+
+              <p>Run the blocks in Bash. <code>SHA256SUMS</code> verifies the small runtime archives only—this procedure deliberately does not hash the model payload. The second block enters the extracted top-level directory, runs <code>ldd</code> on every ELF artifact, and fails on a missing dependency or an archive with no ELF files. Keep each package’s <code>bin/</code> and <code>lib/</code> directories together.</p>
 
               <h2>2. Put the same model file on both machines</h2>
 
               <p>The model artifact referenced here is <a href="https://huggingface.co/AngelSlim/Hy4-preview-GGUF/blob/main/Hy4-preview-STQ1_0.gguf" target="_blank" rel="noreferrer"><code>Hy4-preview-STQ1_0.gguf</code></a> from the public <a href="https://huggingface.co/AngelSlim/Hy4-preview-GGUF/tree/main" target="_blank" rel="noreferrer">AngelSlim/Hy4-preview-GGUF</a> repository. It is a mixed 1–2-bit quantization at approximately 2.38 bits per weight.</p>
 
-              <pre class="blog-code-block" aria-label="Verify the Hy4 preview STQ1 model file"><code>sha256sum Hy4-preview-STQ1_0.gguf
-# expected:
-4d1d2259446e33e25c3e1d8bcb072f026cc69b90a361c5e5a8f6eca50d8d0036  Hy4-preview-STQ1_0.gguf</code></pre>
+              <pre class="blog-code-block" aria-label="Resume the single Hy4 preview STQ1 model download and check its byte size without hashing it"><code>set &#45;euo pipefail
+MODEL_ROOT=/absolute/path/to/model-directory
+MODEL="$MODEL_ROOT/Hy4-preview-STQ1_0.gguf"
+mkdir &#45;p "$MODEL_ROOT"
+df &#45;h "$MODEL_ROOT"
+free &#45;h
+EXPECTED_BYTES=229412839872
+SAFETY_BYTES=$((5 * 1024 * 1024 * 1024))
+current_bytes=0
+test ! &#45;L "$MODEL"
+if [[ &#45;e "$MODEL" ]]; then
+  test &#45;f "$MODEL"
+  current_bytes=$(stat &#45;c %s &#45;&#45; "$MODEL")
+fi
+(( current_bytes &lt;= EXPECTED_BYTES ))
+available_bytes=$(df &#45;PB1 &#45;&#45; "$MODEL_ROOT" | awk 'NR == 2 { print $4 }')
+(( available_bytes &gt;= EXPECTED_BYTES &#45; current_bytes + SAFETY_BYTES ))
+if (( current_bytes &lt; EXPECTED_BYTES )); then
+  curl &#45;fL &#45;C &#45; &#45;&#45;retry 20 &#45;o "$MODEL" \
+    'https://huggingface.co/AngelSlim/Hy4-preview-GGUF/resolve/main/Hy4-preview-STQ1_0.gguf?download=true'
+fi
+test &#45;r "$MODEL"
+test "$(stat &#45;c %s &#45;&#45; "$MODEL")" &#45;eq "$EXPECTED_BYTES"</code></pre>
 
-              <p>The single file is approximately 229 GB. A complete, checksum-identical copy lived on fast local storage on both machines—we will optimize this storage requirement in later releases because each rank reads only the weights assigned to it—and each launch command pointed <code>&#45;&#45;model</code> at that local file.</p>
+              <p>The single file is 229,412,839,872 bytes. Put one assumed-complete, fixed copy on fast local storage on each machine. Each wrapper opens the local file on FD 203, and <code>&#45;&#45;model</code> reads it through <code>/proc/self/fd/203</code>.</p>
 
               <p>The cross-LAN link carried intermediate activations and control traffic, not a continuous stream of 200GB-plus model weights.</p>
 
               <h2>3. Verify and bind the model once on each machine</h2>
 
-              <p>Each machine generated its own receipt from a manifest for this exact STQ1_0 artifact. A receipt binds the repository revision, filename, byte size, SHA-256 value, and local model root to the machine running that rank.</p>
+              <p>Use a fresh state directory on each machine. Its directory and every authority input must not be group- or world-accessible: the preview tools reject a topology or receipt with unsafe ownership or mode. The manifest is supplied by this guidance; <code>prima-moe-artifact</code> does not generate it. The SHA-256 string inside the frozen manifest is provenance metadata—none of the commands below hashes the local model payload.</p>
 
-              <pre class="blog-code-block" aria-label="Create a rank-specific model receipt"><code>./bin/prima-moe-artifact create-v1 \
+              <pre class="blog-code-block" aria-label="Create a private state directory and the fixed Hy4 preview STQ1 model manifest"><code>set &#45;euo pipefail
+umask 077
+RUNTIME=/absolute/path/to/extracted-runtime
+STATE=/absolute/path/to/fresh-private-state
+MODEL_ROOT=/absolute/path/to/model-directory
+MODEL="$MODEL_ROOT/Hy4-preview-STQ1_0.gguf"
+[[ "$RUNTIME" = /* &amp;&amp; "$STATE" = /* &amp;&amp; "$MODEL_ROOT" = /* ]]
+test ! &#45;e "$STATE"
+mkdir &#45;m 700 "$STATE"
+mkdir &#45;m 700 "$STATE/tmp" "$STATE/logs"
+mkdir &#45;m 700 "$STATE/logs/prima-log"
+
+cat &gt; "$STATE/hy4-stq1_0-manifest.json" &lt;&lt;'JSON'
+{
+  "schema": "prima.moe.artifact-manifest.v1",
+  "repository": "AngelSlim/Hy4-preview-GGUF",
+  "revision": "7f10d3724b61b2e1d6e9207a0bd961768b7b30a1",
+  "adapter": "hyv4-preview-stq1-0-v1",
+  "variant": "Hy4-preview-STQ1_0",
+  "shard_count": 1,
+  "total_bytes": 229412839872,
+  "shards": [
+    {
+      "ordinal": "00001",
+      "basename": "Hy4-preview-STQ1_0.gguf",
+      "size_bytes": 229412839872,
+      "sha256": "4d1d2259446e33e25c3e1d8bcb072f026cc69b90a361c5e5a8f6eca50d8d0036"
+    }
+  ]
+}
+JSON
+chmod 600 "$STATE/hy4-stq1_0-manifest.json"</code></pre>
+
+              <p>Then run <code>create-v1</code> once per machine, changing <code>RANK</code> to <code>rank1</code> on the Laptop. It checks the bounded GGUF metadata, expected basename and size, and model-root identity before writing a machine-local <code>.prar</code> receipt. In the reproduced run it reported <code>metadata_bytes_read=5051512</code> and <code>tensor_payload_bytes_read=0</code>: it does not read or hash the tensor payload and is not a corruption check.</p>
+
+              <pre class="blog-code-block" aria-label="Create a rank-specific model receipt without hashing the tensor payload"><code>set &#45;euo pipefail
+umask 077
+RUNTIME=/absolute/path/to/extracted-runtime
+STATE=/absolute/path/to/fresh-private-state
+MODEL_ROOT=/absolute/path/to/model-directory
+MODEL="$MODEL_ROOT/Hy4-preview-STQ1_0.gguf"
+RANK=rank0
+test &#45;r "$MODEL"
+test "$(stat &#45;c %s &#45;&#45; "$MODEL")" &#45;eq 229412839872
+RECEIPT="$STATE/${RANK}-receipt.prar"
+[[ ! &#45;e "$RECEIPT" &amp;&amp; ! &#45;L "$RECEIPT" ]]
+"$RUNTIME/bin/prima-moe-artifact" create-v1 \
   &#45;&#45;adapter-id hyv4-preview-stq1-0-v1 \
   &#45;&#45;repository AngelSlim/Hy4-preview-GGUF \
   &#45;&#45;revision 7f10d3724b61b2e1d6e9207a0bd961768b7b30a1 \
-  &#45;&#45;manifest /path/to/hy4-stq1_0-manifest.json \
-  &#45;&#45;model-root /path/to/model-directory \
-  &#45;&#45;output rank0-receipt.prar</code></pre>
+  &#45;&#45;manifest "$STATE/hy4-stq1_0-manifest.json" \
+  &#45;&#45;model-root "$MODEL_ROOT" \
+  &#45;&#45;output "$RECEIPT"
+chmod 600 "$RECEIPT"</code></pre>
 
-              <p>The 4090 machine ran the same validation with <code>&#45;&#45;output rank1-receipt.prar</code>. This made a copied or incomplete model file fail early instead of producing an ambiguous runtime error later.</p>
+              <p>The model is assumed complete and fixed. If it is moved or replaced, create a fresh private state directory and new receipt rather than reusing the old binding.</p>
 
               <p>The command options have the following roles:</p>
 
               <ul>
-                <li><code>create-v1</code> creates a version-1, machine-local artifact receipt;</li>
+                <li><code>create-v1</code> reads the supplied manifest and creates a version-1, machine-local artifact receipt; it does not create the manifest;</li>
                 <li><code>&#45;&#45;adapter-id</code> selects PRIMA’s model-specific STQ1_0 adapter;</li>
                 <li><code>&#45;&#45;repository</code> and <code>&#45;&#45;revision</code> pin the model’s source and immutable repository revision;</li>
-                <li><code>&#45;&#45;manifest</code> supplies the expected filename, byte size, and SHA-256 identity;</li>
+                <li><code>&#45;&#45;manifest</code> points to the fixed local JSON containing the declared filename, byte size, and artifact provenance; it does not request a local payload hash;</li>
                 <li><code>&#45;&#45;model-root</code> points to the local directory containing the GGUF;</li>
                 <li><code>&#45;&#45;output</code> writes the receipt that this machine passes to <code>prima-server</code> at startup.</li>
               </ul>
 
-              <p>Generate the receipt once on each machine and reuse it while the model file and its local path remain unchanged. Moving, replacing, or re-downloading the model requires a new receipt.</p>
+              <p>Generate the receipt once on each machine and reuse it only while the model file and its absolute local path remain unchanged. Authority paths must be canonical absolute paths with no symlink component; every input must be owned by the effective user, be a regular file with link count one and exact mode <code>0600</code>; the output parent must be owned by that user with exact mode <code>0700</code>. <code>chmod</code> alone cannot repair a wrong owner, hard link, or symlink.</p>
 
               <h2>4. Probe the GPUs once on both ranks</h2>
 
               <p>Each rank captured its own local GPU topology. The A4000 process exposed 4 CUDA devices; the laptop exposed one.</p>
 
-              <pre class="blog-code-block" aria-label="Probe the GPU topology on both ranks"><code># Rank 0 · four-A4000 server
-CUDA_VISIBLE_DEVICES=0,1,2,3 \
-  ./bin/prima-server &#45;&#45;moe-device-group CUDA0,CUDA1,CUDA2,CUDA3 \
-  &#45;&#45;moe-topology-probe &gt; rank0-topology.bin
+              <pre class="blog-code-block" aria-label="Probe the GPU topology on both ranks into private files"><code>set &#45;euo pipefail
+umask 077
+RUNTIME=/absolute/path/to/extracted-runtime
+STATE=/absolute/path/to/fresh-private-state
+nvidia&#45;smi
 
-# Rank 1 · 4090 Laptop
-CUDA_VISIBLE_DEVICES=0 \
-  ./bin/prima-server &#45;&#45;moe-device-group CUDA0 \
-  &#45;&#45;moe-topology-probe &gt; rank1-topology.bin</code></pre>
+RANK=rank0 # set rank1 on the 4090 Laptop
+case "$RANK" in
+  rank0) VISIBLE=0,1,2,3; DEVICE_GROUP=CUDA0,CUDA1,CUDA2,CUDA3 ;;
+  rank1) VISIBLE=0;       DEVICE_GROUP=CUDA0 ;;
+  *) echo "RANK must be rank0 or rank1" &gt;&amp;2; exit 2 ;;
+esac
 
-              <p>These probes verified local GPU visibility and captured the rank-specific topology before startup. Each machine kept its own topology artifact alongside its receipt and writable profile-cache path.</p>
+TOPOLOGY="$STATE/${RANK}-topology.bin"
+[[ ! &#45;e "$TOPOLOGY" &amp;&amp; ! &#45;L "$TOPOLOGY" ]]
+env &#45;i \
+  PATH=/usr/bin:/bin LANG=C LC_ALL=C \
+  CUDA_DEVICE_ORDER=PCI_BUS_ID CUDA_VISIBLE_DEVICES="$VISIBLE" \
+  "$RUNTIME/bin/prima-server" &#45;&#45;moe-device-group "$DEVICE_GROUP" \
+  &#45;&#45;moe-topology-probe &gt; "$TOPOLOGY"
+chmod 600 "$TOPOLOGY"</code></pre>
+
+              <p>Inspect <code>nvidia-smi</code> before every probe or launch and do not disturb unrelated processes. The clean <code>env &#45;i</code> probe deliberately matches the launch’s PCI-bus CUDA ordering and leaves <code>GGML_CUDA_P2P</code> unset; either setting can change the topology digest and make manual startup reject the plan. A plain redirection under the common <code>022</code> umask creates mode <code>0644</code>, which the authority checks also reject. Keep each topology, receipt, plan, profile-cache path, and their parent state directory private.</p>
 
               <h2>5. Generate the hybrid two-rank placement plan</h2>
 
               <p>This testbed combined two levels of parallelism. Across the approximately 50 ms cross-LAN link, the two ranks used layer/pipeline partitioning. Inside the four-A4000 rank, PRIMA used local expert parallelism for routed MoE work. The manual plan establishes the inter-rank cut and assigns each layer’s resident main-graph tensors, shared-expert weights, state, and KV cache to a reference GPU. Routed-expert banks are managed separately by the tiered MoE runtime.</p>
 
-              <p>For this preview, the reference placement was selected explicitly and then validated and materialized with <code>prima-moe-plan</code>. Copy rank 1’s receipt and topology file to rank 0, then run the following command on rank 0:</p>
+              <p>For this preview, the reference placement was selected explicitly and then validated and materialized with <code>prima-moe-plan</code>. Copy rank 1’s receipt and topology file to rank 0 over an authenticated channel, place them inside rank 0’s private <code>STATE</code>, and force mode <code>0600</code>. Use absolute paths and a fresh, absent output path:</p>
 
-              <pre class="blog-code-block" aria-label="Generate the Hy4 preview two-rank manual placement plan"><code>./bin/prima-moe-plan create-v1 \
+              <pre class="blog-code-block" aria-label="Generate the Hy4 preview two-rank manual placement plan"><code>set &#45;euo pipefail
+umask 077
+RUNTIME=/absolute/path/to/extracted-runtime
+STATE=/absolute/path/to/fresh-private-state
+TRANSFER=/absolute/private/path/to/received-rank1-files
+[[ ! &#45;e "$STATE/rank1-receipt.prar" &amp;&amp; ! &#45;L "$STATE/rank1-receipt.prar" ]]
+[[ ! &#45;e "$STATE/rank1-topology.bin" &amp;&amp; ! &#45;L "$STATE/rank1-topology.bin" ]]
+install &#45;m 600 "$TRANSFER/rank1-receipt.prar" "$STATE/rank1-receipt.prar"
+install &#45;m 600 "$TRANSFER/rank1-topology.bin" "$STATE/rank1-topology.bin"
+
+[[ "$(realpath &#45;e &#45;&#45; "$STATE")" == "$STATE" ]]
+[[ "$(stat &#45;c %u &#45;&#45; "$STATE")" &#45;eq "$EUID" ]]
+[[ "$(stat &#45;c %a &#45;&#45; "$STATE")" == 700 ]]
+for input in "$STATE"/rank{0,1}&#45;{receipt.prar,topology.bin}; do
+  [[ &#45;f "$input" &amp;&amp; ! &#45;L "$input" ]]
+  [[ "$(realpath &#45;e &#45;&#45; "$input")" == "$input" ]]
+  [[ "$(stat &#45;c %u &#45;&#45; "$input")" &#45;eq "$EUID" ]]
+  [[ "$(stat &#45;c %a &#45;&#45; "$input")" == 600 ]]
+  [[ "$(stat &#45;c %h &#45;&#45; "$input")" &#45;eq 1 ]]
+done
+
+PLAN="$STATE/hy4-two-rank-plan.prmp"
+[[ ! &#45;e "$PLAN" &amp;&amp; ! &#45;L "$PLAN" ]]
+
+"$RUNTIME/bin/prima-moe-plan" create-v1 \
   &#45;&#45;adapter hyv4-preview-stq1-0-v1 \
-  &#45;&#45;rank0-receipt /path/to/rank0-receipt.prar \
-  &#45;&#45;rank1-receipt /path/to/rank1-receipt.prar \
-  &#45;&#45;rank0-topology /path/to/rank0-topology.bin \
-  &#45;&#45;rank1-topology /path/to/rank1-topology.bin \
+  &#45;&#45;rank0-receipt "$STATE/rank0-receipt.prar" \
+  &#45;&#45;rank1-receipt "$STATE/rank1-receipt.prar" \
+  &#45;&#45;rank0-topology "$STATE/rank0-topology.bin" \
+  &#45;&#45;rank1-topology "$STATE/rank1-topology.bin" \
   &#45;&#45;cut 61 \
   &#45;&#45;rank0-device-layers 15,15,15,16 \
   &#45;&#45;rank1-device-layers 17 \
-  &#45;&#45;output /path/to/hy4-two-rank-plan.prmp</code></pre>
+  &#45;&#45;output "$PLAN"
+chmod 600 "$PLAN"</code></pre>
 
               <p><code>&#45;&#45;cut 61</code> assigns model layers 0–60 to rank 0 and layers 61–77 to rank 1. The per-device counts are contiguous base layer placement and expand as follows:</p>
 
@@ -351,80 +511,235 @@ CUDA_VISIBLE_DEVICES=0 \
 
               <p>Rank 1 has one GPU, so it has no intra-rank multi-GPU expert fan-out. PRIMA does not fan experts across the two machines: doing so would introduce expert communication at every routed layer over the high-RTT cross-LAN path.</p>
 
-              <p>The tool does not search for the fastest placement. It verifies that the two receipts refer to the same model artifact and adapter, checks both captured GPU topologies, validates the selected cut and layer counts, and writes a binary plan. These values describe this testbed and should not be copied to different hardware without a new placement decision. Copy the generated plan to rank 1 without modifying it; both ranks then pass their local copy through <code>&#45;&#45;moe-manual-plan</code>.</p>
+              <p>The tool does not search for the fastest placement. It verifies that the two receipts refer to the same model artifact and adapter, checks both captured GPU topologies, validates the selected cut and layer counts, and writes a binary plan. These values describe this testbed and should not be copied to different hardware without a new placement decision. Transfer the generated plan without modifying it; on rank 1, receive it outside <code>STATE</code>, require the destination to be absent, then run <code>install &#45;m 600 /absolute/path/to/received-plan "$STATE/hy4-two-rank-plan.prmp"</code>. Both ranks pass their private local copy through <code>&#45;&#45;moe-manual-plan</code>.</p>
 
               <h2>6. Start rank 0 and rank 1</h2>
 
-              <p>The two processes connect with a data port and a signal port on each rank. Rank 1 started first with <code>&#45;&#45;worker-ready-listener</code>; rank 0 then started as <code>&#45;&#45;head &#45;&#45;world 2</code>.</p>
+              <p>The two processes connect with a data port and a signal port on each rank. The tested path uses an SSH tunnel because direct reverse reachability was unavailable. Start the tunnel, then rank 1 with <code>&#45;&#45;worker-ready-listener</code>, and finally rank 0 as <code>&#45;&#45;head &#45;&#45;world 2</code>.</p>
 
               <div class="blog-table-wrap" role="region" aria-label="Hy4 preview two-rank network ports and startup order" tabindex="0">
                 <table class="blog-table--wide">
-                  <thead><tr><th scope="col">Order</th><th scope="col">Rank</th><th scope="col">Own Ring ports</th><th scope="col"><code>&#45;&#45;next</code></th></tr></thead>
+                  <thead><tr><th scope="col">Order</th><th scope="col">Rank</th><th scope="col">Own data / signal / echo ports</th><th scope="col"><code>&#45;&#45;next</code></th></tr></thead>
                   <tbody>
-                    <tr><th scope="row">1</th><td>Rank 1 · 4090</td><td>Data 19868 · Signal 20895</td><td><code>A4000_HOST:19867:20894</code></td></tr>
-                    <tr><th scope="row">2</th><td>Rank 0 · A4000</td><td>Data 19867 · Signal 20894</td><td><code>RANK1_HOST:19868:20895</code></td></tr>
+                    <tr><th scope="row">1</th><td>Rank 1 · 4090</td><td>19541 / 20571 / 20771</td><td><code>127.0.0.1:19542:20572</code> (local forwards)</td></tr>
+                    <tr><th scope="row">2</th><td>Rank 0 · A4000</td><td>19540 / 20570 / 20770</td><td><code>127.0.0.1:19543:20573</code> (reverse forwards)</td></tr>
                   </tbody>
                 </table>
               </div>
 
-              <p>Start rank 1 on the 4090 Laptop:</p>
+              <p><strong>Secure the ports before starting anything.</strong> In this preview, the Ring data/signal and diagnostic echo listeners bind wildcard interfaces, and the reproduced rank 0 HTTP listener appeared on <code>0.0.0.0:18331</code> even with <code>&#45;&#45;host 127.0.0.1</code>. These listeners have no TLS or client authentication. Use site-specific firewall and routing rules to deny untrusted ingress to 18331, 18332, 19540, 19541, 20570, 20571, 20770, and 20771 while preserving required loopback traffic. Inspect <code>ss &#45;ltnp</code> on both hosts before launch to confirm all declared and forwarded ports are free. Do not paste generic firewall commands that could cut off SSH.</p>
 
-              <pre class="blog-code-block" aria-label="Start Hy4 preview rank 1 on the 4090 Laptop"><code>CUDA_VISIBLE_DEVICES=0 ./bin/prima-server \
-  &#45;&#45;model /path/to/Hy4-preview-STQ1_0.gguf \
-  &#45;&#45;moe-provider tiered-local-cold-hot-v1 \
-  &#45;&#45;moe-model-adapter hyv4-preview-stq1-0-v1 \
-  &#45;&#45;moe-routing-policy local-cold-no-remote-v1 \
-  &#45;&#45;moe-artifact-receipt rank1-receipt.prar \
-  &#45;&#45;moe-profile-cache rank1-profile-cache.bin \
-  &#45;&#45;moe-manual-plan /path/to/hy4-two-rank-plan.prmp \
-  &#45;&#45;device CUDA0 &#45;&#45;split-mode layer &#45;&#45;moe-device-group CUDA0 \
-  &#45;&#45;next A4000_HOST:19867:20894 \
-  &#45;&#45;data-port 19868 &#45;&#45;signal-port 20895 \
-  &#45;&#45;ctx-size 8192 \
-  &#45;&#45;worker-ready-listener</code></pre>
+              <p>Before first use, verify the A4000 host-key fingerprint through a separate trusted channel and record it in <code>known_hosts</code>; do not blindly accept a TOFU prompt. In Terminal A on the Laptop, keep this tunnel in the foreground. Replace both the SSH username and <code>A4000_HOST</code>; non-interactive public-key authentication, strict known-host checking, and both local and remote TCP forwarding must be allowed (and not blocked by <code>PermitOpen</code>/<code>PermitListen</code>). <code>ExitOnForwardFailure</code> confirms that the six forwarding listeners bound successfully, not that the still-unstarted Prima endpoints are ready.</p>
 
-              <p>Then start rank 0 on the four-A4000 server:</p>
+              <pre class="blog-code-block" aria-label="Open the tested bidirectional SSH port forwards from the Laptop"><code>set &#45;euo pipefail
+SSH_TARGET=ubuntu@A4000_HOST # replace username and host
+ssh &#45;N &#45;T &#45;S none \
+  &#45;o BatchMode=yes \
+  &#45;o PasswordAuthentication=no \
+  &#45;o KbdInteractiveAuthentication=no \
+  &#45;o ControlMaster=no \
+  &#45;o ControlPath=none \
+  &#45;o ExitOnForwardFailure=yes \
+  &#45;o ServerAliveInterval=15 \
+  &#45;o ServerAliveCountMax=3 \
+  &#45;o ConnectTimeout=15 \
+  &#45;o ForwardAgent=no \
+  &#45;o NumberOfPasswordPrompts=0 \
+  &#45;o StrictHostKeyChecking=yes \
+  &#45;L 127.0.0.1:19542:127.0.0.1:19540 \
+  &#45;L 127.0.0.1:20572:127.0.0.1:20570 \
+  &#45;L 127.0.0.1:20770:127.0.0.1:20770 \
+  &#45;R 127.0.0.1:19543:127.0.0.1:19541 \
+  &#45;R 127.0.0.1:20573:127.0.0.1:20571 \
+  &#45;R 127.0.0.1:20771:127.0.0.1:20771 \
+  "$SSH_TARGET"</code></pre>
 
-              <pre class="blog-code-block" aria-label="Start Hy4 preview rank 0 on the four-A4000 server"><code>CUDA_VISIBLE_DEVICES=0,1,2,3 ./bin/prima-server \
-  &#45;&#45;model /path/to/Hy4-preview-STQ1_0.gguf \
-  &#45;&#45;moe-provider tiered-local-cold-hot-v1 \
-  &#45;&#45;moe-model-adapter hyv4-preview-stq1-0-v1 \
-  &#45;&#45;moe-routing-policy local-cold-no-remote-v1 \
-  &#45;&#45;moe-artifact-receipt rank0-receipt.prar \
-  &#45;&#45;moe-profile-cache rank0-profile-cache.bin \
-  &#45;&#45;moe-manual-plan /path/to/hy4-two-rank-plan.prmp \
-  &#45;&#45;device CUDA0 &#45;&#45;split-mode layer \
-  &#45;&#45;moe-device-group CUDA0,CUDA1,CUDA2,CUDA3 \
-  &#45;&#45;head &#45;&#45;world 2 \
-  &#45;&#45;next RANK1_HOST:19868:20895 \
-  &#45;&#45;data-port 19867 &#45;&#45;signal-port 20894 \
-  &#45;&#45;ctx-size 8192 \
-  &#45;&#45;host 0.0.0.0 &#45;&#45;port 18727</code></pre>
+              <p>The four data/signal forwards are the reproduced functional path. The two additional echo forwards follow the runtime's <code>signal_port + 200</code> scheme and allow best-effort outbound-hop telemetry; they do not affect the fixed scheduler hop price.</p>
 
-              <p>Only rank 0 served clients. The request endpoint was:</p>
+              <p>Save the following common launch settings as <code>$STATE/hy4-common.sh</code> on both machines. These opt-in gates are part of the reproduced STQ runtime—not optional tuning suggestions.</p>
 
-              <pre class="blog-code-block" aria-label="OpenAI-compatible request endpoint"><code>http://A4000_HOST:18727/v1/chat/completions</code></pre>
+              <pre class="blog-code-block" aria-label="Create the common reproduced STQ launch settings"><code>set &#45;euo pipefail
+umask 077
+STATE=/absolute/path/to/fresh-private-state
+cat &gt; "$STATE/hy4-common.sh" &lt;&lt;'BASH'
+COMMON_ENV=(
+  PATH=/usr/bin:/bin LANG=C LC_ALL=C
+  CUDA_CACHE_DISABLE=1 CUDA_DEVICE_ORDER=PCI_BUS_ID CUDA_LAUNCH_BLOCKING=0
+  GGML_CUDA_DISABLE_GRAPHS=1
+  LLAMA_MOE_CPU_CUDA_NUMERIC_COMPAT_V1=1
+  PRIMA_ACTIVATION_WIRE_DTYPE=fp32
+  PRIMA_MOE_BACKGROUND_STAGING_V1=1
+  PRIMA_MOE_BG_PROMOTION_V1=1
+  PRIMA_MOE_COPY_STREAM_READY_SYNC_V1=1
+  PRIMA_MOE_COPY_STREAM_V1=1
+  PRIMA_MOE_DECODE_TIMING_V1=1
+  PRIMA_MOE_DRAIN_PROMOTION_COPIES_WITHIN_ALLOWANCE_V1=1
+  PRIMA_MOE_HOTCACHE_POLICY_V1=recent
+  PRIMA_MOE_PRECISE_PREFETCH_V1=1
+  PRIMA_MOE_PUBLISH_READY_BEFORE_DECODE_V1=1
+  PRIMA_MOE_REQUEST_PLANNER_V1=1
+  PRIMA_MOE_ROUTE_PAGECACHE_POPULATE_V1=1
+  PRIMA_MOE_ROUTE_PAGE_PREFETCH_V1=1
+  PRIMA_MOE_STARTUP_COLD_PREFETCH_MAX_BYTES_V1=8589934592
+  PRIMA_MOE_STARTUP_COLD_PREFETCH_V1=1
+)
+COMMON_ARGS=(
+  &#45;&#45;model /proc/self/fd/203 &#45;&#45;load-mode mmap &#45;&#45;log-profile production
+  &#45;&#45;topology static &#45;&#45;world-timeout 7200
+  &#45;&#45;ctx-size 8192 &#45;&#45;batch-size 2 &#45;&#45;ubatch-size 1 &#45;&#45;parallel 1
+  &#45;&#45;n-predict 60 &#45;&#45;threads 8 &#45;&#45;threads-batch 8
+  &#45;&#45;moe-hybrid manual
+  &#45;&#45;moe-provider tiered-local-cold-hot-v1
+  &#45;&#45;moe-model-adapter hyv4-preview-stq1-0-v1
+  &#45;&#45;moe-routing-policy local-cold-no-remote-v1
+  &#45;&#45;moe-min-request-hits 2 &#45;&#45;moe-ttft-guard-percent 3
+  &#45;&#45;moe-artifact-receipt /proc/self/fd/200
+  &#45;&#45;moe-manual-plan /proc/self/fd/201
+  &#45;&#45;jinja &#45;&#45;no-context-shift &#45;&#45;no-warmup &#45;&#45;no-repack
+  &#45;&#45;no-cache-prompt &#45;&#45;cache-reuse 0 &#45;&#45;no-slots &#45;&#45;no-webui
+  &#45;&#45;seed 0 &#45;&#45;temp 0 &#45;&#45;top-k 1 &#45;&#45;top-p 1 &#45;&#45;min-p 0
+  &#45;&#45;repeat-penalty 1 &#45;&#45;ignore-eos
+)
+BASH
+chmod 600 "$STATE/hy4-common.sh"</code></pre>
+
+              <p>In Terminal B on the 4090 Laptop, start rank 1 in the foreground. The retained run had 15,930 MiB GPU memory free and 22.66 GB <code>MemAvailable</code> before launch; the block aborts below conservative reproduced-environment gates of 15,800 MiB and 22.0 GB. The wrapper pins the local receipt, plan, and model to file descriptors 200, 201, and 203. A normal plan pathname is not accepted by the current manual-mode contract.</p>
+
+              <pre class="blog-code-block" aria-label="Start Hy4 preview rank 1 on the 4090 Laptop"><code>set &#45;euo pipefail
+umask 077
+RUNTIME=/absolute/path/to/extracted-runtime
+STATE=/absolute/path/to/fresh-private-state
+MODEL=/absolute/path/to/Hy4-preview-STQ1_0.gguf
+source "$STATE/hy4-common.sh"
+nvidia&#45;smi
+mem_available_bytes=$(awk '/^MemAvailable:/ { printf "%.0f\n", $2 * 1024 }' /proc/meminfo)
+gpu_free_mib=$(nvidia&#45;smi &#45;&#45;query&#45;gpu=memory.free &#45;&#45;format=csv,noheader,nounits)
+(( mem_available_bytes &gt;= 22000000000 ))
+[[ "$gpu_free_mib" =~ ^[0-9]+$ ]]
+(( gpu_free_mib &gt;= 15800 ))
+
+(
+  exec 200&lt;"$STATE/rank1-receipt.prar"
+  exec 201&lt;"$STATE/hy4-two-rank-plan.prmp"
+  exec 203&lt;"$MODEL"
+
+  exec env &#45;i \
+    "${COMMON_ENV[@]}" \
+    TMPDIR="$STATE/tmp" \
+    PRIMA_LOG_ROOT="$STATE/logs/prima-log" \
+    CUDA_VISIBLE_DEVICES=0 \
+    "$RUNTIME/bin/prima-server" \
+      "${COMMON_ARGS[@]}" \
+      &#45;&#45;moe-profile-cache "$STATE/rank1-profile-cache.bin" \
+      &#45;&#45;next 127.0.0.1:19542:20572 \
+      &#45;&#45;data-port 19541 &#45;&#45;signal-port 20571 \
+      &#45;&#45;worker-ready-listener \
+      &#45;&#45;host 127.0.0.1 &#45;&#45;port 18332 \
+      &#45;&#45;device CUDA0 &#45;&#45;split-mode layer &#45;&#45;moe-device-group CUDA0
+) 2&gt;&amp;1 | tee "$STATE/logs/rank1.log"</code></pre>
+
+              <p>Keep Terminal B alive. In another Laptop terminal, confirm that the rank 1 process is still running and that <code>ss &#45;ltnp</code> shows its data listener on 19541; then immediately start rank 0 in Terminal C on the four-A4000 server. <strong>Do not wait for rank 1 signal port 20571, HTTP port 18332, or <code>prima-server: service ready</code> yet:</strong> the signal listener and ready marker appear only after rank 0 joins and the static world advances through its barriers.</p>
+
+              <p>The retained A4000 launch had 14,966 MiB free on each of four cards and 27.91 GB <code>MemAvailable</code>. The rank 0 block requires exactly four visible devices, at least 14,900 MiB free on each, and at least 27.0 GB available host memory. These gates reproduce the measured admission envelope; they are not universal hardware minima.</p>
+
+              <pre class="blog-code-block" aria-label="Start Hy4 preview rank 0 on the four-A4000 server"><code>set &#45;euo pipefail
+umask 077
+RUNTIME=/absolute/path/to/extracted-runtime
+STATE=/absolute/path/to/fresh-private-state
+MODEL=/absolute/path/to/Hy4-preview-STQ1_0.gguf
+source "$STATE/hy4-common.sh"
+nvidia&#45;smi
+mem_available_bytes=$(awk '/^MemAvailable:/ { printf "%.0f\n", $2 * 1024 }' /proc/meminfo)
+mapfile &#45;t gpu_free_mib &lt; &lt;(nvidia&#45;smi &#45;&#45;query&#45;gpu=memory.free &#45;&#45;format=csv,noheader,nounits)
+(( mem_available_bytes &gt;= 27000000000 ))
+(( ${#gpu_free_mib[@]} == 4 ))
+for free_mib in "${gpu_free_mib[@]}"; do
+  [[ "$free_mib" =~ ^[0-9]+$ ]]
+  (( free_mib &gt;= 14900 ))
+done
+
+(
+  exec 200&lt;"$STATE/rank0-receipt.prar"
+  exec 201&lt;"$STATE/hy4-two-rank-plan.prmp"
+  exec 203&lt;"$MODEL"
+
+  exec env &#45;i \
+    "${COMMON_ENV[@]}" \
+    TMPDIR="$STATE/tmp" \
+    PRIMA_LOG_ROOT="$STATE/logs/prima-log" \
+    CUDA_VISIBLE_DEVICES=0,1,2,3 \
+    "$RUNTIME/bin/prima-server" \
+      "${COMMON_ARGS[@]}" \
+      &#45;&#45;moe-profile-cache "$STATE/rank0-profile-cache.bin" \
+      &#45;&#45;head &#45;&#45;world 2 \
+      &#45;&#45;next 127.0.0.1:19543:20573 \
+      &#45;&#45;data-port 19540 &#45;&#45;signal-port 20570 \
+      &#45;&#45;host 127.0.0.1 &#45;&#45;port 18331 \
+      &#45;&#45;device CUDA0 &#45;&#45;split-mode layer \
+      &#45;&#45;moe-device-group CUDA0,CUDA1,CUDA2,CUDA3
+) 2&gt;&amp;1 | tee "$STATE/logs/rank0.log"</code></pre>
+
+              <p>After both processes are running, confirm the 20570/20571 signal listeners and wait for the exact <code>prima-server: service ready</code> marker in both rank logs. If either foreground command exits, stop and diagnose instead of continuing to poll. Only rank 0 serves clients. On the A4000 host, poll <code>/health</code> to HTTP 200 with a bounded per-attempt timeout and an overall deadline, then make a fixed-sampler chat request with its own finite timeout. Hy4 may spend the first tokens reasoning, so inspect both <code>content</code> and <code>reasoning_content</code>; a very small token budget can legitimately leave <code>content</code> empty.</p>
+
+              <pre class="blog-code-block" aria-label="Check readiness and send an OpenAI-compatible request on rank 0"><code>set &#45;euo pipefail
+umask 077
+STATE=/absolute/path/to/fresh-private-state
+deadline=$((SECONDS + 7200))
+until curl &#45;fsS &#45;&#45;connect&#45;timeout 2 &#45;&#45;max&#45;time 5 \
+  &#45;o "$STATE/health.json" http://127.0.0.1:18331/health; do
+  (( SECONDS &lt; deadline )) || { echo "health deadline exceeded" &gt;&amp;2; exit 1; }
+  sleep 5
+done
+
+RESPONSE="$STATE/smoke-chat-response.json"
+curl &#45;fsS &#45;&#45;connect&#45;timeout 5 &#45;&#45;max&#45;time 900 \
+  &#45;o "$RESPONSE" http://127.0.0.1:18331/v1/chat/completions \
+  &#45;H 'Content-Type: application/json' \
+  &#45;d '{
+    "model": "hy4-preview-stq1_0",
+    "messages": [{"role": "user", "content": "Reply with one short sentence: why does local expert caching help sparse MoE inference?"}],
+    "max_tokens": 64,
+    "temperature": 0,
+    "top_k": 1,
+    "top_p": 1,
+    "min_p": 0,
+    "repeat_penalty": 1,
+    "seed": 0,
+    "stream": false
+  }'
+
+jq &#45;e '((((.choices[0].message.content // "") | length) &gt; 0) or
+         (((.choices[0].message.reasoning_content // "") | length) &gt; 0))' \
+  "$RESPONSE" &gt;/dev/null
+jq '.choices[0].message | {content, reasoning_content}' "$RESPONSE"</code></pre>
+
+              <p>Immediately after launch, re-run <code>ss &#45;ltnp</code> and verify that the observed wildcard data, signal, echo, and HTTP listeners—including 20770/20771—are protected by the preconfigured ingress policy. Neither <code>&#45;&#45;host 127.0.0.1</code> nor the SSH loopback forwards constrain Prima’s own wildcard binds.</p>
 
               <h2>7. The settings that shaped the run</h2>
 
               <p>The essential settings were:</p>
 
               <ul>
+                <li><code>/proc/self/fd/200</code>, <code>/proc/self/fd/201</code>, and <code>/proc/self/fd/203</code>: consume the receipt, manual plan, and model through the descriptors pinned by the wrapper, rather than reopening mutable pathnames inside the server;</li>
+                <li><code>&#45;&#45;topology static</code>, <code>&#45;&#45;world-timeout 7200</code>, and <code>&#45;&#45;moe-hybrid manual</code>: satisfy the current STQ startup contract by selecting the declared static two-rank topology, allowing up to 7,200 seconds for rank coordination and cold startup, and requiring the supplied manual hybrid-MoE plan;</li>
                 <li><code>&#45;&#45;moe-provider tiered-local-cold-hot-v1</code>: keep hot expert data on GPU while using host memory and local SSD for colder data;</li>
                 <li><code>&#45;&#45;moe-routing-policy local-cold-no-remote-v1</code>: read a rank’s cold weights locally instead of fetching them from the other machine;</li>
-                <li><code>&#45;&#45;moe-manual-plan</code>: load the same validated layer-placement plan on both ranks;</li>
+                <li><code>&#45;&#45;moe-manual-plan /proc/self/fd/201</code>: load the same validated plan on both ranks through required FD 201; a normal filesystem path is rejected by the current manual-mode contract;</li>
+                <li><code>&#45;&#45;load-mode mmap</code>: map the 229 GB model and allow colder pages to be served from each rank’s local storage;</li>
                 <li><code>&#45;&#45;split-mode layer</code>: place resident main-graph and shared-expert layer data according to the plan; routed hot experts still use rank 0’s local expert parallelism;</li>
                 <li><code>&#45;&#45;moe-device-group</code>: declare the ordered local GPU group available to each rank;</li>
-                <li><code>&#45;&#45;ctx-size 8192</code>: use the experiment’s 8K context window.</li>
+                <li><code>&#45;&#45;ctx-size 8192 &#45;&#45;batch-size 2 &#45;&#45;ubatch-size 1 &#45;&#45;parallel 1</code>: run one request at a time with the measured 8K-context batch configuration;</li>
+                <li><code>&#45;&#45;no-warmup &#45;&#45;no-repack</code>: skip automatic warmup and weight repacking for this recorded path;</li>
+                <li><code>&#45;&#45;jinja</code>: apply the model’s Jinja chat template so <code>/v1/chat/completions</code> has reliable chat semantics.</li>
               </ul>
 
-              <p>PRIMA manages expert caching, prefetching, page-cache population, background staging, and asynchronous transfers internally.</p>
+              <p>The common wrapper also fixes PCI-bus GPU ordering, disables CUDA graphs, enables the measured CPU–CUDA numeric-compatibility path, and sends inter-rank activations as FP32. The <code>PRIMA_MOE_*</code> variables shown in the common block explicitly enable the reproduced request planner, hot-cache policy, cold prefetch, page-cache population, background staging and promotion, and asynchronous copy synchronization. Omitting them is a different, unverified configuration.</p>
 
               <p>We replay the measured generation in the <a href="./playground" data-route-link="playground">Playground</a>. The Playground does not connect to live devices or start a live inference run; it replays the fixed input, output, and per-token timing captured from a real offline inference run.</p>
 
               <div class="blog-post__footnotes" role="note" aria-label="Guidance notes">
-                <p class="blog-post__footnote"><sup>1</sup> This guidance is a functional preview. It currently supports Linux only; Macs are not yet supported. Future releases will simplify deployment, support automatic plan generation, and add support for both Mac clusters and mixed Mac–Linux clusters.</p>
-                <p class="blog-post__footnote"><sup>2</sup> Executable binary packages: <a href="https://huggingface.co/AngelSlim/Hy4-preview-GGUF/tree/main/prima-runtime" target="_blank" rel="noreferrer">AngelSlim/Hy4-preview-GGUF/prima-runtime</a>.</p>
+                <p class="blog-post__footnote"><sup>1</sup> This guidance is a functional preview limited to the exact x86-64, GPU/SM, Ubuntu, and CUDA ABI combinations in the compatibility matrix above. Macs are not yet supported. Future releases will simplify deployment, support automatic plan generation, and add support for both Mac clusters and mixed Mac–Linux clusters.</p>
+                <p class="blog-post__footnote"><sup>2</sup> Executable binary packages: public <a href="https://huggingface.co/AngelSlim/Hy4-preview-GGUF/tree/main/prima-runtime" target="_blank" rel="noreferrer">AngelSlim/Hy4-preview-GGUF/prima-runtime</a>.</p>
               </div>
               </div>
             </div>
@@ -432,12 +747,14 @@ CUDA_VISIBLE_DEVICES=0 \
             <div lang="zh-CN" data-blog-language-panel="zh" hidden>
               <header class="blog-post__header">
                 <div class="blog-meta"><time datetime="2026-08-31">2026 年 8 月 31 日</time></div>
-                <h1 id="hy4-runbook-title-zh">解密 PRIMA：如何在两台异构设备上运行 Hy4 preview 770B</h1>
-                <p>两台设备，异地、跨网、无线连接，总计仅 80GB 显存和 64GB 系统内存，将 Hy4 preview 770B 跑到 1 TPS。</p>
+                <h1 id="hy4-runbook-title-zh">解密 PRIMA：如何在两台异构设备上运行 Hy4 Preview 770B</h1>
+                <p>两台设备，异地、跨网、无线连接，总计仅 80GB 显存和 64GB 系统内存，用 PRIMA 将 Hy4 Preview 770B 提速到 1 TPS。</p>
               </header>
 
               <div class="blog-post__body">
                 <p><a href="./blog/hunyuan4-770b-local-devices" data-blog-post-link="hunyuan4-770b-local-devices">Hy4 preview 770B 案例研究</a>解释了我们为何组合已有设备，以及这次实验揭示了可扩展本地 AI 的哪些可能。下面的流程记录了这套测试环境所使用的双 rank 运行路径。</p>
+
+                <p><strong>备注：</strong>我们建议使用 AI 工具来辅助部署这个预览版本。我们将在后续版本中简化部署，并提供一键式部署和安装工具。</p>
 
                 <h2>部署结构一览</h2>
 
@@ -453,7 +770,7 @@ CUDA_VISIBLE_DEVICES=0 \
                   </table>
                 </div>
 
-                <p>每台机器均配备 32 GB 系统内存。两台主机通过既有的 Wi-Fi、VPN 和远端局域网路径，使用主机间直连地址通信。</p>
+                <p>每台机器均配备 32GB 系统内存。两台主机通过现有 Wi-Fi、VPN 和远端局域网路径中的主机直连地址通信。</p>
 
                 <h2>1. 为每个 rank 准备一个运行时软件包</h2>
 
@@ -469,86 +786,244 @@ CUDA_VISIBLE_DEVICES=0 \
                   </table>
                 </div>
 
-                <p>软件包包含已编译的 ELF 可执行文件、共享库和符号链接，不包含模型文件、源代码、安装脚本、NVIDIA 驱动、CUDA 或 cuBLAS。</p>
+                <p>当前功能预览二进制文件仅对应下面这份精确兼容矩阵：</p>
 
-                <pre class="blog-code-block" aria-label="校验下载的运行时软件包"><code>sha256sum &#45;c SHA256SUMS &#45;&#45;ignore-missing
-RANK=a4000-rank0 # 或 4090-rank1
-tar &#45;xzf "prima-preview-${RANK}-linux-x86_64-cuda-runtime.tar.gz"
-ldd ./bin/prima-server | sed &#45;n '/not found/p'</code></pre>
+                <div class="blog-table-wrap" role="region" aria-label="Hy4 preview 运行时兼容矩阵" tabindex="0">
+                  <table class="blog-table--wide">
+                    <thead><tr><th scope="col">Rank</th><th scope="col">CPU 架构</th><th scope="col">已验证 GPU</th><th scope="col">计算能力</th><th scope="col">操作系统</th><th scope="col">CUDA ABI</th></tr></thead>
+                    <tbody>
+                      <tr><th scope="row">Rank 0</th><td>x86-64</td><td>NVIDIA RTX A4000 × 4</td><td>SM86</td><td>Ubuntu 24.04</td><td>CUDA 12 ABI</td></tr>
+                      <tr><th scope="row">Rank 1</th><td>x86-64</td><td>NVIDIA RTX 4090 Laptop × 1</td><td>SM89</td><td>Ubuntu 22.04</td><td>CUDA 13 ABI</td></tr>
+                    </tbody>
+                  </table>
+                </div>
 
-                <p>最后一条命令不应输出任何内容。每个软件包中的 <code>bin/</code> 和 <code>lib/</code> 目录必须保持在一起，服务进程才能找到随包提供的库。</p>
+                <p>软件包包含已编译的 ELF 可执行文件、共享库和符号链接，不包含模型文件、源代码、安装脚本、NVIDIA 驱动、CUDA 或 cuBLAS。<a href="https://huggingface.co/AngelSlim/Hy4-preview-GGUF/tree/main/prima-runtime" target="_blank" rel="noreferrer">公开的 Hugging Face <code>prima-runtime</code> 目录</a>提供运行时软件包及其对应的 <code>SHA256SUMS</code>。</p>
+
+                <pre class="blog-code-block" aria-label="下载一个 Hy4 preview 运行时软件包"><code>set &#45;euo pipefail
+mkdir &#45;p hy4-runtime
+cd hy4-runtime
+for tool in bash tar file ldd sha256sum curl realpath stat install sed ssh jq nvidia&#45;smi ss df free find tee sleep awk grep; do
+  command &#45;v "$tool" &gt;/dev/null
+done
+
+ROLE=a4000-rank0   # 在 Laptop 上使用 4090-rank1
+HF_BASE=https://huggingface.co/AngelSlim/Hy4-preview-GGUF/resolve/main/prima-runtime
+ARCHIVE="prima-preview-${ROLE}-linux-x86_64-cuda-runtime.tar.gz"
+
+curl &#45;fL &#45;&#45;retry 20 &#45;o SHA256SUMS "$HF_BASE/SHA256SUMS?download=true"
+curl &#45;fL &#45;C &#45; &#45;&#45;retry 20 &#45;o "$ARCHIVE" \
+  "$HF_BASE/$ARCHIVE?download=true"</code></pre>
+
+                <p>压缩包与 <code>SHA256SUMS</code> 必须从同一个公开目录下载。保留上方显示的精确压缩包文件名；不要重命名，也不要替换为其他来源的 checksum manifest。</p>
+
+                <pre class="blog-code-block" aria-label="校验下载的运行时软件包"><code>set &#45;euo pipefail
+DOWNLOAD_DIR=/absolute/path/to/hy4-runtime
+# 与上一个代码块从 Hugging Face 下载的精确文件名和 SHA256SUMS 保持一致。
+ARCHIVE=prima&#45;preview&#45;a4000&#45;rank0&#45;linux&#45;x86_64&#45;cuda&#45;runtime.tar.gz
+# Laptop 使用 4090-rank1 压缩包文件名。
+cd "$DOWNLOAD_DIR"
+
+sha256sum &#45;c SHA256SUMS &#45;&#45;ignore-missing
+first_entry=$(tar &#45;tzf "$ARCHIVE" | sed &#45;n '1p')
+PACKAGE=${first_entry%%/*}
+[[ "$PACKAGE" =~ ^[A-Za-z0-9._-]+$ ]]
+[[ ! &#45;e "$PACKAGE" &amp;&amp; ! &#45;L "$PACKAGE" ]]
+tar &#45;xzf "$ARCHIVE"
+cd "$PACKAGE"
+
+elf_count=0
+while IFS= read &#45;r &#45;d '' artifact; do
+  file_type=$(file &#45;b &#45;&#45; "$artifact")
+  [[ "$file_type" == ELF* ]] || continue
+  elf_count=$((elf_count + 1))
+  echo "==> $artifact"
+  ldd_output=$(env &#45;i PATH=/usr/bin:/bin LANG=C LC_ALL=C ldd "$artifact")
+  printf '%s\n' "$ldd_output"
+  if [[ "$ldd_output" == *"not found"* ]]; then
+    echo "Missing dependency in $artifact" >&2
+    exit 1
+  fi
+done &lt; &lt;(find . &#45;type f &#45;print0)
+(( elf_count > 0 ))</code></pre>
+
+                <p>请在 Bash 中运行这些命令。<code>SHA256SUMS</code> 只校验较小的运行时压缩包；本流程明确不对模型 payload 做哈希。第二段命令进入解压目录，对每个 ELF 制品执行 <code>ldd</code>，遇到依赖缺失或包内没有 ELF 文件就失败。软件包中的 <code>bin/</code> 和 <code>lib/</code> 必须保持在一起。</p>
 
                 <h2>2. 在两台机器上放置同一模型文件</h2>
 
                 <p>本文使用的模型制品是公开 <a href="https://huggingface.co/AngelSlim/Hy4-preview-GGUF/tree/main" target="_blank" rel="noreferrer">AngelSlim/Hy4-preview-GGUF</a> 仓库中的 <a href="https://huggingface.co/AngelSlim/Hy4-preview-GGUF/blob/main/Hy4-preview-STQ1_0.gguf" target="_blank" rel="noreferrer"><code>Hy4-preview-STQ1_0.gguf</code></a>。这是 1–2 bit 混合量化，平均每个权重约 2.38 bit。</p>
 
-                <pre class="blog-code-block" aria-label="校验 Hy4 preview STQ1 模型文件"><code>sha256sum Hy4-preview-STQ1_0.gguf
-# expected:
-4d1d2259446e33e25c3e1d8bcb072f026cc69b90a361c5e5a8f6eca50d8d0036  Hy4-preview-STQ1_0.gguf</code></pre>
+                <pre class="blog-code-block" aria-label="断点续传唯一的 Hy4 preview STQ1 模型并在不做哈希的情况下检查字节数"><code>set &#45;euo pipefail
+MODEL_ROOT=/absolute/path/to/model-directory
+MODEL="$MODEL_ROOT/Hy4-preview-STQ1_0.gguf"
+mkdir &#45;p "$MODEL_ROOT"
+df &#45;h "$MODEL_ROOT"
+free &#45;h
+EXPECTED_BYTES=229412839872
+SAFETY_BYTES=$((5 * 1024 * 1024 * 1024))
+current_bytes=0
+test ! &#45;L "$MODEL"
+if [[ &#45;e "$MODEL" ]]; then
+  test &#45;f "$MODEL"
+  current_bytes=$(stat &#45;c %s &#45;&#45; "$MODEL")
+fi
+(( current_bytes &lt;= EXPECTED_BYTES ))
+available_bytes=$(df &#45;PB1 &#45;&#45; "$MODEL_ROOT" | awk 'NR == 2 { print $4 }')
+(( available_bytes &gt;= EXPECTED_BYTES &#45; current_bytes + SAFETY_BYTES ))
+if (( current_bytes &lt; EXPECTED_BYTES )); then
+  curl &#45;fL &#45;C &#45; &#45;&#45;retry 20 &#45;o "$MODEL" \
+    'https://huggingface.co/AngelSlim/Hy4-preview-GGUF/resolve/main/Hy4-preview-STQ1_0.gguf?download=true'
+fi
+test &#45;r "$MODEL"
+test "$(stat &#45;c %s &#45;&#45; "$MODEL")" &#45;eq "$EXPECTED_BYTES"</code></pre>
 
-                <p>这个单文件约为 229 GB。两台机器的高速本地存储上各放置一份完整且校验和一致的副本——由于每个 rank 只读取分配给自己的权重，后续版本会优化这项存储要求——每条启动命令的 <code>&#45;&#45;model</code> 都指向本机文件。</p>
+                <p>该单文件精确大小为 229,412,839,872 字节。两台机器的高速本地存储上各放置一份假定完整且固定的副本。每个 wrapper 在 FD 203 上打开本地文件，<code>&#45;&#45;model</code> 再通过 <code>/proc/self/fd/203</code> 读取。</p>
 
                 <p>跨局域网链路传输的是中间激活和控制流量，而不是持续传输超过 200 GB 的模型权重。</p>
 
                 <h2>3. 在每台机器上校验并绑定一次模型</h2>
 
-                <p>每台机器都根据这个 STQ1_0 制品的清单生成自己的凭据。凭据会把仓库修订版本、文件名、字节大小、SHA-256 值和本地模型根目录，绑定到运行相应 rank 的机器。</p>
+                <p>先在每台机器上使用全新的私有 state 目录。目录以及每个 authority 输入都不能允许 group 或 world 访问，否则预览工具会拒绝不安全的 topology 或 receipt。Manifest 由本指南提供，<code>prima-moe-artifact</code> 不会生成它。Frozen manifest 内的 SHA-256 字符串属于制品来源元数据；下方命令都不会计算本地模型 payload 的哈希。</p>
 
-                <pre class="blog-code-block" aria-label="创建特定 rank 的模型凭据"><code>./bin/prima-moe-artifact create-v1 \
+                <pre class="blog-code-block" aria-label="创建私有 state 目录和固定的 Hy4 preview STQ1 模型 manifest"><code>set &#45;euo pipefail
+umask 077
+RUNTIME=/absolute/path/to/extracted-runtime
+STATE=/absolute/path/to/fresh-private-state
+MODEL_ROOT=/absolute/path/to/model-directory
+MODEL="$MODEL_ROOT/Hy4-preview-STQ1_0.gguf"
+[[ "$RUNTIME" = /* &amp;&amp; "$STATE" = /* &amp;&amp; "$MODEL_ROOT" = /* ]]
+test ! &#45;e "$STATE"
+mkdir &#45;m 700 "$STATE"
+mkdir &#45;m 700 "$STATE/tmp" "$STATE/logs"
+mkdir &#45;m 700 "$STATE/logs/prima-log"
+
+cat &gt; "$STATE/hy4-stq1_0-manifest.json" &lt;&lt;'JSON'
+{
+  "schema": "prima.moe.artifact-manifest.v1",
+  "repository": "AngelSlim/Hy4-preview-GGUF",
+  "revision": "7f10d3724b61b2e1d6e9207a0bd961768b7b30a1",
+  "adapter": "hyv4-preview-stq1-0-v1",
+  "variant": "Hy4-preview-STQ1_0",
+  "shard_count": 1,
+  "total_bytes": 229412839872,
+  "shards": [
+    {
+      "ordinal": "00001",
+      "basename": "Hy4-preview-STQ1_0.gguf",
+      "size_bytes": 229412839872,
+      "sha256": "4d1d2259446e33e25c3e1d8bcb072f026cc69b90a361c5e5a8f6eca50d8d0036"
+    }
+  ]
+}
+JSON
+chmod 600 "$STATE/hy4-stq1_0-manifest.json"</code></pre>
+
+                <p>然后每台机器各运行一次 <code>create-v1</code>；Laptop 上把 <code>RANK</code> 改成 <code>rank1</code>。工具检查有界 GGUF 元数据、预期文件名与大小，以及 model-root 身份，再写出机器本地的 <code>.prar</code> receipt。本次复现中它报告 <code>metadata_bytes_read=5051512</code>、<code>tensor_payload_bytes_read=0</code>：它不会读取或哈希 tensor payload，也不是文件损坏检查。</p>
+
+                <pre class="blog-code-block" aria-label="不哈希 tensor payload，创建特定 rank 的模型凭据"><code>set &#45;euo pipefail
+umask 077
+RUNTIME=/absolute/path/to/extracted-runtime
+STATE=/absolute/path/to/fresh-private-state
+MODEL_ROOT=/absolute/path/to/model-directory
+MODEL="$MODEL_ROOT/Hy4-preview-STQ1_0.gguf"
+RANK=rank0
+test &#45;r "$MODEL"
+test "$(stat &#45;c %s &#45;&#45; "$MODEL")" &#45;eq 229412839872
+RECEIPT="$STATE/${RANK}-receipt.prar"
+[[ ! &#45;e "$RECEIPT" &amp;&amp; ! &#45;L "$RECEIPT" ]]
+"$RUNTIME/bin/prima-moe-artifact" create-v1 \
   &#45;&#45;adapter-id hyv4-preview-stq1-0-v1 \
   &#45;&#45;repository AngelSlim/Hy4-preview-GGUF \
   &#45;&#45;revision 7f10d3724b61b2e1d6e9207a0bd961768b7b30a1 \
-  &#45;&#45;manifest /path/to/hy4-stq1_0-manifest.json \
-  &#45;&#45;model-root /path/to/model-directory \
-  &#45;&#45;output rank0-receipt.prar</code></pre>
+  &#45;&#45;manifest "$STATE/hy4-stq1_0-manifest.json" \
+  &#45;&#45;model-root "$MODEL_ROOT" \
+  &#45;&#45;output "$RECEIPT"
+chmod 600 "$RECEIPT"</code></pre>
 
-                <p>4090 机器使用 <code>&#45;&#45;output rank1-receipt.prar</code> 执行相同校验。这样，模型文件复制不完整或内容错误时会尽早失败，而不会在后续产生含糊的运行时错误。</p>
+                <p>这里假设模型完整且固定。移动或替换模型后，应创建新的私有 state 目录与 receipt，不要继续使用旧绑定。</p>
 
                 <p>各命令选项的作用如下：</p>
 
                 <ul>
-                  <li><code>create-v1</code> 创建版本 1 的机器本地制品凭据；</li>
+                  <li><code>create-v1</code> 读取给定的 manifest，并创建版本 1 的机器本地制品凭据；它不会创建 manifest；</li>
                   <li><code>&#45;&#45;adapter-id</code> 选择 PRIMA 针对该模型的 STQ1_0 适配器；</li>
                   <li><code>&#45;&#45;repository</code> 和 <code>&#45;&#45;revision</code> 固定模型来源及不可变的仓库修订版本；</li>
-                  <li><code>&#45;&#45;manifest</code> 提供预期的文件名、字节大小和 SHA-256 身份信息；</li>
+                  <li><code>&#45;&#45;manifest</code> 指向本地固定内容的 JSON，其中包含声明的文件名、字节大小和制品来源元数据；它不会要求对本地 payload 做哈希；</li>
                   <li><code>&#45;&#45;model-root</code> 指向包含 GGUF 的本地目录；</li>
                   <li><code>&#45;&#45;output</code> 写出本机在启动时传给 <code>prima-server</code> 的凭据。</li>
                 </ul>
 
-                <p>每台机器只需生成一次凭据；只要模型文件及其本地路径不变，就可以重复使用。移动、替换或重新下载模型后，需要生成新的凭据。</p>
+                <p>每台机器只需生成一次凭据；仅当模型文件及其绝对本地路径保持不变时才可复用。Authority path 必须是无 symlink component 的 canonical absolute path；每个输入都必须由 effective user 拥有、是 link count 为 1 且 mode 精确为 <code>0600</code> 的 regular file；输出父目录必须由该用户拥有且 mode 精确为 <code>0700</code>。仅执行 <code>chmod</code> 无法修复错误 owner、hard link 或 symlink。</p>
 
                 <h2>4. 探测两个 rank 的 GPU</h2>
 
                 <p>每个 rank 分别采集本机 GPU 拓扑。A4000 进程暴露四个 CUDA 设备，Laptop 暴露一个。</p>
 
-                <pre class="blog-code-block" aria-label="探测两个 rank 的 GPU 拓扑"><code># Rank 0 · four-A4000 server
-CUDA_VISIBLE_DEVICES=0,1,2,3 \
-  ./bin/prima-server &#45;&#45;moe-device-group CUDA0,CUDA1,CUDA2,CUDA3 \
-  &#45;&#45;moe-topology-probe &gt; rank0-topology.bin
+                <pre class="blog-code-block" aria-label="把两个 rank 的 GPU 拓扑写入私有文件"><code>set &#45;euo pipefail
+umask 077
+RUNTIME=/absolute/path/to/extracted-runtime
+STATE=/absolute/path/to/fresh-private-state
+nvidia&#45;smi
 
-# Rank 1 · 4090 Laptop
-CUDA_VISIBLE_DEVICES=0 \
-  ./bin/prima-server &#45;&#45;moe-device-group CUDA0 \
-  &#45;&#45;moe-topology-probe &gt; rank1-topology.bin</code></pre>
+RANK=rank0 # 在 4090 Laptop 上设为 rank1
+case "$RANK" in
+  rank0) VISIBLE=0,1,2,3; DEVICE_GROUP=CUDA0,CUDA1,CUDA2,CUDA3 ;;
+  rank1) VISIBLE=0;       DEVICE_GROUP=CUDA0 ;;
+  *) echo "RANK must be rank0 or rank1" &gt;&amp;2; exit 2 ;;
+esac
 
-                <p>这些探测会确认本地 GPU 可见性，并在启动前记录特定 rank 的拓扑。每台机器都保留自己的拓扑文件、凭据和可写的 profile cache 路径。</p>
+TOPOLOGY="$STATE/${RANK}-topology.bin"
+[[ ! &#45;e "$TOPOLOGY" &amp;&amp; ! &#45;L "$TOPOLOGY" ]]
+env &#45;i \
+  PATH=/usr/bin:/bin LANG=C LC_ALL=C \
+  CUDA_DEVICE_ORDER=PCI_BUS_ID CUDA_VISIBLE_DEVICES="$VISIBLE" \
+  "$RUNTIME/bin/prima-server" &#45;&#45;moe-device-group "$DEVICE_GROUP" \
+  &#45;&#45;moe-topology-probe &gt; "$TOPOLOGY"
+chmod 600 "$TOPOLOGY"</code></pre>
+
+                <p>每次 probe 或启动前都先检查 <code>nvidia-smi</code>，不得干扰无关进程。干净的 <code>env &#45;i</code> probe 会与正式启动保持相同的 PCI-bus CUDA 顺序，并让 <code>GGML_CUDA_P2P</code> 保持未设置；任一项不同都可能改变 topology digest，导致 manual startup 拒绝 plan。常见的 <code>022</code> umask 配合普通重定向还会生成 <code>0644</code> 文件，authority 检查同样会拒绝。Topology、receipt、plan、profile-cache 路径及父 state 目录都应保持私有。</p>
 
                 <h2>5. 生成混合并行的双 rank 放置计划</h2>
 
                 <p>这个测试床组合了两个层级的并行机制：两台机器之间经过 RTT 约 50 ms 的跨 LAN 链路，采用按层切分和流水线并行；四卡 A4000 rank 内部则对路由 MoE 计算使用本地专家并行。人工 plan 定义跨 rank 切分点，并把每层常驻的 main-graph tensors、shared-expert weights、state 和 KV cache 分给一张参考 GPU；routed-expert banks 则由分层 MoE runtime 单独管理。</p>
 
-                <p>在这个预览版本中，参考放置由人工明确选择，再由 <code>prima-moe-plan</code> 校验并生成二进制计划。先把 rank 1 的凭据和拓扑文件复制到 rank 0，然后在 rank 0 上运行：</p>
+                <p>在这个预览版本中，参考放置由人工明确选择，再由 <code>prima-moe-plan</code> 校验并生成二进制计划。通过认证通道把 rank 1 的 receipt 和 topology 复制到 rank 0，放入 rank 0 的私有 <code>STATE</code> 并强制设为 <code>0600</code>。使用绝对路径以及尚不存在的全新输出路径：</p>
 
-                <pre class="blog-code-block" aria-label="生成 Hy4 preview 双 rank 人工放置计划"><code>./bin/prima-moe-plan create-v1 \
+                <pre class="blog-code-block" aria-label="生成 Hy4 preview 双 rank 人工放置计划"><code>set &#45;euo pipefail
+umask 077
+RUNTIME=/absolute/path/to/extracted-runtime
+STATE=/absolute/path/to/fresh-private-state
+TRANSFER=/absolute/private/path/to/received-rank1-files
+[[ ! &#45;e "$STATE/rank1-receipt.prar" &amp;&amp; ! &#45;L "$STATE/rank1-receipt.prar" ]]
+[[ ! &#45;e "$STATE/rank1-topology.bin" &amp;&amp; ! &#45;L "$STATE/rank1-topology.bin" ]]
+install &#45;m 600 "$TRANSFER/rank1-receipt.prar" "$STATE/rank1-receipt.prar"
+install &#45;m 600 "$TRANSFER/rank1-topology.bin" "$STATE/rank1-topology.bin"
+
+[[ "$(realpath &#45;e &#45;&#45; "$STATE")" == "$STATE" ]]
+[[ "$(stat &#45;c %u &#45;&#45; "$STATE")" &#45;eq "$EUID" ]]
+[[ "$(stat &#45;c %a &#45;&#45; "$STATE")" == 700 ]]
+for input in "$STATE"/rank{0,1}&#45;{receipt.prar,topology.bin}; do
+  [[ &#45;f "$input" &amp;&amp; ! &#45;L "$input" ]]
+  [[ "$(realpath &#45;e &#45;&#45; "$input")" == "$input" ]]
+  [[ "$(stat &#45;c %u &#45;&#45; "$input")" &#45;eq "$EUID" ]]
+  [[ "$(stat &#45;c %a &#45;&#45; "$input")" == 600 ]]
+  [[ "$(stat &#45;c %h &#45;&#45; "$input")" &#45;eq 1 ]]
+done
+
+PLAN="$STATE/hy4-two-rank-plan.prmp"
+[[ ! &#45;e "$PLAN" &amp;&amp; ! &#45;L "$PLAN" ]]
+
+"$RUNTIME/bin/prima-moe-plan" create-v1 \
   &#45;&#45;adapter hyv4-preview-stq1-0-v1 \
-  &#45;&#45;rank0-receipt /path/to/rank0-receipt.prar \
-  &#45;&#45;rank1-receipt /path/to/rank1-receipt.prar \
-  &#45;&#45;rank0-topology /path/to/rank0-topology.bin \
-  &#45;&#45;rank1-topology /path/to/rank1-topology.bin \
+  &#45;&#45;rank0-receipt "$STATE/rank0-receipt.prar" \
+  &#45;&#45;rank1-receipt "$STATE/rank1-receipt.prar" \
+  &#45;&#45;rank0-topology "$STATE/rank0-topology.bin" \
+  &#45;&#45;rank1-topology "$STATE/rank1-topology.bin" \
   &#45;&#45;cut 61 \
   &#45;&#45;rank0-device-layers 15,15,15,16 \
   &#45;&#45;rank1-device-layers 17 \
-  &#45;&#45;output /path/to/hy4-two-rank-plan.prmp</code></pre>
+  &#45;&#45;output "$PLAN"
+chmod 600 "$PLAN"</code></pre>
 
                 <p><code>&#45;&#45;cut 61</code> 把模型的第 0–60 层分给 rank 0，把第 61–77 层分给 rank 1。各 GPU 的数字表示连续的基础层放置，具体如下：</p>
 
@@ -571,80 +1046,235 @@ CUDA_VISIBLE_DEVICES=0 \
 
                 <p>Rank 1 只有一张 GPU，因此没有 rank 内多 GPU expert fan-out。PRIMA 不在两台机器之间做专家分发，因为这会让每个路由层都经过高 RTT 的跨 LAN 链路交换专家数据。</p>
 
-                <p>这个工具不会自动搜索最快的放置方案。它会确认两个凭据指向同一模型制品和适配器，检查两端记录的 GPU 拓扑，验证人工选择的切分点与各 GPU 层数，并写出二进制 plan。这些参数只对应本测试环境，硬件变化后需要重新决定放置方式。把生成的同一份 plan 原样复制到 rank 1；两个 rank 启动时都通过 <code>&#45;&#45;moe-manual-plan</code> 指向各自的本地副本。</p>
+                <p>这个工具不会自动搜索最快的放置方案。它会确认两个凭据指向同一模型制品和适配器，检查两端记录的 GPU 拓扑，验证人工选择的切分点与各 GPU 层数，并写出二进制 plan。这些参数只对应本测试环境，硬件变化后需要重新决定放置方式。原样传输生成的 plan；在 rank 1 上先接收到 <code>STATE</code> 之外，确认目标不存在，再执行 <code>install &#45;m 600 /absolute/path/to/received-plan "$STATE/hy4-two-rank-plan.prmp"</code>。两个 rank 启动时都通过 <code>&#45;&#45;moe-manual-plan</code> 使用各自的私有本地副本。</p>
 
                 <h2>6. 启动 rank 0 和 rank 1</h2>
 
-                <p>两个进程组成一个环，每个 rank 各有一个数据端口和一个信号端口。Rank 1 先使用 <code>&#45;&#45;worker-ready-listener</code> 启动；随后 rank 0 以 <code>&#45;&#45;head &#45;&#45;world 2</code> 启动。</p>
+                <p>两个进程组成一个环，每个 rank 各有一个数据端口和一个信号端口。由于直接反向连通性不可用，实测主路径使用 SSH tunnel。先启动 tunnel，再以 <code>&#45;&#45;worker-ready-listener</code> 启动 rank 1，最后以 <code>&#45;&#45;head &#45;&#45;world 2</code> 启动 rank 0。</p>
 
                 <div class="blog-table-wrap" role="region" aria-label="Hy4 preview 双 rank 网络端口与启动顺序" tabindex="0">
                   <table class="blog-table--wide">
-                    <thead><tr><th scope="col">顺序</th><th scope="col">Rank</th><th scope="col">本机 Ring 端口</th><th scope="col"><code>&#45;&#45;next</code></th></tr></thead>
+                    <thead><tr><th scope="col">顺序</th><th scope="col">Rank</th><th scope="col">本机 data / signal / echo 端口</th><th scope="col"><code>&#45;&#45;next</code></th></tr></thead>
                     <tbody>
-                      <tr><th scope="row">1</th><td>Rank 1 · 4090</td><td>数据 19868 · 信号 20895</td><td><code>A4000_HOST:19867:20894</code></td></tr>
-                      <tr><th scope="row">2</th><td>Rank 0 · A4000</td><td>数据 19867 · 信号 20894</td><td><code>RANK1_HOST:19868:20895</code></td></tr>
+                      <tr><th scope="row">1</th><td>Rank 1 · 4090</td><td>19541 / 20571 / 20771</td><td><code>127.0.0.1:19542:20572</code>（本地转发）</td></tr>
+                      <tr><th scope="row">2</th><td>Rank 0 · A4000</td><td>19540 / 20570 / 20770</td><td><code>127.0.0.1:19543:20573</code>（反向转发）</td></tr>
                     </tbody>
                   </table>
                 </div>
 
-                <p>先在 4090 Laptop 上启动 rank 1：</p>
+                <p><strong>启动任何进程前先保护端口。</strong>本预览的 Ring data/signal 与诊断 echo listener 会绑定 wildcard interface；复现时 rank 0 HTTP listener 即使传入 <code>&#45;&#45;host 127.0.0.1</code>，仍出现在 <code>0.0.0.0:18331</code>。这些 listener 都没有 TLS 或客户端认证。应使用符合本地网络的 firewall/routing 策略，拒绝不可信入口访问 18331、18332、19540、19541、20570、20571、20770 和 20771，同时保留必要的 loopback 流量。启动前在两机运行 <code>ss &#45;ltnp</code>，确认所有声明及转发端口空闲。不要粘贴可能切断 SSH 的通用防火墙命令。</p>
 
-                <pre class="blog-code-block" aria-label="在 4090 Laptop 上启动 Hy4 preview rank 1"><code>CUDA_VISIBLE_DEVICES=0 ./bin/prima-server \
-  &#45;&#45;model /path/to/Hy4-preview-STQ1_0.gguf \
-  &#45;&#45;moe-provider tiered-local-cold-hot-v1 \
-  &#45;&#45;moe-model-adapter hyv4-preview-stq1-0-v1 \
-  &#45;&#45;moe-routing-policy local-cold-no-remote-v1 \
-  &#45;&#45;moe-artifact-receipt rank1-receipt.prar \
-  &#45;&#45;moe-profile-cache rank1-profile-cache.bin \
-  &#45;&#45;moe-manual-plan /path/to/hy4-two-rank-plan.prmp \
-  &#45;&#45;device CUDA0 &#45;&#45;split-mode layer &#45;&#45;moe-device-group CUDA0 \
-  &#45;&#45;next A4000_HOST:19867:20894 \
-  &#45;&#45;data-port 19868 &#45;&#45;signal-port 20895 \
-  &#45;&#45;ctx-size 8192 \
-  &#45;&#45;worker-ready-listener</code></pre>
+                <p>首次使用前，应通过独立可信渠道核对 A4000 主机公钥指纹并写入 <code>known_hosts</code>，不要盲目接受 TOFU 提示。在 Laptop 的终端 A 中让下方 tunnel 保持前台运行。替换 SSH 用户名与 <code>A4000_HOST</code>；必须允许非交互式公钥认证、严格 known-host 校验以及 local、remote 两种 TCP forwarding，且不能被 <code>PermitOpen</code>/<code>PermitListen</code> 阻断。<code>ExitOnForwardFailure</code> 只确认六个转发 listener 绑定成功，不代表尚未启动的 Prima endpoint 已 ready。</p>
 
-                <p>然后在四卡 A4000 服务器上启动 rank 0：</p>
+                <pre class="blog-code-block" aria-label="从 Laptop 建立经过实测的双向 SSH 端口转发"><code>set &#45;euo pipefail
+SSH_TARGET=ubuntu@A4000_HOST # 替换用户名和主机
+ssh &#45;N &#45;T &#45;S none \
+  &#45;o BatchMode=yes \
+  &#45;o PasswordAuthentication=no \
+  &#45;o KbdInteractiveAuthentication=no \
+  &#45;o ControlMaster=no \
+  &#45;o ControlPath=none \
+  &#45;o ExitOnForwardFailure=yes \
+  &#45;o ServerAliveInterval=15 \
+  &#45;o ServerAliveCountMax=3 \
+  &#45;o ConnectTimeout=15 \
+  &#45;o ForwardAgent=no \
+  &#45;o NumberOfPasswordPrompts=0 \
+  &#45;o StrictHostKeyChecking=yes \
+  &#45;L 127.0.0.1:19542:127.0.0.1:19540 \
+  &#45;L 127.0.0.1:20572:127.0.0.1:20570 \
+  &#45;L 127.0.0.1:20770:127.0.0.1:20770 \
+  &#45;R 127.0.0.1:19543:127.0.0.1:19541 \
+  &#45;R 127.0.0.1:20573:127.0.0.1:20571 \
+  &#45;R 127.0.0.1:20771:127.0.0.1:20771 \
+  "$SSH_TARGET"</code></pre>
 
-                <pre class="blog-code-block" aria-label="在四卡 A4000 服务器上启动 Hy4 preview rank 0"><code>CUDA_VISIBLE_DEVICES=0,1,2,3 ./bin/prima-server \
-  &#45;&#45;model /path/to/Hy4-preview-STQ1_0.gguf \
-  &#45;&#45;moe-provider tiered-local-cold-hot-v1 \
-  &#45;&#45;moe-model-adapter hyv4-preview-stq1-0-v1 \
-  &#45;&#45;moe-routing-policy local-cold-no-remote-v1 \
-  &#45;&#45;moe-artifact-receipt rank0-receipt.prar \
-  &#45;&#45;moe-profile-cache rank0-profile-cache.bin \
-  &#45;&#45;moe-manual-plan /path/to/hy4-two-rank-plan.prmp \
-  &#45;&#45;device CUDA0 &#45;&#45;split-mode layer \
-  &#45;&#45;moe-device-group CUDA0,CUDA1,CUDA2,CUDA3 \
-  &#45;&#45;head &#45;&#45;world 2 \
-  &#45;&#45;next RANK1_HOST:19868:20895 \
-  &#45;&#45;data-port 19867 &#45;&#45;signal-port 20894 \
-  &#45;&#45;ctx-size 8192 \
-  &#45;&#45;host 0.0.0.0 &#45;&#45;port 18727</code></pre>
+                <p>其中四个 data/signal forward 是已经复现的功能路径。额外两个 echo forward 遵循 runtime 的 <code>signal_port + 200</code> 规则，用于获得 best-effort outbound-hop telemetry；它们不会改变固定的 scheduler hop price。</p>
 
-                <p>只有 rank 0 对外服务。请求端点为：</p>
+                <p>在两台机器上把以下公共启动设置保存为 <code>$STATE/hy4-common.sh</code>。这些 opt-in gate 是经过复现的 STQ runtime 配置组成部分，不是可省略的调优建议。</p>
 
-                <pre class="blog-code-block" aria-label="OpenAI 兼容请求端点"><code>http://A4000_HOST:18727/v1/chat/completions</code></pre>
+                <pre class="blog-code-block" aria-label="创建经过复现的 STQ 公共启动设置"><code>set &#45;euo pipefail
+umask 077
+STATE=/absolute/path/to/fresh-private-state
+cat &gt; "$STATE/hy4-common.sh" &lt;&lt;'BASH'
+COMMON_ENV=(
+  PATH=/usr/bin:/bin LANG=C LC_ALL=C
+  CUDA_CACHE_DISABLE=1 CUDA_DEVICE_ORDER=PCI_BUS_ID CUDA_LAUNCH_BLOCKING=0
+  GGML_CUDA_DISABLE_GRAPHS=1
+  LLAMA_MOE_CPU_CUDA_NUMERIC_COMPAT_V1=1
+  PRIMA_ACTIVATION_WIRE_DTYPE=fp32
+  PRIMA_MOE_BACKGROUND_STAGING_V1=1
+  PRIMA_MOE_BG_PROMOTION_V1=1
+  PRIMA_MOE_COPY_STREAM_READY_SYNC_V1=1
+  PRIMA_MOE_COPY_STREAM_V1=1
+  PRIMA_MOE_DECODE_TIMING_V1=1
+  PRIMA_MOE_DRAIN_PROMOTION_COPIES_WITHIN_ALLOWANCE_V1=1
+  PRIMA_MOE_HOTCACHE_POLICY_V1=recent
+  PRIMA_MOE_PRECISE_PREFETCH_V1=1
+  PRIMA_MOE_PUBLISH_READY_BEFORE_DECODE_V1=1
+  PRIMA_MOE_REQUEST_PLANNER_V1=1
+  PRIMA_MOE_ROUTE_PAGECACHE_POPULATE_V1=1
+  PRIMA_MOE_ROUTE_PAGE_PREFETCH_V1=1
+  PRIMA_MOE_STARTUP_COLD_PREFETCH_MAX_BYTES_V1=8589934592
+  PRIMA_MOE_STARTUP_COLD_PREFETCH_V1=1
+)
+COMMON_ARGS=(
+  &#45;&#45;model /proc/self/fd/203 &#45;&#45;load-mode mmap &#45;&#45;log-profile production
+  &#45;&#45;topology static &#45;&#45;world-timeout 7200
+  &#45;&#45;ctx-size 8192 &#45;&#45;batch-size 2 &#45;&#45;ubatch-size 1 &#45;&#45;parallel 1
+  &#45;&#45;n-predict 60 &#45;&#45;threads 8 &#45;&#45;threads-batch 8
+  &#45;&#45;moe-hybrid manual
+  &#45;&#45;moe-provider tiered-local-cold-hot-v1
+  &#45;&#45;moe-model-adapter hyv4-preview-stq1-0-v1
+  &#45;&#45;moe-routing-policy local-cold-no-remote-v1
+  &#45;&#45;moe-min-request-hits 2 &#45;&#45;moe-ttft-guard-percent 3
+  &#45;&#45;moe-artifact-receipt /proc/self/fd/200
+  &#45;&#45;moe-manual-plan /proc/self/fd/201
+  &#45;&#45;jinja &#45;&#45;no-context-shift &#45;&#45;no-warmup &#45;&#45;no-repack
+  &#45;&#45;no-cache-prompt &#45;&#45;cache-reuse 0 &#45;&#45;no-slots &#45;&#45;no-webui
+  &#45;&#45;seed 0 &#45;&#45;temp 0 &#45;&#45;top-k 1 &#45;&#45;top-p 1 &#45;&#45;min-p 0
+  &#45;&#45;repeat-penalty 1 &#45;&#45;ignore-eos
+)
+BASH
+chmod 600 "$STATE/hy4-common.sh"</code></pre>
+
+                <p>在 4090 Laptop 的终端 B 中以前台方式启动 rank 1。保留复现启动前有 15,930 MiB 可用显存和 22.66 GB <code>MemAvailable</code>；代码块会在低于保守的复现环境 gate（15,800 MiB 和 22.0 GB）时中止。Wrapper 会把本地 receipt、plan 和模型固定到文件描述符 200、201 和 203；当前 manual-mode 合同不接受普通的 plan 路径。</p>
+
+                <pre class="blog-code-block" aria-label="在 4090 Laptop 上启动 Hy4 preview rank 1"><code>set &#45;euo pipefail
+umask 077
+RUNTIME=/absolute/path/to/extracted-runtime
+STATE=/absolute/path/to/fresh-private-state
+MODEL=/absolute/path/to/Hy4-preview-STQ1_0.gguf
+source "$STATE/hy4-common.sh"
+nvidia&#45;smi
+mem_available_bytes=$(awk '/^MemAvailable:/ { printf "%.0f\n", $2 * 1024 }' /proc/meminfo)
+gpu_free_mib=$(nvidia&#45;smi &#45;&#45;query&#45;gpu=memory.free &#45;&#45;format=csv,noheader,nounits)
+(( mem_available_bytes &gt;= 22000000000 ))
+[[ "$gpu_free_mib" =~ ^[0-9]+$ ]]
+(( gpu_free_mib &gt;= 15800 ))
+
+(
+  exec 200&lt;"$STATE/rank1-receipt.prar"
+  exec 201&lt;"$STATE/hy4-two-rank-plan.prmp"
+  exec 203&lt;"$MODEL"
+
+  exec env &#45;i \
+    "${COMMON_ENV[@]}" \
+    TMPDIR="$STATE/tmp" \
+    PRIMA_LOG_ROOT="$STATE/logs/prima-log" \
+    CUDA_VISIBLE_DEVICES=0 \
+    "$RUNTIME/bin/prima-server" \
+      "${COMMON_ARGS[@]}" \
+      &#45;&#45;moe-profile-cache "$STATE/rank1-profile-cache.bin" \
+      &#45;&#45;next 127.0.0.1:19542:20572 \
+      &#45;&#45;data-port 19541 &#45;&#45;signal-port 20571 \
+      &#45;&#45;worker-ready-listener \
+      &#45;&#45;host 127.0.0.1 &#45;&#45;port 18332 \
+      &#45;&#45;device CUDA0 &#45;&#45;split-mode layer &#45;&#45;moe-device-group CUDA0
+) 2&gt;&amp;1 | tee "$STATE/logs/rank1.log"</code></pre>
+
+                <p>保持终端 B 存活。在 Laptop 的另一个终端确认 rank 1 进程仍在运行，并确认 <code>ss &#45;ltnp</code> 已显示 data listener 19541；随后立即在四卡 A4000 服务器的终端 C 启动 rank 0。<strong>此时不要等待 rank 1 的 signal 端口 20571、HTTP 端口 18332 或 <code>prima-server: service ready</code>：</strong>signal listener 与 ready 标志只有在 rank 0 加入、static world 继续通过各项 barrier 后才会出现。</p>
+
+                <p>保留复现中，四张 A4000 启动前每张有 14,966 MiB 可用显存，主机有 27.91 GB <code>MemAvailable</code>。rank 0 代码块要求恰好四张可见 GPU、每张至少 14,900 MiB 可用显存，以及至少 27.0 GB 可用主存。这些 gate 用于复现本次 admission envelope，并非通用硬件最低配置。</p>
+
+                <pre class="blog-code-block" aria-label="在四卡 A4000 服务器上启动 Hy4 preview rank 0"><code>set &#45;euo pipefail
+umask 077
+RUNTIME=/absolute/path/to/extracted-runtime
+STATE=/absolute/path/to/fresh-private-state
+MODEL=/absolute/path/to/Hy4-preview-STQ1_0.gguf
+source "$STATE/hy4-common.sh"
+nvidia&#45;smi
+mem_available_bytes=$(awk '/^MemAvailable:/ { printf "%.0f\n", $2 * 1024 }' /proc/meminfo)
+mapfile &#45;t gpu_free_mib &lt; &lt;(nvidia&#45;smi &#45;&#45;query&#45;gpu=memory.free &#45;&#45;format=csv,noheader,nounits)
+(( mem_available_bytes &gt;= 27000000000 ))
+(( ${#gpu_free_mib[@]} == 4 ))
+for free_mib in "${gpu_free_mib[@]}"; do
+  [[ "$free_mib" =~ ^[0-9]+$ ]]
+  (( free_mib &gt;= 14900 ))
+done
+
+(
+  exec 200&lt;"$STATE/rank0-receipt.prar"
+  exec 201&lt;"$STATE/hy4-two-rank-plan.prmp"
+  exec 203&lt;"$MODEL"
+
+  exec env &#45;i \
+    "${COMMON_ENV[@]}" \
+    TMPDIR="$STATE/tmp" \
+    PRIMA_LOG_ROOT="$STATE/logs/prima-log" \
+    CUDA_VISIBLE_DEVICES=0,1,2,3 \
+    "$RUNTIME/bin/prima-server" \
+      "${COMMON_ARGS[@]}" \
+      &#45;&#45;moe-profile-cache "$STATE/rank0-profile-cache.bin" \
+      &#45;&#45;head &#45;&#45;world 2 \
+      &#45;&#45;next 127.0.0.1:19543:20573 \
+      &#45;&#45;data-port 19540 &#45;&#45;signal-port 20570 \
+      &#45;&#45;host 127.0.0.1 &#45;&#45;port 18331 \
+      &#45;&#45;device CUDA0 &#45;&#45;split-mode layer \
+      &#45;&#45;moe-device-group CUDA0,CUDA1,CUDA2,CUDA3
+) 2&gt;&amp;1 | tee "$STATE/logs/rank0.log"</code></pre>
+
+                <p>两个进程都启动后，确认 20570/20571 signal listener 已出现，并等待两份 rank 日志都出现精确标志 <code>prima-server: service ready</code>。如果任一前台命令退出，应停止并诊断，而不是继续轮询。只有 rank 0 对客户端提供服务。在 A4000 主机上使用单次超时和总 deadline 轮询 <code>/health</code> 至 HTTP 200，再以独立的有限超时发送固定 sampler chat 请求。Hy4 可能先用若干 token 进行推理，因此应同时检查 <code>content</code> 和 <code>reasoning_content</code>；token 预算很小时，<code>content</code> 为空并不一定是启动失败。</p>
+
+                <pre class="blog-code-block" aria-label="检查 rank 0 就绪状态并发送 OpenAI 兼容请求"><code>set &#45;euo pipefail
+umask 077
+STATE=/absolute/path/to/fresh-private-state
+deadline=$((SECONDS + 7200))
+until curl &#45;fsS &#45;&#45;connect&#45;timeout 2 &#45;&#45;max&#45;time 5 \
+  &#45;o "$STATE/health.json" http://127.0.0.1:18331/health; do
+  (( SECONDS &lt; deadline )) || { echo "health deadline exceeded" &gt;&amp;2; exit 1; }
+  sleep 5
+done
+
+RESPONSE="$STATE/smoke-chat-response.json"
+curl &#45;fsS &#45;&#45;connect&#45;timeout 5 &#45;&#45;max&#45;time 900 \
+  &#45;o "$RESPONSE" http://127.0.0.1:18331/v1/chat/completions \
+  &#45;H 'Content-Type: application/json' \
+  &#45;d '{
+    "model": "hy4-preview-stq1_0",
+    "messages": [{"role": "user", "content": "Reply with one short sentence: why does local expert caching help sparse MoE inference?"}],
+    "max_tokens": 64,
+    "temperature": 0,
+    "top_k": 1,
+    "top_p": 1,
+    "min_p": 0,
+    "repeat_penalty": 1,
+    "seed": 0,
+    "stream": false
+  }'
+
+jq &#45;e '((((.choices[0].message.content // "") | length) &gt; 0) or
+         (((.choices[0].message.reasoning_content // "") | length) &gt; 0))' \
+  "$RESPONSE" &gt;/dev/null
+jq '.choices[0].message | {content, reasoning_content}' "$RESPONSE"</code></pre>
+
+                <p>启动后立即再次运行 <code>ss &#45;ltnp</code>，确认观察到的 wildcard data、signal、echo 与 HTTP listener（包括 20770/20771）均已被预先配置的 ingress 策略保护。<code>&#45;&#45;host 127.0.0.1</code> 与 SSH loopback forward 都不会约束 Prima 自身的 wildcard bind。</p>
 
                 <h2>7. 决定本次运行方式的关键设置</h2>
 
                 <p>关键设置包括：</p>
 
                 <ul>
+                  <li><code>/proc/self/fd/200</code>、<code>/proc/self/fd/201</code> 和 <code>/proc/self/fd/203</code>：通过 wrapper 固定的描述符读取 receipt、manual plan 和模型，避免服务端再次按可变路径名打开这些文件；</li>
+                  <li><code>&#45;&#45;topology static</code>、<code>&#45;&#45;world-timeout 7200</code> 和 <code>&#45;&#45;moe-hybrid manual</code>：满足当前 STQ 启动合同，使用声明的双 rank 静态拓扑，为 rank 协调和冷启动预留最多 7,200 秒，并要求使用提供的手动 hybrid-MoE plan；</li>
                   <li><code>&#45;&#45;moe-provider tiered-local-cold-hot-v1</code>：热专家数据保留在 GPU，较冷的数据使用主机内存和本地 SSD；</li>
                   <li><code>&#45;&#45;moe-routing-policy local-cold-no-remote-v1</code>：每个 rank 从本地读取自己的冷权重，而不是从另一台机器获取；</li>
-                  <li><code>&#45;&#45;moe-manual-plan</code>：两个 rank 都加载同一份经过校验的层放置计划；</li>
+                  <li><code>&#45;&#45;moe-manual-plan /proc/self/fd/201</code>：两个 rank 都通过必需的 FD 201 加载同一份经过校验的 plan；当前 manual-mode 合同会拒绝普通文件系统路径；</li>
+                  <li><code>&#45;&#45;load-mode mmap</code>：映射 229 GB 模型，让较冷的页面由每个 rank 的本地存储提供；</li>
                   <li><code>&#45;&#45;split-mode layer</code>：按 plan 放置常驻 main-graph 和 shared-expert 层数据；routed hot experts 仍使用 rank 0 内部的本地专家并行；</li>
                   <li><code>&#45;&#45;moe-device-group</code>：声明每个 rank 可用且有序的本地 GPU 组；</li>
-                  <li><code>&#45;&#45;ctx-size 8192</code>：使用本次实验的 8K 上下文窗口。</li>
+                  <li><code>&#45;&#45;ctx-size 8192 &#45;&#45;batch-size 2 &#45;&#45;ubatch-size 1 &#45;&#45;parallel 1</code>：以本次实测使用的 8K 上下文 batch 配置，每次运行一个请求；</li>
+                  <li><code>&#45;&#45;no-warmup &#45;&#45;no-repack</code>：在这条记录路径中跳过自动 warmup 和权重 repack；</li>
+                  <li><code>&#45;&#45;jinja</code>：应用模型的 Jinja chat template，确保 <code>/v1/chat/completions</code> 具有可靠的聊天语义。</li>
                 </ul>
 
-                <p>PRIMA 在内部管理专家缓存、预取、page cache 填充、后台 staging 和异步传输。</p>
+                <p>公共 wrapper 还会固定 PCI 总线 GPU 顺序、关闭 CUDA graphs、启用实测的 CPU–CUDA 数值兼容路径，并以 FP32 传输 rank 间激活。公共代码块中列出的 <code>PRIMA_MOE_*</code> 变量明确启用本次复现所用的 request planner、hot-cache policy、cold prefetch、page-cache population、后台 staging/promotion 与异步 copy synchronization；省略它们就属于未经验证的另一套配置。</p>
 
-                <p>我们在 <a href="./playground" data-route-link="playground">Playground</a> 中回放实测生成过程。Playground 不连接真实设备，也不会启动实时推理；它按照一次真实离线推理运行所记录的固定输入、输出和逐 token 时间进行回放。</p>
+                <p>我们会在 <a href="./playground" data-route-link="playground">Playground</a> 中回放实测生成过程。Playground 不会连接真实设备或启动实时推理；它回放的是一次真实离线推理运行中记录的固定输入、输出和逐 token 时间。</p>
 
                 <div class="blog-post__footnotes" role="note" aria-label="指南脚注">
-                  <p class="blog-post__footnote"><sup>1</sup> 本指南仅用于功能预览。目前仅适配 Linux，Mac 系列设备暂未支持。未来版本将简化部署流程、支持自动生成 plan，并支持 Mac 集群和 Mac–Linux 混合集群。</p>
-                  <p class="blog-post__footnote"><sup>2</sup> 可执行二进制文件包：<a href="https://huggingface.co/AngelSlim/Hy4-preview-GGUF/tree/main/prima-runtime" target="_blank" rel="noreferrer">AngelSlim/Hy4-preview-GGUF/prima-runtime</a>。</p>
+                  <p class="blog-post__footnote"><sup>1</sup> 本指南仅用于功能预览，当前只适配上方兼容矩阵中精确列出的 x86-64、GPU/SM、Ubuntu 和 CUDA ABI 组合。Mac 系列设备暂未支持。未来版本将简化部署流程、支持自动生成 plan，并支持 Mac 集群和 Mac–Linux 混合集群。</p>
+                  <p class="blog-post__footnote"><sup>2</sup> 可执行二进制文件包：公开的 <a href="https://huggingface.co/AngelSlim/Hy4-preview-GGUF/tree/main/prima-runtime" target="_blank" rel="noreferrer">AngelSlim/Hy4-preview-GGUF/prima-runtime</a>。</p>
                 </div>
               </div>
             </div>
@@ -689,7 +1319,7 @@ CUDA_VISIBLE_DEVICES=0 \
             <div data-blog-language-panel="en">
               <header class="blog-post__header">
                 <div class="blog-meta"><time datetime="2026-08-30">August 30, 2026</time></div>
-                <h1 id="hunyuan4-post-title-en">Scalability Matters More Than a Bigger Machine: What PRIMA’s Hy4 preview 770B Experiment Reveals About Local AI</h1>
+                <h1 id="hunyuan4-post-title-en">Scalability Matters More Than a Bigger Machine: What PRIMA’s Hy4 Preview 770B Experiment Reveals About Local AI</h1>
               </header>
 
               <div class="blog-post__body">
@@ -933,7 +1563,7 @@ CUDA_VISIBLE_DEVICES=0 \
             <div lang="zh-CN" data-blog-language-panel="zh" hidden>
             <header class="blog-post__header">
               <div class="blog-meta"><time datetime="2026-08-30">August 30, 2026</time></div>
-              <h1 id="hunyuan4-post-title">不可忽视的可扩展性：PRIMA 的 Hy4 preview 770B 压测揭示本地 AI 新方向</h1>
+              <h1 id="hunyuan4-post-title">不可忽视的可扩展性：PRIMA 的 Hy4 Preview 770B 压测揭示本地 AI 新方向</h1>
             </header>
 
             <div class="blog-post__body">
@@ -1179,8 +1809,8 @@ CUDA_VISIBLE_DEVICES=0 \
               <span data-blog-footnote-copy="en">Installation and run guide: </span>
               <span data-blog-footnote-copy="zh" lang="zh-CN">部署与运行教程：</span>
               <a href="./blog/inside-hy4-770b-experiment" data-blog-post-link="inside-hy4-770b-experiment">
-                <span data-blog-footnote-copy="en">Inside the PRIMA Hy4 preview 770B Experiment: How We Ran It Across Two Machines.</span>
-                <span data-blog-footnote-copy="zh" lang="zh-CN">解密 PRIMA：如何在两台异构设备上运行 Hy4 preview 770B。</span>
+                <span data-blog-footnote-copy="en">Inside the PRIMA Hy4 Preview 770B Experiment: How We Ran It Across Two Machines.</span>
+                <span data-blog-footnote-copy="zh" lang="zh-CN">解密 PRIMA：如何在两台异构设备上运行 Hy4 Preview 770B。</span>
               </a>
             </p>
           </article>
@@ -1335,7 +1965,7 @@ CUDA_VISIBLE_DEVICES=0 \
                 <label class="sim-model-field" for="simulation-model">
                   <span>Model · quantization</span>
                   <select id="simulation-model" data-sim-model>
-                    <option value="hy4-770b-iq1" selected>Hy4-770B Preview · IQ1</option>
+                    <option value="hy4-770b-stq1-0" selected>Hy4-770B Preview · STQ1_0</option>
                     <option value="qwen38-27b-q8">Qwen3.8-27B · Q8</option>
                   </select>
                 </label>
@@ -1420,7 +2050,7 @@ CUDA_VISIBLE_DEVICES=0 \
               </dl>
               <span class="sr-only" data-sim-server-summary>Remote LAN · subnet B. GPU server with an Intel Core i7-12700 CPU, four NVIDIA RTX A4000 GPUs with 16 GB VRAM each, 32 GB system memory, 1 gigabit per second uplink and downlink, and RTT approximately 50 milliseconds.</span>
             </article>
-            <figcaption class="sr-only" id="sim-topology-caption">Two heterogeneous devices across different subnets. Network figures are observed from the laptop and apply to the DFlash 2-enabled trace.</figcaption>
+            <figcaption class="sr-only" id="sim-topology-caption">Two heterogeneous devices across different subnets. Network figures describe the recorded testbed; token timing comes from the selected historical trace.</figcaption>
             </figure>
 
             <div class="sim-results" aria-label="Side-by-side inference playback comparison">
@@ -1473,10 +2103,10 @@ CUDA_VISIBLE_DEVICES=0 \
 
           <footer class="sim-disclaimer" id="simulation-disclosure" role="note">
             <strong>Simulation only.</strong>
-            Fixed illustrative input and output. No live model or device connection. Speed data is based on real measurements. With temperature sampling enabled, outputs may differ between runs.
-            <span class="sr-only">Replays fixed measured output timing. It does not run a model, start Prima.cpp, or connect to either device.</span>
+            Fixed recorded input, output, and token intervals. No live model, device connection, or sampling occurs. Playback starts at the first visible token; startup and time to first token are not shown.
+            <span class="sr-only">Replays fixed recorded output timing. It does not run a model, start Prima.cpp, connect to either device, or include startup and first-token latency.</span>
           </footer>
-          <span class="sr-only" id="simulation-boundary">Configuration-specific measured-rate playback.</span>
+          <span class="sr-only" id="simulation-boundary">Configuration-specific historical playback beginning at the first visible token.</span>
         </div>
       </section>
 
@@ -1545,6 +2175,6 @@ CUDA_VISIBLE_DEVICES=0 \
     </main>
 
     <script defer src="./vendor/lucide-prima.js"></script>
-    <script type="module" src="./src/app.js?v=prima-hy4-runbook-v23-20260831"></script>
+    <script type="module" src="./src/app.js?v=hy4-guidance-stq1-v29-20260901"></script>
   </body>
 </html>

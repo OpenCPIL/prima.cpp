@@ -5726,7 +5726,7 @@ h3 {
   }
 
   .sim-controls-panel {
-    grid-template-columns: minmax(0, 1fr) 124px;
+    grid-template-columns: minmax(0, 1fr) 112px;
     gap: 10px;
     padding: 12px 0 14px;
   }
