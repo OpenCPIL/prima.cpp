@@ -18,7 +18,7 @@
     <link rel="preload" as="font" href="./assets/fonts/Geist-Variable.woff2" type="font/woff2" crossorigin />
     <link rel="preload" as="image" href="./assets/hero-topology-v6.webp" />
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.18.1/dist/katex.min.css" crossorigin="anonymous" />
-    <link rel="stylesheet" href="./src/styles.css?v=prima-active-nav-v56-20260830" />
+    <link rel="stylesheet" href="./src/styles.css?v=prima-hy4-runbook-v58-20260901" />
     <title>Prima Lab — Local AI, beyond one device</title>
   </head>
   <body>
@@ -184,7 +184,7 @@
                 <div class="blog-card__content">
                   <div class="blog-meta"><time datetime="2026-08-30">August 30, 2026</time></div>
                   <h2>Scalability Matters More Than a Bigger Machine</h2>
-                  <p>What PRIMA’s Hy4 770B experiment reveals about the future of scalable local AI.</p>
+                  <p>What PRIMA’s Hy4 preview 770B experiment reveals about the future of scalable local AI.</p>
                   <span class="blog-card__link">Read note <b aria-hidden="true">→</b></span>
                 </div>
               </a>
@@ -199,6 +199,456 @@
               </a>
             </div>
           </div>
+
+          <article class="blog-post blog-post--longform blog-post--runbook" lang="en" data-blog-post="inside-hy4-770b-experiment" data-blog-language-root aria-labelledby="hy4-runbook-title-en" hidden>
+            <div class="blog-post__toolbar">
+              <a class="blog-back" href="./blog" data-blog-index-link><span aria-hidden="true">←</span> All blogs</a>
+              <div class="blog-language-toggle" role="group" aria-label="Article language">
+                <button type="button" data-blog-language="en" aria-pressed="true">EN</button>
+                <button type="button" data-blog-language="zh" aria-pressed="false" lang="zh-CN">中文</button>
+              </div>
+            </div>
+
+            <div data-blog-language-panel="en">
+              <header class="blog-post__header">
+                <div class="blog-meta"><time datetime="2026-08-31">August 31, 2026</time></div>
+                <h1 id="hy4-runbook-title-en">Inside the PRIMA Hy4 preview 770B Experiment: How We Ran It Across Two Machines</h1>
+                <p>Two machines in different locations, across separate networks and connected wirelessly, combined 80 GB of VRAM and 64 GB of RAM to run Hy4 preview 770B at 1 TPS.</p>
+              </header>
+
+              <div class="blog-post__body">
+              <p>The <a href="./blog/hunyuan4-770b-local-devices" data-blog-post-link="hunyuan4-770b-local-devices">Hy4 preview 770B case study</a> explains why we combined existing devices and what the experiment revealed about scalable local AI. The procedure below records the two-rank path used on this testbed.</p>
+
+              <h2>The deployment in one view</h2>
+
+              <p>The experiment was a two-rank static topology. The four-A4000 machine was rank 0 and exposed the client API. The 4090 Laptop was rank 1 and joined as the second worker.</p>
+
+              <div class="blog-table-wrap" role="region" aria-label="Complete Hy4 preview experiment device configuration" tabindex="0">
+                <table class="blog-table--wide">
+                  <thead><tr><th scope="col">Rank</th><th scope="col">OS · runtime</th><th scope="col">CPU · RAM</th><th scope="col">GPU · VRAM</th><th scope="col">Local model disk</th><th scope="col">Network · bandwidth</th><th scope="col">RTT</th></tr></thead>
+                  <tbody>
+                    <tr><th scope="row">Rank 0 · head</th><td>Ubuntu 24.04 · CUDA 12.x</td><td>Intel Core i7-12700 · 32 GB RAM</td><td>NVIDIA RTX A4000 × 4 · 16 GB each, 64 GB total</td><td>8 TB NVMe SSD</td><td>Wired remote LAN · 1 Gbps up/down</td><td>≈ 50 ms</td></tr>
+                    <tr><th scope="row">Rank 1 · worker</th><td>Ubuntu 22.04 · CUDA 13.x</td><td>Intel Core Ultra 9 185H · 32 GB RAM</td><td>NVIDIA RTX 4090 Laptop × 1 · 16 GB</td><td>2 TB NVMe SSD</td><td>Wi-Fi · VPN · cross-LAN · 27 Mbps up / 145 Mbps down</td><td>≈ 50 ms</td></tr>
+                  </tbody>
+                </table>
+              </div>
+
+              <p>Each machine had 32GB of system memory. The two hosts communicated through direct host-to-host addresses across the existing Wi-Fi, VPN, and remote-LAN path.</p>
+
+              <h2>1. Prepare one runtime package per rank</h2>
+
+              <p>The experiment used one hardware-specific runtime package per rank:</p>
+
+              <div class="blog-table-wrap" role="region" aria-label="Hy4 preview runtime packages" tabindex="0">
+                <table class="blog-table--wide">
+                  <thead><tr><th scope="col">Package</th><th scope="col">Install on</th><th scope="col">Role</th></tr></thead>
+                  <tbody>
+                    <tr><th scope="row"><code>prima-preview-a4000-rank0-linux-x86_64-cuda-runtime.tar.gz</code></th><td>Four-A4000 server</td><td>Rank 0, the head device</td></tr>
+                    <tr><th scope="row"><code>prima-preview-4090-rank1-linux-x86_64-cuda-runtime.tar.gz</code></th><td>4090 Laptop</td><td>Rank 1, the worker device</td></tr>
+                  </tbody>
+                </table>
+              </div>
+
+              <p>The packages contain compiled ELF executables, shared libraries, and symlinks. They do not contain model files, source code, setup scripts, the NVIDIA driver, CUDA, or cuBLAS.</p>
+
+              <pre class="blog-code-block" aria-label="Verify downloaded runtime packages"><code>sha256sum &#45;c SHA256SUMS &#45;&#45;ignore-missing
+RANK=a4000-rank0 # or 4090-rank1
+tar &#45;xzf "prima-preview-${RANK}-linux-x86_64-cuda-runtime.tar.gz"
+ldd ./bin/prima-server | sed &#45;n '/not found/p'</code></pre>
+
+              <p>The last command should print nothing. Each package’s <code>bin/</code> and <code>lib/</code> directories must remain together so <code>prima-server</code> can find its packaged libraries.</p>
+
+              <h2>2. Put the same model file on both machines</h2>
+
+              <p>The model artifact referenced here is <a href="https://huggingface.co/AngelSlim/Hy4-preview-GGUF/blob/main/Hy4-preview-STQ1_0.gguf" target="_blank" rel="noreferrer"><code>Hy4-preview-STQ1_0.gguf</code></a> from the public <a href="https://huggingface.co/AngelSlim/Hy4-preview-GGUF/tree/main" target="_blank" rel="noreferrer">AngelSlim/Hy4-preview-GGUF</a> repository. It is a mixed 1–2-bit quantization at approximately 2.38 bits per weight.</p>
+
+              <pre class="blog-code-block" aria-label="Verify the Hy4 preview STQ1 model file"><code>sha256sum Hy4-preview-STQ1_0.gguf
+# expected:
+4d1d2259446e33e25c3e1d8bcb072f026cc69b90a361c5e5a8f6eca50d8d0036  Hy4-preview-STQ1_0.gguf</code></pre>
+
+              <p>The single file is approximately 229 GB. A complete, checksum-identical copy lived on fast local storage on both machines—we will optimize this storage requirement in later releases because each rank reads only the weights assigned to it—and each launch command pointed <code>&#45;&#45;model</code> at that local file.</p>
+
+              <p>The cross-LAN link carried intermediate activations and control traffic, not a continuous stream of 200GB-plus model weights.</p>
+
+              <h2>3. Verify and bind the model once on each machine</h2>
+
+              <p>Each machine generated its own receipt from a manifest for this exact STQ1_0 artifact. A receipt binds the repository revision, filename, byte size, SHA-256 value, and local model root to the machine running that rank.</p>
+
+              <pre class="blog-code-block" aria-label="Create a rank-specific model receipt"><code>./bin/prima-moe-artifact create-v1 \
+  &#45;&#45;adapter-id hyv4-preview-stq1-0-v1 \
+  &#45;&#45;repository AngelSlim/Hy4-preview-GGUF \
+  &#45;&#45;revision 7f10d3724b61b2e1d6e9207a0bd961768b7b30a1 \
+  &#45;&#45;manifest /path/to/hy4-stq1_0-manifest.json \
+  &#45;&#45;model-root /path/to/model-directory \
+  &#45;&#45;output rank0-receipt.prar</code></pre>
+
+              <p>The 4090 machine ran the same validation with <code>&#45;&#45;output rank1-receipt.prar</code>. This made a copied or incomplete model file fail early instead of producing an ambiguous runtime error later.</p>
+
+              <p>The command options have the following roles:</p>
+
+              <ul>
+                <li><code>create-v1</code> creates a version-1, machine-local artifact receipt;</li>
+                <li><code>&#45;&#45;adapter-id</code> selects PRIMA’s model-specific STQ1_0 adapter;</li>
+                <li><code>&#45;&#45;repository</code> and <code>&#45;&#45;revision</code> pin the model’s source and immutable repository revision;</li>
+                <li><code>&#45;&#45;manifest</code> supplies the expected filename, byte size, and SHA-256 identity;</li>
+                <li><code>&#45;&#45;model-root</code> points to the local directory containing the GGUF;</li>
+                <li><code>&#45;&#45;output</code> writes the receipt that this machine passes to <code>prima-server</code> at startup.</li>
+              </ul>
+
+              <p>Generate the receipt once on each machine and reuse it while the model file and its local path remain unchanged. Moving, replacing, or re-downloading the model requires a new receipt.</p>
+
+              <h2>4. Probe the GPUs once on both ranks</h2>
+
+              <p>Each rank captured its own local GPU topology. The A4000 process exposed 4 CUDA devices; the laptop exposed one.</p>
+
+              <pre class="blog-code-block" aria-label="Probe the GPU topology on both ranks"><code># Rank 0 · four-A4000 server
+CUDA_VISIBLE_DEVICES=0,1,2,3 \
+  ./bin/prima-server &#45;&#45;moe-device-group CUDA0,CUDA1,CUDA2,CUDA3 \
+  &#45;&#45;moe-topology-probe &gt; rank0-topology.bin
+
+# Rank 1 · 4090 Laptop
+CUDA_VISIBLE_DEVICES=0 \
+  ./bin/prima-server &#45;&#45;moe-device-group CUDA0 \
+  &#45;&#45;moe-topology-probe &gt; rank1-topology.bin</code></pre>
+
+              <p>These probes verified local GPU visibility and captured the rank-specific topology before startup. Each machine kept its own topology artifact alongside its receipt and writable profile-cache path.</p>
+
+              <h2>5. Generate the hybrid two-rank placement plan</h2>
+
+              <p>This testbed combined two levels of parallelism. Across the approximately 50 ms cross-LAN link, the two ranks used layer/pipeline partitioning. Inside the four-A4000 rank, PRIMA used local expert parallelism for routed MoE work. The manual plan establishes the inter-rank cut and assigns each layer’s resident main-graph tensors, shared-expert weights, state, and KV cache to a reference GPU. Routed-expert banks are managed separately by the tiered MoE runtime.</p>
+
+              <p>For this preview, the reference placement was selected explicitly and then validated and materialized with <code>prima-moe-plan</code>. Copy rank 1’s receipt and topology file to rank 0, then run the following command on rank 0:</p>
+
+              <pre class="blog-code-block" aria-label="Generate the Hy4 preview two-rank manual placement plan"><code>./bin/prima-moe-plan create-v1 \
+  &#45;&#45;adapter hyv4-preview-stq1-0-v1 \
+  &#45;&#45;rank0-receipt /path/to/rank0-receipt.prar \
+  &#45;&#45;rank1-receipt /path/to/rank1-receipt.prar \
+  &#45;&#45;rank0-topology /path/to/rank0-topology.bin \
+  &#45;&#45;rank1-topology /path/to/rank1-topology.bin \
+  &#45;&#45;cut 61 \
+  &#45;&#45;rank0-device-layers 15,15,15,16 \
+  &#45;&#45;rank1-device-layers 17 \
+  &#45;&#45;output /path/to/hy4-two-rank-plan.prmp</code></pre>
+
+              <p><code>&#45;&#45;cut 61</code> assigns model layers 0–60 to rank 0 and layers 61–77 to rank 1. The per-device counts are contiguous base layer placement and expand as follows:</p>
+
+              <div class="blog-table-wrap" role="region" aria-label="Hy4 preview base layer placement by rank and GPU" tabindex="0">
+                <table class="blog-table--wide">
+                  <thead><tr><th scope="col">Rank</th><th scope="col">GPU</th><th scope="col">Plan count</th><th scope="col">Reference layer range</th></tr></thead>
+                  <tbody>
+                    <tr><th scope="row">Rank 0</th><td>CUDA0 · A4000</td><td>15</td><td>0–14</td></tr>
+                    <tr><th scope="row">Rank 0</th><td>CUDA1 · A4000</td><td>15</td><td>15–29</td></tr>
+                    <tr><th scope="row">Rank 0</th><td>CUDA2 · A4000</td><td>15</td><td>30–44</td></tr>
+                    <tr><th scope="row">Rank 0</th><td>CUDA3 · A4000</td><td>16</td><td>45–60</td></tr>
+                    <tr><th scope="row">Rank 1</th><td>CUDA0 · 4090 Laptop</td><td>17</td><td>61–77</td></tr>
+                  </tbody>
+                </table>
+              </div>
+
+              <p><strong>This table is layer placement, not expert parallelism.</strong> For each contiguous range, the listed GPU owns the resident main graph—including attention, routing, and normalization tensors—the shared-expert weights, and that layer’s state and KV cache. The counts do not divide the routed-expert bank among GPUs.</p>
+
+              <p>Expert parallelism is a second, intra-rank step that applies only to routed experts. For routed MoE layers 1–60 on rank 0, accepted hot-expert weights are striped across all four A4000 GPUs using <code>(reference owner + expert ID mod 4) mod 4</code>. For example, if CUDA1 is the reference owner, expert IDs 0, 4, … prefer CUDA1; 1, 5, … prefer CUDA2; 2, 6, … prefer CUDA3; and 3, 7, … prefer CUDA0, subject to hot-cache capacity. Independent GPU expert branches are submitted together, overlap with the local CPU cold-expert branch backed by host memory and SSD, and are then reduced in a stable order.</p>
+
+              <p>Rank 1 has one GPU, so it has no intra-rank multi-GPU expert fan-out. PRIMA does not fan experts across the two machines: doing so would introduce expert communication at every routed layer over the high-RTT cross-LAN path.</p>
+
+              <p>The tool does not search for the fastest placement. It verifies that the two receipts refer to the same model artifact and adapter, checks both captured GPU topologies, validates the selected cut and layer counts, and writes a binary plan. These values describe this testbed and should not be copied to different hardware without a new placement decision. Copy the generated plan to rank 1 without modifying it; both ranks then pass their local copy through <code>&#45;&#45;moe-manual-plan</code>.</p>
+
+              <h2>6. Start rank 0 and rank 1</h2>
+
+              <p>The two processes connect with a data port and a signal port on each rank. Rank 1 started first with <code>&#45;&#45;worker-ready-listener</code>; rank 0 then started as <code>&#45;&#45;head &#45;&#45;world 2</code>.</p>
+
+              <div class="blog-table-wrap" role="region" aria-label="Hy4 preview two-rank network ports and startup order" tabindex="0">
+                <table class="blog-table--wide">
+                  <thead><tr><th scope="col">Order</th><th scope="col">Rank</th><th scope="col">Own Ring ports</th><th scope="col"><code>&#45;&#45;next</code></th></tr></thead>
+                  <tbody>
+                    <tr><th scope="row">1</th><td>Rank 1 · 4090</td><td>Data 19868 · Signal 20895</td><td><code>A4000_HOST:19867:20894</code></td></tr>
+                    <tr><th scope="row">2</th><td>Rank 0 · A4000</td><td>Data 19867 · Signal 20894</td><td><code>RANK1_HOST:19868:20895</code></td></tr>
+                  </tbody>
+                </table>
+              </div>
+
+              <p>Start rank 1 on the 4090 Laptop:</p>
+
+              <pre class="blog-code-block" aria-label="Start Hy4 preview rank 1 on the 4090 Laptop"><code>CUDA_VISIBLE_DEVICES=0 ./bin/prima-server \
+  &#45;&#45;model /path/to/Hy4-preview-STQ1_0.gguf \
+  &#45;&#45;moe-provider tiered-local-cold-hot-v1 \
+  &#45;&#45;moe-model-adapter hyv4-preview-stq1-0-v1 \
+  &#45;&#45;moe-routing-policy local-cold-no-remote-v1 \
+  &#45;&#45;moe-artifact-receipt rank1-receipt.prar \
+  &#45;&#45;moe-profile-cache rank1-profile-cache.bin \
+  &#45;&#45;moe-manual-plan /path/to/hy4-two-rank-plan.prmp \
+  &#45;&#45;device CUDA0 &#45;&#45;split-mode layer &#45;&#45;moe-device-group CUDA0 \
+  &#45;&#45;next A4000_HOST:19867:20894 \
+  &#45;&#45;data-port 19868 &#45;&#45;signal-port 20895 \
+  &#45;&#45;ctx-size 8192 \
+  &#45;&#45;worker-ready-listener</code></pre>
+
+              <p>Then start rank 0 on the four-A4000 server:</p>
+
+              <pre class="blog-code-block" aria-label="Start Hy4 preview rank 0 on the four-A4000 server"><code>CUDA_VISIBLE_DEVICES=0,1,2,3 ./bin/prima-server \
+  &#45;&#45;model /path/to/Hy4-preview-STQ1_0.gguf \
+  &#45;&#45;moe-provider tiered-local-cold-hot-v1 \
+  &#45;&#45;moe-model-adapter hyv4-preview-stq1-0-v1 \
+  &#45;&#45;moe-routing-policy local-cold-no-remote-v1 \
+  &#45;&#45;moe-artifact-receipt rank0-receipt.prar \
+  &#45;&#45;moe-profile-cache rank0-profile-cache.bin \
+  &#45;&#45;moe-manual-plan /path/to/hy4-two-rank-plan.prmp \
+  &#45;&#45;device CUDA0 &#45;&#45;split-mode layer \
+  &#45;&#45;moe-device-group CUDA0,CUDA1,CUDA2,CUDA3 \
+  &#45;&#45;head &#45;&#45;world 2 \
+  &#45;&#45;next RANK1_HOST:19868:20895 \
+  &#45;&#45;data-port 19867 &#45;&#45;signal-port 20894 \
+  &#45;&#45;ctx-size 8192 \
+  &#45;&#45;host 0.0.0.0 &#45;&#45;port 18727</code></pre>
+
+              <p>Only rank 0 served clients. The request endpoint was:</p>
+
+              <pre class="blog-code-block" aria-label="OpenAI-compatible request endpoint"><code>http://A4000_HOST:18727/v1/chat/completions</code></pre>
+
+              <h2>7. The settings that shaped the run</h2>
+
+              <p>The essential settings were:</p>
+
+              <ul>
+                <li><code>&#45;&#45;moe-provider tiered-local-cold-hot-v1</code>: keep hot expert data on GPU while using host memory and local SSD for colder data;</li>
+                <li><code>&#45;&#45;moe-routing-policy local-cold-no-remote-v1</code>: read a rank’s cold weights locally instead of fetching them from the other machine;</li>
+                <li><code>&#45;&#45;moe-manual-plan</code>: load the same validated layer-placement plan on both ranks;</li>
+                <li><code>&#45;&#45;split-mode layer</code>: place resident main-graph and shared-expert layer data according to the plan; routed hot experts still use rank 0’s local expert parallelism;</li>
+                <li><code>&#45;&#45;moe-device-group</code>: declare the ordered local GPU group available to each rank;</li>
+                <li><code>&#45;&#45;ctx-size 8192</code>: use the experiment’s 8K context window.</li>
+              </ul>
+
+              <p>PRIMA manages expert caching, prefetching, page-cache population, background staging, and asynchronous transfers internally.</p>
+
+              <p>We replay the measured generation in the <a href="./playground" data-route-link="playground">Playground</a>. The Playground does not connect to live devices or start a live inference run; it replays the fixed input, output, and per-token timing captured from a real offline inference run.</p>
+
+              <div class="blog-post__footnotes" role="note" aria-label="Guidance notes">
+                <p class="blog-post__footnote"><sup>1</sup> This guidance is a functional preview. It currently supports Linux only; Macs are not yet supported. Future releases will simplify deployment, support automatic plan generation, and add support for both Mac clusters and mixed Mac–Linux clusters.</p>
+                <p class="blog-post__footnote"><sup>2</sup> Executable binary packages: <a href="https://huggingface.co/AngelSlim/Hy4-preview-GGUF/tree/main/prima-runtime" target="_blank" rel="noreferrer">AngelSlim/Hy4-preview-GGUF/prima-runtime</a>.</p>
+              </div>
+              </div>
+            </div>
+
+            <div lang="zh-CN" data-blog-language-panel="zh" hidden>
+              <header class="blog-post__header">
+                <div class="blog-meta"><time datetime="2026-08-31">2026 年 8 月 31 日</time></div>
+                <h1 id="hy4-runbook-title-zh">解密 PRIMA：如何在两台异构设备上运行 Hy4 preview 770B</h1>
+                <p>两台设备，异地、跨网、无线连接，总计仅 80GB 显存和 64GB 系统内存，将 Hy4 preview 770B 跑到 1 TPS。</p>
+              </header>
+
+              <div class="blog-post__body">
+                <p><a href="./blog/hunyuan4-770b-local-devices" data-blog-post-link="hunyuan4-770b-local-devices">Hy4 preview 770B 案例研究</a>解释了我们为何组合已有设备，以及这次实验揭示了可扩展本地 AI 的哪些可能。下面的流程记录了这套测试环境所使用的双 rank 运行路径。</p>
+
+                <h2>部署结构一览</h2>
+
+                <p>实验采用双 rank 静态拓扑。四卡 A4000 机器作为 rank 0，对外提供客户端 API；4090 Laptop 作为 rank 1，以第二个工作进程的身份加入。</p>
+
+                <div class="blog-table-wrap" role="region" aria-label="完整的 Hy4 preview 实验设备配置" tabindex="0">
+                  <table class="blog-table--wide">
+                    <thead><tr><th scope="col">Rank</th><th scope="col">操作系统 · 运行时</th><th scope="col">CPU · 系统内存</th><th scope="col">GPU · 显存</th><th scope="col">本地模型磁盘</th><th scope="col">网络 · 带宽</th><th scope="col">RTT</th></tr></thead>
+                    <tbody>
+                      <tr><th scope="row">Rank 0 · 主进程</th><td>Ubuntu 24.04 · CUDA 12.x</td><td>Intel Core i7-12700 · 32 GB RAM</td><td>NVIDIA RTX A4000 × 4 · 每张 16 GB，共 64 GB</td><td>8 TB NVMe SSD</td><td>有线远端局域网 · 上下行 1 Gbps</td><td>≈ 50 ms</td></tr>
+                      <tr><th scope="row">Rank 1 · 工作进程</th><td>Ubuntu 22.04 · CUDA 13.x</td><td>Intel Core Ultra 9 185H · 32 GB RAM</td><td>NVIDIA RTX 4090 Laptop × 1 · 16 GB</td><td>2 TB NVMe SSD</td><td>Wi-Fi · VPN · 跨局域网 · 上行 27 Mbps / 下行 145 Mbps</td><td>≈ 50 ms</td></tr>
+                    </tbody>
+                  </table>
+                </div>
+
+                <p>每台机器均配备 32 GB 系统内存。两台主机通过既有的 Wi-Fi、VPN 和远端局域网路径，使用主机间直连地址通信。</p>
+
+                <h2>1. 为每个 rank 准备一个运行时软件包</h2>
+
+                <p>实验为每个 rank 使用一个针对其硬件的软件包：</p>
+
+                <div class="blog-table-wrap" role="region" aria-label="Hy4 preview 运行时软件包" tabindex="0">
+                  <table class="blog-table--wide">
+                    <thead><tr><th scope="col">软件包</th><th scope="col">安装位置</th><th scope="col">用途</th></tr></thead>
+                    <tbody>
+                      <tr><th scope="row"><code>prima-preview-a4000-rank0-linux-x86_64-cuda-runtime.tar.gz</code></th><td>四卡 A4000 服务器</td><td>Rank 0，主设备</td></tr>
+                      <tr><th scope="row"><code>prima-preview-4090-rank1-linux-x86_64-cuda-runtime.tar.gz</code></th><td>4090 Laptop</td><td>Rank 1，工作设备</td></tr>
+                    </tbody>
+                  </table>
+                </div>
+
+                <p>软件包包含已编译的 ELF 可执行文件、共享库和符号链接，不包含模型文件、源代码、安装脚本、NVIDIA 驱动、CUDA 或 cuBLAS。</p>
+
+                <pre class="blog-code-block" aria-label="校验下载的运行时软件包"><code>sha256sum &#45;c SHA256SUMS &#45;&#45;ignore-missing
+RANK=a4000-rank0 # 或 4090-rank1
+tar &#45;xzf "prima-preview-${RANK}-linux-x86_64-cuda-runtime.tar.gz"
+ldd ./bin/prima-server | sed &#45;n '/not found/p'</code></pre>
+
+                <p>最后一条命令不应输出任何内容。每个软件包中的 <code>bin/</code> 和 <code>lib/</code> 目录必须保持在一起，服务进程才能找到随包提供的库。</p>
+
+                <h2>2. 在两台机器上放置同一模型文件</h2>
+
+                <p>本文使用的模型制品是公开 <a href="https://huggingface.co/AngelSlim/Hy4-preview-GGUF/tree/main" target="_blank" rel="noreferrer">AngelSlim/Hy4-preview-GGUF</a> 仓库中的 <a href="https://huggingface.co/AngelSlim/Hy4-preview-GGUF/blob/main/Hy4-preview-STQ1_0.gguf" target="_blank" rel="noreferrer"><code>Hy4-preview-STQ1_0.gguf</code></a>。这是 1–2 bit 混合量化，平均每个权重约 2.38 bit。</p>
+
+                <pre class="blog-code-block" aria-label="校验 Hy4 preview STQ1 模型文件"><code>sha256sum Hy4-preview-STQ1_0.gguf
+# expected:
+4d1d2259446e33e25c3e1d8bcb072f026cc69b90a361c5e5a8f6eca50d8d0036  Hy4-preview-STQ1_0.gguf</code></pre>
+
+                <p>这个单文件约为 229 GB。两台机器的高速本地存储上各放置一份完整且校验和一致的副本——由于每个 rank 只读取分配给自己的权重，后续版本会优化这项存储要求——每条启动命令的 <code>&#45;&#45;model</code> 都指向本机文件。</p>
+
+                <p>跨局域网链路传输的是中间激活和控制流量，而不是持续传输超过 200 GB 的模型权重。</p>
+
+                <h2>3. 在每台机器上校验并绑定一次模型</h2>
+
+                <p>每台机器都根据这个 STQ1_0 制品的清单生成自己的凭据。凭据会把仓库修订版本、文件名、字节大小、SHA-256 值和本地模型根目录，绑定到运行相应 rank 的机器。</p>
+
+                <pre class="blog-code-block" aria-label="创建特定 rank 的模型凭据"><code>./bin/prima-moe-artifact create-v1 \
+  &#45;&#45;adapter-id hyv4-preview-stq1-0-v1 \
+  &#45;&#45;repository AngelSlim/Hy4-preview-GGUF \
+  &#45;&#45;revision 7f10d3724b61b2e1d6e9207a0bd961768b7b30a1 \
+  &#45;&#45;manifest /path/to/hy4-stq1_0-manifest.json \
+  &#45;&#45;model-root /path/to/model-directory \
+  &#45;&#45;output rank0-receipt.prar</code></pre>
+
+                <p>4090 机器使用 <code>&#45;&#45;output rank1-receipt.prar</code> 执行相同校验。这样，模型文件复制不完整或内容错误时会尽早失败，而不会在后续产生含糊的运行时错误。</p>
+
+                <p>各命令选项的作用如下：</p>
+
+                <ul>
+                  <li><code>create-v1</code> 创建版本 1 的机器本地制品凭据；</li>
+                  <li><code>&#45;&#45;adapter-id</code> 选择 PRIMA 针对该模型的 STQ1_0 适配器；</li>
+                  <li><code>&#45;&#45;repository</code> 和 <code>&#45;&#45;revision</code> 固定模型来源及不可变的仓库修订版本；</li>
+                  <li><code>&#45;&#45;manifest</code> 提供预期的文件名、字节大小和 SHA-256 身份信息；</li>
+                  <li><code>&#45;&#45;model-root</code> 指向包含 GGUF 的本地目录；</li>
+                  <li><code>&#45;&#45;output</code> 写出本机在启动时传给 <code>prima-server</code> 的凭据。</li>
+                </ul>
+
+                <p>每台机器只需生成一次凭据；只要模型文件及其本地路径不变，就可以重复使用。移动、替换或重新下载模型后，需要生成新的凭据。</p>
+
+                <h2>4. 探测两个 rank 的 GPU</h2>
+
+                <p>每个 rank 分别采集本机 GPU 拓扑。A4000 进程暴露四个 CUDA 设备，Laptop 暴露一个。</p>
+
+                <pre class="blog-code-block" aria-label="探测两个 rank 的 GPU 拓扑"><code># Rank 0 · four-A4000 server
+CUDA_VISIBLE_DEVICES=0,1,2,3 \
+  ./bin/prima-server &#45;&#45;moe-device-group CUDA0,CUDA1,CUDA2,CUDA3 \
+  &#45;&#45;moe-topology-probe &gt; rank0-topology.bin
+
+# Rank 1 · 4090 Laptop
+CUDA_VISIBLE_DEVICES=0 \
+  ./bin/prima-server &#45;&#45;moe-device-group CUDA0 \
+  &#45;&#45;moe-topology-probe &gt; rank1-topology.bin</code></pre>
+
+                <p>这些探测会确认本地 GPU 可见性，并在启动前记录特定 rank 的拓扑。每台机器都保留自己的拓扑文件、凭据和可写的 profile cache 路径。</p>
+
+                <h2>5. 生成混合并行的双 rank 放置计划</h2>
+
+                <p>这个测试床组合了两个层级的并行机制：两台机器之间经过 RTT 约 50 ms 的跨 LAN 链路，采用按层切分和流水线并行；四卡 A4000 rank 内部则对路由 MoE 计算使用本地专家并行。人工 plan 定义跨 rank 切分点，并把每层常驻的 main-graph tensors、shared-expert weights、state 和 KV cache 分给一张参考 GPU；routed-expert banks 则由分层 MoE runtime 单独管理。</p>
+
+                <p>在这个预览版本中，参考放置由人工明确选择，再由 <code>prima-moe-plan</code> 校验并生成二进制计划。先把 rank 1 的凭据和拓扑文件复制到 rank 0，然后在 rank 0 上运行：</p>
+
+                <pre class="blog-code-block" aria-label="生成 Hy4 preview 双 rank 人工放置计划"><code>./bin/prima-moe-plan create-v1 \
+  &#45;&#45;adapter hyv4-preview-stq1-0-v1 \
+  &#45;&#45;rank0-receipt /path/to/rank0-receipt.prar \
+  &#45;&#45;rank1-receipt /path/to/rank1-receipt.prar \
+  &#45;&#45;rank0-topology /path/to/rank0-topology.bin \
+  &#45;&#45;rank1-topology /path/to/rank1-topology.bin \
+  &#45;&#45;cut 61 \
+  &#45;&#45;rank0-device-layers 15,15,15,16 \
+  &#45;&#45;rank1-device-layers 17 \
+  &#45;&#45;output /path/to/hy4-two-rank-plan.prmp</code></pre>
+
+                <p><code>&#45;&#45;cut 61</code> 把模型的第 0–60 层分给 rank 0，把第 61–77 层分给 rank 1。各 GPU 的数字表示连续的基础层放置，具体如下：</p>
+
+                <div class="blog-table-wrap" role="region" aria-label="Hy4 preview 各 rank 与 GPU 的基础层放置" tabindex="0">
+                  <table class="blog-table--wide">
+                    <thead><tr><th scope="col">Rank</th><th scope="col">GPU</th><th scope="col">Plan 层数</th><th scope="col">参考层范围</th></tr></thead>
+                    <tbody>
+                      <tr><th scope="row">Rank 0</th><td>CUDA0 · A4000</td><td>15</td><td>0–14</td></tr>
+                      <tr><th scope="row">Rank 0</th><td>CUDA1 · A4000</td><td>15</td><td>15–29</td></tr>
+                      <tr><th scope="row">Rank 0</th><td>CUDA2 · A4000</td><td>15</td><td>30–44</td></tr>
+                      <tr><th scope="row">Rank 0</th><td>CUDA3 · A4000</td><td>16</td><td>45–60</td></tr>
+                      <tr><th scope="row">Rank 1</th><td>CUDA0 · 4090 Laptop</td><td>17</td><td>61–77</td></tr>
+                    </tbody>
+                  </table>
+                </div>
+
+                <p><strong>这张表描述的是 layer placement，并不是专家并行。</strong>对每个连续层范围，表中的 GPU 负责常驻 main graph，包括 attention、routing 和 normalization tensors，同时负责 shared-expert weights 以及该层的 state 和 KV cache。这些数字不会把 routed-expert bank 按层分给各 GPU。</p>
+
+                <p>专家并行是随后发生在 rank 内部、仅作用于 routed experts 的第二步。对 rank 0 的路由 MoE 层 1–60，被接纳的 hot-expert weights 会按照 <code>(参考 owner + expert ID mod 4) mod 4</code> 分散到四张 A4000。例如，参考 owner 为 CUDA1 时，expert ID 0、4、……优先进入 CUDA1；1、5、……进入 CUDA2；2、6、……进入 CUDA3；3、7、……进入 CUDA0，实际放置还需满足 hot cache 容量。多个 GPU expert branches 会一起提交，与由本机主存和 SSD 支撑的 CPU cold-expert branch 重叠执行，最后按稳定顺序归并。</p>
+
+                <p>Rank 1 只有一张 GPU，因此没有 rank 内多 GPU expert fan-out。PRIMA 不在两台机器之间做专家分发，因为这会让每个路由层都经过高 RTT 的跨 LAN 链路交换专家数据。</p>
+
+                <p>这个工具不会自动搜索最快的放置方案。它会确认两个凭据指向同一模型制品和适配器，检查两端记录的 GPU 拓扑，验证人工选择的切分点与各 GPU 层数，并写出二进制 plan。这些参数只对应本测试环境，硬件变化后需要重新决定放置方式。把生成的同一份 plan 原样复制到 rank 1；两个 rank 启动时都通过 <code>&#45;&#45;moe-manual-plan</code> 指向各自的本地副本。</p>
+
+                <h2>6. 启动 rank 0 和 rank 1</h2>
+
+                <p>两个进程组成一个环，每个 rank 各有一个数据端口和一个信号端口。Rank 1 先使用 <code>&#45;&#45;worker-ready-listener</code> 启动；随后 rank 0 以 <code>&#45;&#45;head &#45;&#45;world 2</code> 启动。</p>
+
+                <div class="blog-table-wrap" role="region" aria-label="Hy4 preview 双 rank 网络端口与启动顺序" tabindex="0">
+                  <table class="blog-table--wide">
+                    <thead><tr><th scope="col">顺序</th><th scope="col">Rank</th><th scope="col">本机 Ring 端口</th><th scope="col"><code>&#45;&#45;next</code></th></tr></thead>
+                    <tbody>
+                      <tr><th scope="row">1</th><td>Rank 1 · 4090</td><td>数据 19868 · 信号 20895</td><td><code>A4000_HOST:19867:20894</code></td></tr>
+                      <tr><th scope="row">2</th><td>Rank 0 · A4000</td><td>数据 19867 · 信号 20894</td><td><code>RANK1_HOST:19868:20895</code></td></tr>
+                    </tbody>
+                  </table>
+                </div>
+
+                <p>先在 4090 Laptop 上启动 rank 1：</p>
+
+                <pre class="blog-code-block" aria-label="在 4090 Laptop 上启动 Hy4 preview rank 1"><code>CUDA_VISIBLE_DEVICES=0 ./bin/prima-server \
+  &#45;&#45;model /path/to/Hy4-preview-STQ1_0.gguf \
+  &#45;&#45;moe-provider tiered-local-cold-hot-v1 \
+  &#45;&#45;moe-model-adapter hyv4-preview-stq1-0-v1 \
+  &#45;&#45;moe-routing-policy local-cold-no-remote-v1 \
+  &#45;&#45;moe-artifact-receipt rank1-receipt.prar \
+  &#45;&#45;moe-profile-cache rank1-profile-cache.bin \
+  &#45;&#45;moe-manual-plan /path/to/hy4-two-rank-plan.prmp \
+  &#45;&#45;device CUDA0 &#45;&#45;split-mode layer &#45;&#45;moe-device-group CUDA0 \
+  &#45;&#45;next A4000_HOST:19867:20894 \
+  &#45;&#45;data-port 19868 &#45;&#45;signal-port 20895 \
+  &#45;&#45;ctx-size 8192 \
+  &#45;&#45;worker-ready-listener</code></pre>
+
+                <p>然后在四卡 A4000 服务器上启动 rank 0：</p>
+
+                <pre class="blog-code-block" aria-label="在四卡 A4000 服务器上启动 Hy4 preview rank 0"><code>CUDA_VISIBLE_DEVICES=0,1,2,3 ./bin/prima-server \
+  &#45;&#45;model /path/to/Hy4-preview-STQ1_0.gguf \
+  &#45;&#45;moe-provider tiered-local-cold-hot-v1 \
+  &#45;&#45;moe-model-adapter hyv4-preview-stq1-0-v1 \
+  &#45;&#45;moe-routing-policy local-cold-no-remote-v1 \
+  &#45;&#45;moe-artifact-receipt rank0-receipt.prar \
+  &#45;&#45;moe-profile-cache rank0-profile-cache.bin \
+  &#45;&#45;moe-manual-plan /path/to/hy4-two-rank-plan.prmp \
+  &#45;&#45;device CUDA0 &#45;&#45;split-mode layer \
+  &#45;&#45;moe-device-group CUDA0,CUDA1,CUDA2,CUDA3 \
+  &#45;&#45;head &#45;&#45;world 2 \
+  &#45;&#45;next RANK1_HOST:19868:20895 \
+  &#45;&#45;data-port 19867 &#45;&#45;signal-port 20894 \
+  &#45;&#45;ctx-size 8192 \
+  &#45;&#45;host 0.0.0.0 &#45;&#45;port 18727</code></pre>
+
+                <p>只有 rank 0 对外服务。请求端点为：</p>
+
+                <pre class="blog-code-block" aria-label="OpenAI 兼容请求端点"><code>http://A4000_HOST:18727/v1/chat/completions</code></pre>
+
+                <h2>7. 决定本次运行方式的关键设置</h2>
+
+                <p>关键设置包括：</p>
+
+                <ul>
+                  <li><code>&#45;&#45;moe-provider tiered-local-cold-hot-v1</code>：热专家数据保留在 GPU，较冷的数据使用主机内存和本地 SSD；</li>
+                  <li><code>&#45;&#45;moe-routing-policy local-cold-no-remote-v1</code>：每个 rank 从本地读取自己的冷权重，而不是从另一台机器获取；</li>
+                  <li><code>&#45;&#45;moe-manual-plan</code>：两个 rank 都加载同一份经过校验的层放置计划；</li>
+                  <li><code>&#45;&#45;split-mode layer</code>：按 plan 放置常驻 main-graph 和 shared-expert 层数据；routed hot experts 仍使用 rank 0 内部的本地专家并行；</li>
+                  <li><code>&#45;&#45;moe-device-group</code>：声明每个 rank 可用且有序的本地 GPU 组；</li>
+                  <li><code>&#45;&#45;ctx-size 8192</code>：使用本次实验的 8K 上下文窗口。</li>
+                </ul>
+
+                <p>PRIMA 在内部管理专家缓存、预取、page cache 填充、后台 staging 和异步传输。</p>
+
+                <p>我们在 <a href="./playground" data-route-link="playground">Playground</a> 中回放实测生成过程。Playground 不连接真实设备，也不会启动实时推理；它按照一次真实离线推理运行所记录的固定输入、输出和逐 token 时间进行回放。</p>
+
+                <div class="blog-post__footnotes" role="note" aria-label="指南脚注">
+                  <p class="blog-post__footnote"><sup>1</sup> 本指南仅用于功能预览。目前仅适配 Linux，Mac 系列设备暂未支持。未来版本将简化部署流程、支持自动生成 plan，并支持 Mac 集群和 Mac–Linux 混合集群。</p>
+                  <p class="blog-post__footnote"><sup>2</sup> 可执行二进制文件包：<a href="https://huggingface.co/AngelSlim/Hy4-preview-GGUF/tree/main/prima-runtime" target="_blank" rel="noreferrer">AngelSlim/Hy4-preview-GGUF/prima-runtime</a>。</p>
+                </div>
+              </div>
+            </div>
+          </article>
 
           <article class="blog-post" data-blog-post="workstation-already-in-room" aria-labelledby="sample-post-title" hidden>
             <a class="blog-back" href="./blog" data-blog-index-link><span aria-hidden="true">←</span> All blogs</a>
@@ -239,7 +689,7 @@
             <div data-blog-language-panel="en">
               <header class="blog-post__header">
                 <div class="blog-meta"><time datetime="2026-08-30">August 30, 2026</time></div>
-                <h1 id="hunyuan4-post-title-en">Scalability Matters More Than a Bigger Machine: What PRIMA’s Hy4 770B Experiment Reveals About Local AI</h1>
+                <h1 id="hunyuan4-post-title-en">Scalability Matters More Than a Bigger Machine: What PRIMA’s Hy4 preview 770B Experiment Reveals About Local AI</h1>
               </header>
 
               <div class="blog-post__body">
@@ -292,15 +742,15 @@
 
                 <p>This is what PRIMA means by scalable local AI.</p>
 
-                <h2>Hy4 770B gave us an extreme experiment</h2>
+                <h2>Hy4 preview 770B gave us an extreme experiment</h2>
 
-                <p>When Tencent released Hy4 Preview, we saw a model that was unusually well suited to testing this idea.</p>
+                <p>When Tencent released Hy4 preview, we saw a model that was unusually well suited to testing this idea.</p>
 
-                <p>Hy4 is a 770B-parameter MoE model. Its MoE layers contain 256 routed experts and one shared expert. For every generated token, eight routed experts plus the shared expert are activated, for roughly 49B active parameters per token.</p>
+                <p>Hy4 preview is a 770B-parameter MoE model. Its MoE layers contain 256 routed experts and one shared expert. For every generated token, eight routed experts plus the shared expert are activated, for roughly 49B active parameters per token.</p>
 
-                <p>The MoE architecture does not activate all 770B parameters for every token, but the complete expert weights still place enormous pressure on RAM and VRAM. Even after aggressive 1-bit quantization, storing the Hy4 770B parameters requires more than 200GB. That pushed our question to an extreme:</p>
+                <p>The MoE architecture does not activate all 770B parameters for every token, but the complete expert weights still place enormous pressure on RAM and VRAM. Even after aggressive 1-bit quantization, storing the Hy4 preview 770B parameters requires more than 200GB. That pushed our question to an extreme:</p>
 
-                <blockquote><strong>Without buying any new hardware for Hy4, how far could I run this 770B model using only the devices already available to me?</strong></blockquote>
+                <blockquote><strong>Without buying any new hardware for Hy4 preview, how far could I run this 770B model using only the devices already available to me?</strong></blockquote>
 
                 <h3>The first device: an ordinary 4090 Laptop</h3>
 
@@ -318,11 +768,11 @@
                   </table>
                 </div>
 
-                <p>I initially wanted to try FreeToken, but the laptop had only 32GB of system memory—enough for just a fraction of Hy4 IQ1. Continuing down the full-memory-residency path would require at least 256GB of RAM. On a laptop, that is not as simple as adding a few memory modules; the motherboard would have to change as well. At that point, I might as well call the result a high-memory workstation.</p>
+                <p>I initially wanted to try FreeToken, but the laptop had only 32GB of system memory—enough for just a fraction of Hy4 preview IQ1. Continuing down the full-memory-residency path would require at least 256GB of RAM. On a laptop, that is not as simple as adding a few memory modules; the motherboard would have to change as well. At that point, I might as well call the result a high-memory workstation.</p>
 
                 <p>I did not want to build or buy an expensive high-memory workstation for one model. Apart from electricity, my hardware budget was zero.</p>
 
-                <p>Instead, I used llama.cpp with mmap and disk streaming to run Hy4 770B IQ1 directly on the laptop.</p>
+                <p>Instead, I used llama.cpp with mmap and disk streaming to run Hy4 preview 770B IQ1 directly on the laptop.</p>
 
                 <p>The model ran. But its per-token latency reached <strong>5.9 s/token, or approximately 0.17 TPS.</strong></p>
 
@@ -367,7 +817,7 @@
                 <p>The machines are not even on the same LAN. The laptop reaches the GPU server on a remote LAN over Wi-Fi and a VPN. Network RTT is approximately 50ms; the laptop’s downlink is only 145 Mbps, and its uplink is lower still at 27 Mbps.</p>
 
                 <figure class="blog-figure">
-                  <img data-blog-image="prima-hy4-testbed.png" alt="A home RTX 4090 laptop connects over Wi-Fi and an encrypted cross-LAN VPN to a university server with four NVIDIA A4000 GPUs; measured HY4 770B throughput rises from 0.17 and 0.37 to 1.02 tokens per second with PRIMA" width="1536" height="1024" />
+                  <img data-blog-image="prima-hy4-testbed.png" alt="A home RTX 4090 laptop connects over Wi-Fi and an encrypted cross-LAN VPN to a university server with four NVIDIA A4000 GPUs; measured Hy4 preview 770B throughput rises from 0.17 and 0.37 to 1.02 tokens per second with PRIMA" width="1536" height="1024" />
                 </figure>
 
                 <p>From an HPC perspective, this is almost exactly the kind of hardware and network setup one would be told not to use for distributed large-model inference. Yet it reflects the real world of local AI: <strong>heterogeneous devices, limited memory, and wireless networking.</strong></p>
@@ -387,13 +837,13 @@
                   <li>Transmit only intermediate activations and control messages between devices, not enormous expert weights.</li>
                 </ul>
 
-                <p>Think of the system as an enormous tool warehouse. Hy4 has hundreds of tools, but a specific problem needs only a few of them at a time. The GPU is a fast workbench close to the worker, but it has little space. The SSD is a vast warehouse, but retrieving a tool takes time. PRIMA tries to predict which tools will be needed next, move them close to the workbench in advance, and keep multiple workers and warehouses busy at the same time.</p>
+                <p>Think of the system as an enormous tool warehouse. Hy4 preview has hundreds of tools, but a specific problem needs only a few of them at a time. The GPU is a fast workbench close to the worker, but it has little space. The SSD is a vast warehouse, but retrieving a tool takes time. PRIMA tries to predict which tools will be needed next, move them close to the workbench in advance, and keep multiple workers and warehouses busy at the same time.</p>
 
                 <h2>From 6 seconds to 1 TPS</h2>
 
                 <p>With PRIMA coordinating the two devices, we measured:</p>
 
-                <div class="blog-table-wrap" role="region" aria-label="HY4 770B inference throughput comparison" tabindex="0">
+                <div class="blog-table-wrap" role="region" aria-label="Hy4 preview 770B inference throughput comparison" tabindex="0">
                   <table>
                     <thead><tr><th scope="col"><strong>Configuration</strong></th><th scope="col"><strong>Throughput</strong></th></tr></thead>
                     <tbody>
@@ -412,7 +862,7 @@
 
                 <h2 data-single-line-heading>1 TPS is nowhere near PRIMA’s performance ceiling</h2>
 
-                <p>More importantly, the primary bottleneck in this two-machine system is still not CPU or GPU compute. It is <strong>streaming model data from SSD</strong>. The complete Hy4 IQ1 weights remain larger than the RAM and VRAM that can stay resident across both devices. Every generated token still requires substantial cold-expert data to be read from SSD. Prefetching, the page cache, expert caching, and computation overlap hide as much disk latency as possible, but SSD bandwidth remains the clearest bottleneck.</p>
+                <p>More importantly, the primary bottleneck in this two-machine system is still not CPU or GPU compute. It is <strong>streaming model data from SSD</strong>. The complete Hy4 preview IQ1 weights remain larger than the RAM and VRAM that can stay resident across both devices. Every generated token still requires substantial cold-expert data to be read from SSD. Prefetching, the page cache, expert caching, and computation overlap hide as much disk latency as possible, but SSD bandwidth remains the clearest bottleneck.</p>
 
                 <p>Therefore:</p>
 
@@ -462,7 +912,7 @@
 
                 <p>When evaluating local AI hardware, we have traditionally asked: <strong>“Can this device still run the model?”</strong> If the answer is no, a machine with a high sunk cost is put aside.</p>
 
-                <p>PRIMA reframes the question: <strong>What can this device still contribute to my AI?</strong> It may not run Hy4 alone, but it has a GPU. The GPU may not be fast, but it has 16GB of VRAM and the machine has 32GB of RAM. The CPU may be old, but the device has a fast NVMe SSD. None of it may be flagship hardware, yet several such devices together can support something no single one of them can do.</p>
+                <p>PRIMA reframes the question: <strong>What can this device still contribute to my AI?</strong> It may not run Hy4 preview alone, but it has a GPU. The GPU may not be fast, but it has 16GB of VRAM and the machine has 32GB of RAM. The CPU may be old, but the device has a fast NVMe SSD. None of it may be flagship hardware, yet several such devices together can support something no single one of them can do.</p>
 
                 <p>For personal and home AI, this matters more than chasing the highest TPS in a single benchmark. Because:</p>
 
@@ -472,7 +922,7 @@
 
                 <p>The model may be less capable, but most real-world tasks do not require the most capable model. We can add capacity until it becomes capable enough.</p>
 
-                <p>PRIMA + Hy4 770B was a successful stress test. It did not create a local AI throughput miracle. It showed that 0.37 TPS on one device was not the limit of what I could deploy without new hardware, and that 1 TPS across two devices is not the end of the performance curve.</p>
+                <p>PRIMA + Hy4 preview 770B was a successful stress test. It did not create a local AI throughput miracle. It showed that 0.37 TPS on one device was not the limit of what I could deploy without new hardware, and that 1 TPS across two devices is not the end of the performance curve.</p>
 
                 <blockquote>Where will that boundary move when the next device joins?</blockquote>
 
@@ -483,7 +933,7 @@
             <div lang="zh-CN" data-blog-language-panel="zh" hidden>
             <header class="blog-post__header">
               <div class="blog-meta"><time datetime="2026-08-30">August 30, 2026</time></div>
-              <h1 id="hunyuan4-post-title">不可忽视的可扩展性：PRIMA 的 Hy4 770B 压测揭示本地 AI 新方向</h1>
+              <h1 id="hunyuan4-post-title">不可忽视的可扩展性：PRIMA 的 Hy4 preview 770B 压测揭示本地 AI 新方向</h1>
             </header>
 
             <div class="blog-post__body">
@@ -536,15 +986,15 @@
 
               <p>这也是 PRIMA 所关注的“可扩展本地 AI”。</p>
 
-              <h2>当 Hy4 770B 发布，我们想做一个极端实验</h2>
+              <h2>当 Hy4 preview 770B 发布，我们想做一个极端实验</h2>
 
-              <p>在腾讯发布 Hy4 Preview 后，我们看到了一个非常适合验证这个想法的模型。</p>
+              <p>在腾讯发布 Hy4 preview 后，我们看到了一个非常适合验证这个想法的模型。</p>
 
-              <p>Hy4 是一个 770B 参数规模的超大 MoE 模型，它的 MoE 层包含 256 个路由专家和 1 个共享专家，每生成一个 token，会激活其中 8 个路由专家和共享专家。模型每个 token 的激活参数约为 49B。</p>
+              <p>Hy4 preview 是一个 770B 参数规模的超大 MoE 模型，它的 MoE 层包含 256 个路由专家和 1 个共享专家，每生成一个 token，会激活其中 8 个路由专家和共享专家。模型每个 token 的激活参数约为 49B。</p>
 
-              <p>虽然 MoE 架构并不会在每个 token 上激活全部 770B 参数，但完整的专家权重仍然给主存和显存带来巨大压力。即使经过激进的 1-bit 量化， Hy4 770B 的模型参数存储需求仍然高达 200 GB+，这把我们的问题推到一个极端规模：</p>
+              <p>虽然 MoE 架构并不会在每个 token 上激活全部 770B 参数，但完整的专家权重仍然给主存和显存带来巨大压力。即使经过激进的 1-bit 量化， Hy4 preview 770B 的模型参数存储需求仍然高达 200 GB+，这把我们的问题推到一个极端规模：</p>
 
-              <blockquote><strong>如果不为了 Hy4 购买任何新硬件，仅凭我手上的现有设备，能把这个 770B 模型跑到什么程度？</strong></blockquote>
+              <blockquote><strong>如果不为了 Hy4 preview 购买任何新硬件，仅凭我手上的现有设备，能把这个 770B 模型跑到什么程度？</strong></blockquote>
 
               <h3>第一台设备：一台普通的 4090 Laptop</h3>
 
@@ -562,11 +1012,11 @@
                 </table>
               </div>
 
-              <p>我本想尝试 FreeToken，但我发现： 这台笔记本的系统内存太小了，只有 32 GB，只够放 Hy4 IQ1 的一个零头。要沿着全内存驻留路线继续，我需要扩展内存到至少 256 GB。但这不是“再插几根内存条”这么简单，笔记本主板得跟着一起换。升级完以后，我或许该称它为高内存工作站。</p>
+              <p>我本想尝试 FreeToken，但我发现： 这台笔记本的系统内存太小了，只有 32 GB，只够放 Hy4 preview IQ1 的一个零头。要沿着全内存驻留路线继续，我需要扩展内存到至少 256 GB。但这不是“再插几根内存条”这么简单，笔记本主板得跟着一起换。升级完以后，我或许该称它为高内存工作站。</p>
 
               <p>而我并不想为了一个模型，大价钱打造/重新买一台大内存工作站。除了电费，我一分钱预算都没有。</p>
 
-              <p>于是，我选择了 llama.cpp，通过 mmap 和磁盘流式读取，在这台笔记本上直接运行 Hy4 770B IQ1。</p>
+              <p>于是，我选择了 llama.cpp，通过 mmap 和磁盘流式读取，在这台笔记本上直接运行 Hy4 preview 770B IQ1。</p>
 
               <p>模型确实跑起来了。但它的单 token 延迟高达 <strong>5.9 s/token，约等于 0.17 TPS。</strong></p>
 
@@ -611,7 +1061,7 @@
               <p>它们甚至不在同一个局域网里：笔记本通过 Wi-Fi 和 VPN 访问远端局域网中的 GPU 服务器，网络 RTT 约为 50ms，笔记本的下行带宽仅为 145 Mbps，上行带宽更低，仅为 27 Mbps。</p>
 
               <figure class="blog-figure">
-                <img data-blog-image="prima-hy4-testbed.png" alt="A home RTX 4090 laptop connects over Wi-Fi and an encrypted cross-LAN VPN to a university server with four NVIDIA A4000 GPUs; measured HY4 770B throughput rises from 0.17 and 0.37 to 1.02 tokens per second with PRIMA" width="1536" height="1024" />
+                <img data-blog-image="prima-hy4-testbed.png" alt="A home RTX 4090 laptop connects over Wi-Fi and an encrypted cross-LAN VPN to a university server with four NVIDIA A4000 GPUs; measured Hy4 preview 770B throughput rises from 0.17 and 0.37 to 1.02 tokens per second with PRIMA" width="1536" height="1024" />
               </figure>
 
               <p>从 HPC 的角度看，这几乎是一套“不应该拿来做分布式大模型推理”的硬件和网络设施。但这正是本地 AI 面对的真实世界：<strong>异构设备、小内存、无线网络。</strong></p>
@@ -631,13 +1081,13 @@
                 <li>设备之间只传中间激活和控制信息，不传庞大的专家权重。</li>
               </ul>
 
-              <p>可以把它理解成一个非常大的工具仓库。 Hy4 有几百种工具，但解决一个具体问题时，一次只需要其中少数几种。 GPU 是离工人最近的工作台，但空间很小。 SSD 是巨大的仓库，但取工具比较慢。 PRIMA 要做的事情，就是尽可能预测“接下来最可能用什么工具”，提前把它们放到工作台附近，同时让多个工人、多个仓库一起工作。</p>
+              <p>可以把它理解成一个非常大的工具仓库。 Hy4 preview 有几百种工具，但解决一个具体问题时，一次只需要其中少数几种。 GPU 是离工人最近的工作台，但空间很小。 SSD 是巨大的仓库，但取工具比较慢。 PRIMA 要做的事情，就是尽可能预测“接下来最可能用什么工具”，提前把它们放到工作台附近，同时让多个工人、多个仓库一起工作。</p>
 
               <h2>从 6 秒，到 1 TPS</h2>
 
               <p>在 PRIMA 的协调下，我们得到：</p>
 
-              <div class="blog-table-wrap" role="region" aria-label="HY4 770B inference throughput comparison" tabindex="0">
+              <div class="blog-table-wrap" role="region" aria-label="Hy4 preview 770B inference throughput comparison" tabindex="0">
                 <table>
                   <thead><tr><th scope="col"><strong>配置</strong></th><th scope="col"><strong>吞吐</strong></th></tr></thead>
                   <tbody>
@@ -656,7 +1106,7 @@
 
               <h2>1 TPS 远不是 PRIMA 的性能上限</h2>
 
-              <p>更重要的是， 目前这套两机系统的主要瓶颈依然不是 CPU/GPU 算力，而是 <strong>SSD 的磁盘流式读取</strong>。因为 Hy4 IQ1 的完整模型权重仍然大于两台设备能够常驻的内存和显存， 每生成一个 token，仍然有大量冷专家权重需要从 SSD 中读取。即使我们已经通过预取、page cache、专家缓存和计算重叠尽量隐藏磁盘延迟，SSD 带宽依然是当前系统最明显的瓶颈。</p>
+              <p>更重要的是， 目前这套两机系统的主要瓶颈依然不是 CPU/GPU 算力，而是 <strong>SSD 的磁盘流式读取</strong>。因为 Hy4 preview IQ1 的完整模型权重仍然大于两台设备能够常驻的内存和显存， 每生成一个 token，仍然有大量冷专家权重需要从 SSD 中读取。即使我们已经通过预取、page cache、专家缓存和计算重叠尽量隐藏磁盘延迟，SSD 带宽依然是当前系统最明显的瓶颈。</p>
 
               <p>因此：</p>
 
@@ -706,7 +1156,7 @@
 
               <p>过去，我们评估本地 AI 硬件时，经常问：<strong>“这台设备还能不能跑这个模型？”</strong> 如果不能，这台已经支付了高沉没成本的机器将被尘封。</p>
 
-              <p>PRIMA 旨在把这个问题换成：<strong>这台设备还能为我的 AI 提供什么？</strong> 也许它无法独立运行 Hy4， 但它有一张 GPU；也许 GPU 不强，但它有 16GB 显存和 32GB 内存； 也许 CPU 很旧，但它有一块高速 NVMe SSD。也许它什么都不是旗舰，但几台这样的设备放在一起，就可能支撑一件任何单台设备都做不到的事情。</p>
+              <p>PRIMA 旨在把这个问题换成：<strong>这台设备还能为我的 AI 提供什么？</strong> 也许它无法独立运行 Hy4 preview， 但它有一张 GPU；也许 GPU 不强，但它有 16GB 显存和 32GB 内存； 也许 CPU 很旧，但它有一块高速 NVMe SSD。也许它什么都不是旗舰，但几台这样的设备放在一起，就可能支撑一件任何单台设备都做不到的事情。</p>
 
               <p>对于家庭和个人 AI 来说，这比追求某一次 benchmark 中的极限 TPS 更重要。因为：</p>
 
@@ -716,13 +1166,23 @@
 
               <p>它可能不聪明，但现实世界大部分真实任务，其实不需要那么聪明，我们通过扩容把它变得更聪明，就足够了。</p>
 
-              <p>PRIMA + Hy4 770B 是一次成功的压力测试，它没有创造本地 AI 吞吐的奇迹，但它证明了单设备 0.37 TPS 不是我零成本部署的极限，而两设备 1 TPS 也不是性能的终点。</p>
+              <p>PRIMA + Hy4 preview 770B 是一次成功的压力测试，它没有创造本地 AI 吞吐的奇迹，但它证明了单设备 0.37 TPS 不是我零成本部署的极限，而两设备 1 TPS 也不是性能的终点。</p>
 
               <blockquote>那么，下一台设备加入之后，这个边界会在哪里？</blockquote>
 
               <p>这正是 PRIMA 接下来想继续回答的问题。</p>
             </div>
             </div>
+
+            <p class="blog-post__footnote" role="note">
+              <sup>1</sup>
+              <span data-blog-footnote-copy="en">Installation and run guide: </span>
+              <span data-blog-footnote-copy="zh" lang="zh-CN">部署与运行教程：</span>
+              <a href="./blog/inside-hy4-770b-experiment" data-blog-post-link="inside-hy4-770b-experiment">
+                <span data-blog-footnote-copy="en">Inside the PRIMA Hy4 preview 770B Experiment: How We Ran It Across Two Machines.</span>
+                <span data-blog-footnote-copy="zh" lang="zh-CN">解密 PRIMA：如何在两台异构设备上运行 Hy4 preview 770B。</span>
+              </a>
+            </p>
           </article>
         </div>
       </section>
@@ -875,7 +1335,7 @@
                 <label class="sim-model-field" for="simulation-model">
                   <span>Model · quantization</span>
                   <select id="simulation-model" data-sim-model>
-                    <option value="hy4-770b-iq1" selected>HY4-770B · IQ1</option>
+                    <option value="hy4-770b-iq1" selected>Hy4-770B Preview · IQ1</option>
                     <option value="qwen38-27b-q8">Qwen3.8-27B · Q8</option>
                   </select>
                 </label>
@@ -1085,6 +1545,6 @@
     </main>
 
     <script defer src="./vendor/lucide-prima.js"></script>
-    <script type="module" src="./src/app.js?v=prima-blog-language-v22-20260830"></script>
+    <script type="module" src="./src/app.js?v=prima-hy4-runbook-v23-20260831"></script>
   </body>
 </html>
