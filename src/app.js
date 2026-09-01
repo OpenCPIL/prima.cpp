@@ -1,5 +1,5 @@
 import { presetConversations } from "./preset-conversations.js?v=appended-presets-v2-20260823";
-import { hy4ReplayData } from "./hy4-replay-data.js?v=hy4-prima-098-v11-20260828";
+import { hy4ReplayData } from "./hy4-replay-data.js?v=hy4-stq1-replay-v13-20260901";
 import { renderMarkdownInto } from "./markdown-renderer.js";
 
 document.documentElement.classList.add("js");
@@ -533,7 +533,7 @@ function initMeasuredPlayback() {
     playbackRate: Number(panel.dataset.simRateOn || 0),
     ttftMs: Number(panel.dataset.simTtftOn || 0),
     recordedEvents: null,
-    observedMeanInterEventSeconds: null,
+    displayTpotSeconds: null,
     visibleTokens: 0,
   }));
 
@@ -552,7 +552,7 @@ function initMeasuredPlayback() {
   const testbedConfigurations = new Map([
     ["testbed-1", {
       label: "TESTBED 1",
-      model: "hy4-770b-iq1",
+      model: "hy4-770b-stq1-0",
       prompt: "model-name",
       dflash: false,
       serverImage: `${routeBasePath}/assets/gpu-server-a4000-x4.webp`,
@@ -576,7 +576,7 @@ function initMeasuredPlayback() {
     }],
   ]);
   const modelTestbeds = new Map([
-    ["hy4-770b-iq1", ["testbed-1"]],
+    ["hy4-770b-stq1-0", ["testbed-1"]],
     ["qwen38-27b-q8", ["testbed-2"]],
   ]);
 
@@ -634,7 +634,7 @@ function initMeasuredPlayback() {
   }
 
   function getRecordedPrompt() {
-    if (testbedSelect.value !== "testbed-1" || !(model instanceof HTMLSelectElement) || model.value !== "hy4-770b-iq1") return null;
+    if (testbedSelect.value !== "testbed-1" || !(model instanceof HTMLSelectElement) || model.value !== "hy4-770b-stq1-0") return null;
     return hy4ReplayData.prompts[prompt.value] || null;
   }
 
@@ -689,34 +689,10 @@ function initMeasuredPlayback() {
     if (recordedPrompt) {
       results.forEach((result) => {
         const measurement = recordedPrompt.results[result.id];
-        const sourceEvents = measurement?.replayExcludesFinalEos
-          ? measurement.events.slice(0, -1)
-          : measurement?.events;
-        const firstTokenAtSeconds = sourceEvents?.[0]?.[0] ?? 0;
-        let removedReplaySeconds = 0;
-        result.recordedEvents = sourceEvents?.map(([atSeconds, gapSeconds, delta, ...metadata], index) => {
-          const tokenOrdinal = index + 1;
-          const overriddenGapSeconds = measurement.replayGapOverridesSeconds?.[tokenOrdinal] ?? gapSeconds;
-          const replayGapSeconds = overriddenGapSeconds === null
-            ? null
-            : Math.max(0, overriddenGapSeconds + (measurement.replayGapAdjustmentSeconds ?? 0));
-          if (gapSeconds !== null && replayGapSeconds < gapSeconds) {
-            removedReplaySeconds += gapSeconds - replayGapSeconds;
-          }
-          return [
-            Math.max(0, atSeconds - firstTokenAtSeconds - removedReplaySeconds),
-            replayGapSeconds,
-            delta,
-            ...metadata,
-          ];
-        }) || null;
-        result.observedMeanInterEventSeconds = measurement?.replayTpotSeconds
-          ?? measurement?.requestLevelAverageTpotSeconds
-          ?? measurement?.observedMeanInterTokenSeconds
-          ?? measurement?.observedMeanInterEventSeconds
-          ?? null;
+        result.recordedEvents = measurement?.events || null;
+        result.displayTpotSeconds = measurement?.tpotSeconds ?? null;
         result.ttftMs = 0;
-        result.playbackRate = result.observedMeanInterEventSeconds ? 1 / result.observedMeanInterEventSeconds : 0;
+        result.playbackRate = measurement ? 1 : 0;
         result.panel.classList.toggle("is-measurement-missing", !measurement);
       });
       playbackRate = results.find((result) => result.id === "prima")?.playbackRate || 0;
@@ -727,7 +703,7 @@ function initMeasuredPlayback() {
     const dflashEnabled = isDflashEnabled();
     results.forEach((result) => {
       result.recordedEvents = null;
-      result.observedMeanInterEventSeconds = null;
+      result.displayTpotSeconds = null;
       result.playbackRate = dflashEnabled ? result.rateOn : result.rateOff;
       result.ttftMs = 0;
       result.panel.classList.toggle("is-measurement-missing", result.playbackRate === 0);
@@ -765,7 +741,7 @@ function initMeasuredPlayback() {
     elapsed.textContent = `${(elapsedMs / 1000).toFixed(1)} s`;
     tokenCount.textContent = playbackState === "idle" || playbackState === "unavailable" ? "0" : `${visibleTokens}`;
     rate.textContent = recordedReplay
-      ? `${formatReplayTpot(getRecordedPrompt().results.prima.replayTpotSeconds)} s/tok`
+      ? `${formatReplayTpot(results.find((result) => result.id === "prima")?.displayTpotSeconds)} s/tok`
       : available
         ? `${formatTokenRate(playbackRate)} tok/s`
         : "—";
@@ -776,8 +752,8 @@ function initMeasuredPlayback() {
       result.elapsed.textContent = `${(resultElapsedMs / 1000).toFixed(1)} s`;
       result.tokenCount.textContent = playbackState === "idle" || playbackState === "unavailable" ? "0" : `${result.visibleTokens}`;
       result.rateOutput.textContent = recordedReplay
-        ? result.observedMeanInterEventSeconds
-          ? `${formatReplayTpot(result.observedMeanInterEventSeconds)} s/tok`
+        ? result.displayTpotSeconds
+          ? `${formatReplayTpot(result.displayTpotSeconds)} s/tok`
           : "—"
         : available
           ? `${formatTokenRate(result.playbackRate)} tok/s`
