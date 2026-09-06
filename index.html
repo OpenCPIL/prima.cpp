@@ -1447,7 +1447,7 @@ jq '.choices[0].message | {content, reasoning_content}' "$RESPONSE"</code></pre>
                 <p>The machines are not even on the same LAN. The laptop reaches the GPU server on a remote LAN over Wi-Fi and a VPN. Network RTT is approximately 50ms; the laptop’s downlink is only 145 Mbps, and its uplink is lower still at 27 Mbps.</p>
 
                 <figure class="blog-figure">
-                  <img data-blog-image="prima-hy4-testbed.png" alt="A home RTX 4090 laptop connects over Wi-Fi and an encrypted cross-LAN VPN to a university server with four NVIDIA A4000 GPUs; measured Hy4 preview 770B throughput rises from 0.17 and 0.37 to 1.02 tokens per second with PRIMA" width="1536" height="1024" />
+                  <img data-blog-image="prima-hy4-testbed-v2.png" alt="A home RTX 4090 laptop connects over Wi-Fi and an encrypted cross-LAN VPN to a university server with four NVIDIA A4000 GPUs; measured Hy4 preview 770B throughput rises from 0.17 and 0.37 to 1.02 tokens per second with PRIMA" width="1536" height="1024" />
                 </figure>
 
                 <p>From an HPC perspective, this is almost exactly the kind of hardware and network setup one would be told not to use for distributed large-model inference. Yet it reflects the real world of local AI: <strong>heterogeneous devices, limited memory, and wireless networking.</strong></p>
@@ -1691,7 +1691,7 @@ jq '.choices[0].message | {content, reasoning_content}' "$RESPONSE"</code></pre>
               <p>它们甚至不在同一个局域网里：笔记本通过 Wi-Fi 和 VPN 访问远端局域网中的 GPU 服务器，网络 RTT 约为 50ms，笔记本的下行带宽仅为 145 Mbps，上行带宽更低，仅为 27 Mbps。</p>
 
               <figure class="blog-figure">
-                <img data-blog-image="prima-hy4-testbed.png" alt="A home RTX 4090 laptop connects over Wi-Fi and an encrypted cross-LAN VPN to a university server with four NVIDIA A4000 GPUs; measured Hy4 preview 770B throughput rises from 0.17 and 0.37 to 1.02 tokens per second with PRIMA" width="1536" height="1024" />
+                <img data-blog-image="prima-hy4-testbed-v2.png" alt="A home RTX 4090 laptop connects over Wi-Fi and an encrypted cross-LAN VPN to a university server with four NVIDIA A4000 GPUs; measured Hy4 preview 770B throughput rises from 0.17 and 0.37 to 1.02 tokens per second with PRIMA" width="1536" height="1024" />
               </figure>
 
               <p>从 HPC 的角度看，这几乎是一套“不应该拿来做分布式大模型推理”的硬件和网络设施。但这正是本地 AI 面对的真实世界：<strong>异构设备、小内存、无线网络。</strong></p>
