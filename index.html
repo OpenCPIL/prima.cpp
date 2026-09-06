@@ -51,7 +51,7 @@
               View on GitHub
               <svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 22v-4a4.8 4.8 0 0 0-1-3.5c3.28-.36 6.72-1.61 6.72-7A5.4 5.4 0 0 0 19.3 4.77 5 5 0 0 0 19.16 2S18.05 1.65 15 3.48a13.4 13.4 0 0 0-7 0C4.95 1.65 3.84 2 3.84 2A5 5 0 0 0 3.7 4.77a5.4 5.4 0 0 0-1.42 2.78c0 5.42 3.44 6.67 6.72 7A4.8 4.8 0 0 0 8 18v4" /><path d="M8 19c-3 .9-3-1.5-4-2" /></svg>
             </a>
-            <a class="button button--outline" href="https://proceedings.iclr.cc/paper_files/paper/2026/file/e991e5587c1daa49bbf9a818b3f02f9a-Paper-Conference.pdf" target="_blank" rel="noreferrer">
+            <a class="button button--outline" href="https://openreview.net/pdf?id=h0LjpOG1jq" target="_blank" rel="noreferrer">
               Paper
               <svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5z" /><path d="M14 2v6h6" /><path d="M16 13H8" /><path d="M16 17H8" /><path d="M10 9H8" /></svg>
             </a>
@@ -213,7 +213,7 @@
               <header class="blog-post__header">
                 <div class="blog-meta"><time datetime="2026-08-31">August 31, 2026</time></div>
                 <h1 id="hy4-runbook-title-en">Inside the PRIMA Hy4 Preview 770B Experiment: How We Ran It Across Two Machines</h1>
-                <p>Two machines in different locations, across separate networks and connected wirelessly, combined 80 GB of VRAM and 64 GB of RAM to run Hy4 preview 770B at 1 TPS.</p>
+                <p>Two machines in different locations, across separate networks and connected wirelessly, combined 80 GB of VRAM and 64 GB of RAM to run Hy4 preview 770B at 1.5 TPS.</p>
               </header>
 
               <div class="blog-post__body">
@@ -748,7 +748,7 @@ jq '.choices[0].message | {content, reasoning_content}' "$RESPONSE"</code></pre>
               <header class="blog-post__header">
                 <div class="blog-meta"><time datetime="2026-08-31">2026 年 8 月 31 日</time></div>
                 <h1 id="hy4-runbook-title-zh">解密 PRIMA：如何在两台异构设备上运行 Hy4 Preview 770B</h1>
-                <p>两台设备，异地、跨网、无线连接，总计仅 80GB 显存和 64GB 系统内存，用 PRIMA 将 Hy4 Preview 770B 提速到 1 TPS。</p>
+                <p>两台设备，异地、跨网、无线连接，总计仅 80GB 显存和 64GB 系统内存，用 PRIMA 将 Hy4 Preview 770B 提速到 1.5 TPS。</p>
               </header>
 
               <div class="blog-post__body">
@@ -1447,7 +1447,7 @@ jq '.choices[0].message | {content, reasoning_content}' "$RESPONSE"</code></pre>
                 <p>The machines are not even on the same LAN. The laptop reaches the GPU server on a remote LAN over Wi-Fi and a VPN. Network RTT is approximately 50ms; the laptop’s downlink is only 145 Mbps, and its uplink is lower still at 27 Mbps.</p>
 
                 <figure class="blog-figure">
-                  <img data-blog-image="prima-hy4-testbed-v2.png" alt="A home RTX 4090 laptop connects over Wi-Fi and an encrypted cross-LAN VPN to a university server with four NVIDIA A4000 GPUs; measured Hy4 preview 770B throughput rises from 0.17 and 0.37 to 1.02 tokens per second with PRIMA" width="1536" height="1024" />
+                  <img data-blog-image="prima-hy4-testbed-v2.png" alt="A home RTX 4090 laptop connects over Wi-Fi and an encrypted cross-LAN VPN to a university server with four NVIDIA A4000 GPUs; measured Hy4 preview 770B throughput rises from 0.17 and 0.37 to 1.5 tokens per second with PRIMA" width="1536" height="1024" />
                 </figure>
 
                 <p>From an HPC perspective, this is almost exactly the kind of hardware and network setup one would be told not to use for distributed large-model inference. Yet it reflects the real world of local AI: <strong>heterogeneous devices, limited memory, and wireless networking.</strong></p>
@@ -1469,7 +1469,7 @@ jq '.choices[0].message | {content, reasoning_content}' "$RESPONSE"</code></pre>
 
                 <p>Think of the system as an enormous tool warehouse. Hy4 preview has hundreds of tools, but a specific problem needs only a few of them at a time. The GPU is a fast workbench close to the worker, but it has little space. The SSD is a vast warehouse, but retrieving a tool takes time. PRIMA tries to predict which tools will be needed next, move them close to the workbench in advance, and keep multiple workers and warehouses busy at the same time.</p>
 
-                <h2>From 6 seconds to 1 TPS</h2>
+                <h2>From 6 seconds to 1.5 TPS</h2>
 
                 <p>With PRIMA coordinating the two devices, we measured:</p>
 
@@ -1479,24 +1479,24 @@ jq '.choices[0].message | {content, reasoning_content}' "$RESPONSE"</code></pre>
                     <tbody>
                       <tr><th scope="row">4090 Laptop + llama.cpp</th><td>0.17 TPS</td></tr>
                       <tr><th scope="row">4× A4000 Server + llama.cpp</th><td>0.37 TPS</td></tr>
-                      <tr><th scope="row">4090 Laptop + 4× A4000 + PRIMA</th><td><strong>1.02 TPS</strong></td></tr>
+                      <tr><th scope="row">4090 Laptop + 4× A4000 + PRIMA</th><td><strong>1.5 TPS</strong></td></tr>
                     </tbody>
                   </table>
                 </div>
 
-                <p>With the two devices working together, throughput increased by <strong>6×</strong> over the laptop alone and by <strong>2.8×</strong> over the four-A4000 server alone.</p>
+                <p>With the two devices working together, throughput increased by <strong>8.8×</strong> over the laptop alone and by <strong>4.1×</strong> over the four-A4000 server alone.</p>
 
-                <p>One TPS is not a speed worth boasting about. What matters is this:</p>
+                <p>1.5 TPS is not a speed worth boasting about. What matters is this:</p>
 
-                <blockquote><strong>Without spending anything on new hardware, we accelerated a 770B model by 6×.</strong></blockquote>
+                <blockquote><strong>Without spending anything on new hardware, we accelerated a 770B model by 8.8×.</strong></blockquote>
 
-                <h2 data-single-line-heading>1 TPS is nowhere near PRIMA’s performance ceiling</h2>
+                <h2 data-single-line-heading>1.5 TPS is nowhere near PRIMA’s performance ceiling</h2>
 
                 <p>More importantly, the primary bottleneck in this two-machine system is still not CPU or GPU compute. It is <strong>streaming model data from SSD</strong>. The complete Hy4 preview IQ1 weights remain larger than the RAM and VRAM that can stay resident across both devices. Every generated token still requires substantial cold-expert data to be read from SSD. Prefetching, the page cache, expert caching, and computation overlap hide as much disk latency as possible, but SSD bandwidth remains the clearest bottleneck.</p>
 
                 <p>Therefore:</p>
 
-                <blockquote><strong>One TPS is the limit of these two devices, not the performance limit of PRIMA.</strong></blockquote>
+                <blockquote><strong>1.5 TPS is the limit of these two devices, not the performance limit of PRIMA.</strong></blockquote>
 
                 <p>Replacing the SSDs with higher-throughput storage in the future would leave significant room for improvement.</p>
 
@@ -1552,7 +1552,7 @@ jq '.choices[0].message | {content, reasoning_content}' "$RESPONSE"</code></pre>
 
                 <p>The model may be less capable, but most real-world tasks do not require the most capable model. We can add capacity until it becomes capable enough.</p>
 
-                <p>PRIMA + Hy4 preview 770B was a successful stress test. It did not create a local AI throughput miracle. It showed that 0.37 TPS on one device was not the limit of what I could deploy without new hardware, and that 1 TPS across two devices is not the end of the performance curve.</p>
+                <p>PRIMA + Hy4 preview 770B was a successful stress test. It did not create a local AI throughput miracle. It showed that 0.37 TPS on one device was not the limit of what I could deploy without new hardware, and that 1.5 TPS across two devices is not the end of the performance curve.</p>
 
                 <blockquote>Where will that boundary move when the next device joins?</blockquote>
 
@@ -1691,7 +1691,7 @@ jq '.choices[0].message | {content, reasoning_content}' "$RESPONSE"</code></pre>
               <p>它们甚至不在同一个局域网里：笔记本通过 Wi-Fi 和 VPN 访问远端局域网中的 GPU 服务器，网络 RTT 约为 50ms，笔记本的下行带宽仅为 145 Mbps，上行带宽更低，仅为 27 Mbps。</p>
 
               <figure class="blog-figure">
-                <img data-blog-image="prima-hy4-testbed-v2.png" alt="A home RTX 4090 laptop connects over Wi-Fi and an encrypted cross-LAN VPN to a university server with four NVIDIA A4000 GPUs; measured Hy4 preview 770B throughput rises from 0.17 and 0.37 to 1.02 tokens per second with PRIMA" width="1536" height="1024" />
+                <img data-blog-image="prima-hy4-testbed-v2.png" alt="A home RTX 4090 laptop connects over Wi-Fi and an encrypted cross-LAN VPN to a university server with four NVIDIA A4000 GPUs; measured Hy4 preview 770B throughput rises from 0.17 and 0.37 to 1.5 tokens per second with PRIMA" width="1536" height="1024" />
               </figure>
 
               <p>从 HPC 的角度看，这几乎是一套“不应该拿来做分布式大模型推理”的硬件和网络设施。但这正是本地 AI 面对的真实世界：<strong>异构设备、小内存、无线网络。</strong></p>
@@ -1713,7 +1713,7 @@ jq '.choices[0].message | {content, reasoning_content}' "$RESPONSE"</code></pre>
 
               <p>可以把它理解成一个非常大的工具仓库。 Hy4 preview 有几百种工具，但解决一个具体问题时，一次只需要其中少数几种。 GPU 是离工人最近的工作台，但空间很小。 SSD 是巨大的仓库，但取工具比较慢。 PRIMA 要做的事情，就是尽可能预测“接下来最可能用什么工具”，提前把它们放到工作台附近，同时让多个工人、多个仓库一起工作。</p>
 
-              <h2>从 6 秒，到 1 TPS</h2>
+              <h2>从 6 秒，到 1.5 TPS</h2>
 
               <p>在 PRIMA 的协调下，我们得到：</p>
 
@@ -1723,24 +1723,24 @@ jq '.choices[0].message | {content, reasoning_content}' "$RESPONSE"</code></pre>
                   <tbody>
                 <tr><th scope="row">4090 Laptop + llama.cpp</th><td>0.17 TPS</td></tr>
                 <tr><th scope="row">4× A4000 Server + llama.cpp</th><td>0.37 TPS</td></tr>
-                <tr><th scope="row">4090 Laptop + 4× A4000 + PRIMA</th><td><strong>1.02 TPS</strong></td></tr>
+                <tr><th scope="row">4090 Laptop + 4× A4000 + PRIMA</th><td><strong>1.5 TPS</strong></td></tr>
               </tbody>
                 </table>
               </div>
 
-              <p>两设备协同下， 相对于笔记本单机，吞吐提高 <strong>6 倍</strong>；相对于四卡 A4000 服务器单机，吞吐提高 <strong>2.8 倍</strong>。</p>
+              <p>两设备协同下，相对于笔记本单机，吞吐提高 <strong>8.8 倍</strong>；相对于四卡 A4000 服务器单机，吞吐提高 <strong>4.1 倍</strong>。</p>
 
-              <p>1 TPS 不是一个值得炫耀的速度。真正重要的是：</p>
+              <p>1.5 TPS 不是一个值得炫耀的速度。真正重要的是：</p>
 
-              <blockquote><strong>我们没有付出任何成本，就把一个 770B 模型加速 6 倍。</strong></blockquote>
+              <blockquote><strong>我们没有付出任何成本，就把一个 770B 模型加速 8.8 倍。</strong></blockquote>
 
-              <h2>1 TPS 远不是 PRIMA 的性能上限</h2>
+              <h2>1.5 TPS 远不是 PRIMA 的性能上限</h2>
 
               <p>更重要的是， 目前这套两机系统的主要瓶颈依然不是 CPU/GPU 算力，而是 <strong>SSD 的磁盘流式读取</strong>。因为 Hy4 preview IQ1 的完整模型权重仍然大于两台设备能够常驻的内存和显存， 每生成一个 token，仍然有大量冷专家权重需要从 SSD 中读取。即使我们已经通过预取、page cache、专家缓存和计算重叠尽量隐藏磁盘延迟，SSD 带宽依然是当前系统最明显的瓶颈。</p>
 
               <p>因此：</p>
 
-              <blockquote><strong>1 TPS 只是这两台设备的极限，并不是 PRIMA 的性能极限。</strong></blockquote>
+              <blockquote><strong>1.5 TPS 只是这两台设备的极限，并不是 PRIMA 的性能极限。</strong></blockquote>
 
               <p>如果我们把 SSD 换成未来吞吐更高的存储，性能仍有显著提高空间。</p>
 
@@ -1796,7 +1796,7 @@ jq '.choices[0].message | {content, reasoning_content}' "$RESPONSE"</code></pre>
 
               <p>它可能不聪明，但现实世界大部分真实任务，其实不需要那么聪明，我们通过扩容把它变得更聪明，就足够了。</p>
 
-              <p>PRIMA + Hy4 preview 770B 是一次成功的压力测试，它没有创造本地 AI 吞吐的奇迹，但它证明了单设备 0.37 TPS 不是我零成本部署的极限，而两设备 1 TPS 也不是性能的终点。</p>
+              <p>PRIMA + Hy4 preview 770B 是一次成功的压力测试，它没有创造本地 AI 吞吐的奇迹，但它证明了单设备 0.37 TPS 不是我零成本部署的极限，而两设备 1.5 TPS 也不是性能的终点。</p>
 
               <blockquote>那么，下一台设备加入之后，这个边界会在哪里？</blockquote>
 
@@ -2087,7 +2087,7 @@ jq '.choices[0].message | {content, reasoning_content}' "$RESPONSE"</code></pre>
               <article class="sim-response-panel sim-response-panel--prima" data-sim-result data-sim-result-id="prima" data-sim-rate-off="7.4" data-sim-rate-on="15.2" data-sim-ttft-off="1351.73" data-sim-ttft-on="1585.18">
                 <div class="sim-response-head">
                   <span>Home Laptop + GPU server · PRIMA</span>
-                  <strong data-sim-result-rate-output data-sim-rate>0.98 s/tok</strong>
+                  <strong data-sim-result-rate-output data-sim-rate>0.66 s/tok</strong>
                   <span data-sim-status data-sim-result-status role="status" aria-live="polite">Ready</span>
                 </div>
                 <div class="sim-response" id="simulation-response" data-sim-output data-sim-result-output aria-busy="false">
@@ -2175,6 +2175,6 @@ jq '.choices[0].message | {content, reasoning_content}' "$RESPONSE"</code></pre>
     </main>
 
     <script defer src="./vendor/lucide-prima.js"></script>
-    <script type="module" src="./src/app.js?v=hy4-guidance-stq1-v29-20260901"></script>
+    <script type="module" src="./src/app.js?v=hy4-replay-fc83-v31-20260905"></script>
   </body>
 </html>
